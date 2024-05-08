@@ -3,15 +3,26 @@
 
   outputs = { self, nixpkgs }: {
 
-    nixosConfigurations.container = nixpkgs.lib.nixosSystem {
+    nixosConfigurations.a = nixpkgs.lib.nixosSystem {
       system = "aarch64-linux";
       modules =
         [ ({ pkgs, ... }: {
-            boot.isContainer = true;
-
             # Let 'nixos-version --json' know about the Git revision
             # of this flake.
             system.configurationRevision = nixpkgs.lib.mkIf (self ? rev) self.rev;
+
+            imports =
+              [ # Include the results of the hardware scan.
+                ./hardware-configuration.nix
+                ./cachix.nix
+              ];
+
+            # Enable flakes
+            nix.settings.experimental-features = [ "nix-command" "flakes" ];
+
+            # Use the systemd-boot EFI boot loader.
+            boot.loader.systemd-boot.enable = true;
+            boot.loader.efi.canTouchEfiVariables = true;
 
             # Network configuration.
             networking.useDHCP = false;
