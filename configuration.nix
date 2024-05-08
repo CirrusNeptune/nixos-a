@@ -24,7 +24,7 @@
   networking.networkmanager = {
     enable = true;
     ensureProfiles.profiles = {
-      macvlan-enp0s1.gitea = {
+      "macvlan-enp0s1.gitea" = {
         connection = {
           id = "macvlan-enp0s1.gitea";
           type = "macvlan";
