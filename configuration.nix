@@ -23,27 +23,26 @@
   # networking.networkmanager.enable = true;  # Easiest to use and most distros use this by default.
   networking.networkmanager = {
     enable = true;
-    ensureProfiles.profiles = {
-      "macvlan-enp0s1.gitea" = {
-        connection = {
-          id = "macvlan-enp0s1.gitea";
-          type = "macvlan";
-          interface-name = "enp0s1.gitea";
-        };
-        macvlan = {
-          mode = "1";
-          parent = "enp0s1";
-        };
-        ipv4 = {
-          dhcp-hostname = "git";
-          method = "auto";
-        };
-        ipv6 = {
-          addr-gen-mode = "default";
-          method = "auto";
-        };
+    ensureProfiles.profiles = lib.attrsets.mapAttrs'
+    (name: hostname: lib.attrsets.nameValuePair "macvlan-enp0s1.${name}" {
+      connection = {
+        id = "macvlan-enp0s1.gitea";
+        type = "macvlan";
+        interface-name = "enp0s1.gitea";
       };
-    };
+      macvlan = {
+        mode = "1";
+        parent = "enp0s1";
+      };
+      ipv4 = {
+        dhcp-hostname = "git";
+        method = "auto";
+      };
+      ipv6 = {
+        addr-gen-mode = "default";
+        method = "auto";
+      };
+    }) { gitea = "git"; hass = "homeassistant"; };
   };
 
   # Set your time zone.
