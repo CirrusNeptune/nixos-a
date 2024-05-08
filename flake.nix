@@ -11,11 +11,7 @@
             # of this flake.
             system.configurationRevision = nixpkgs.lib.mkIf (self ? rev) self.rev;
 
-            imports =
-              [ # Include the results of the hardware scan.
-                ./hardware-configuration.nix
-                ./cachix.nix
-              ];
+            imports = [ ./configuration.nix ];
 
             # Enable flakes
             nix.settings.experimental-features = [ "nix-command" "flakes" ];
