@@ -26,16 +26,16 @@
     ensureProfiles.profiles = lib.attrsets.mapAttrs'
     (name: hostname: lib.attrsets.nameValuePair "macvlan-enp0s1.${name}" {
       connection = {
-        id = "macvlan-enp0s1.gitea";
+        id = "macvlan-enp0s1.${name}";
         type = "macvlan";
-        interface-name = "enp0s1.gitea";
+        interface-name = "enp0s1.${name}";
       };
       macvlan = {
         mode = "1";
         parent = "enp0s1";
       };
       ipv4 = {
-        dhcp-hostname = "git";
+        dhcp-hostname = "${hostname}";
         method = "auto";
       };
       ipv6 = {
