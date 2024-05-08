@@ -21,6 +21,29 @@
   # Pick only one of the below networking options.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
   # networking.networkmanager.enable = true;  # Easiest to use and most distros use this by default.
+  networking.networkmanager = {
+    enable = true;
+    ensureProfiles.profiles = {
+      macvlan-gitea = {
+        connection = {
+          id = "macvlan-gitea";
+          type = "macvlan";
+        };
+        macvlan = {
+          mode = "1";
+          parent = "enp0s1";
+        };
+        ipv4 = {
+          dhcp-hostname = "git";
+          method = "auto";
+        };
+        ipv6 = {
+          addr-gen-mode = "default";
+          method = "auto";
+        };
+      };
+    };
+  };
 
   # Set your time zone.
   time.timeZone = "America/Los_Angeles";
