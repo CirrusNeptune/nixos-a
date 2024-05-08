@@ -3,7 +3,7 @@
 
   outputs = { self, nixpkgs }: {
 
-    nixosConfigurations.a = nixpkgs.lib.nixosSystem {
+    nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
       system = "aarch64-linux";
       modules =
         [ ({ pkgs, ... }: {
