@@ -4,7 +4,7 @@
   outputs = { self, nixpkgs }: {
 
     nixosConfigurations.container = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
+      system = "aarch64-linux";
       modules =
         [ ({ pkgs, ... }: {
             boot.isContainer = true;
