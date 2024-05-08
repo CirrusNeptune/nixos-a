@@ -24,10 +24,11 @@
   networking.networkmanager = {
     enable = true;
     ensureProfiles.profiles = {
-      macvlan-gitea = {
+      macvlan-enp0s1.gitea = {
         connection = {
-          id = "macvlan-gitea";
+          id = "macvlan-enp0s1.gitea";
           type = "macvlan";
+          interface-name = "enp0s1.gitea";
         };
         macvlan = {
           mode = "1";
