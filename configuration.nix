@@ -12,7 +12,7 @@
 
   inherit (lib) mowbark;
 
-  pow = mowbark.macvlan.mow "brr";
+  pow = lib.mowbark.macvlan.mow "brr";
 
   # Enable flakes
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
