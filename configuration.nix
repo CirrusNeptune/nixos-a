@@ -10,8 +10,6 @@
       ./hardware-configuration.nix
     ];
 
-  inherit (lib) mowbark;
-
   pow = lib.mowbark.macvlan.mow "brr";
 
   # Enable flakes
