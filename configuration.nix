@@ -24,7 +24,7 @@
   networking.networkmanager = {
     enable = true;
     ensureProfiles.profiles = lib.attrsets.mapAttrs'
-      (lib.nixon.macvlan.makeMacvlanProfile enp0s1)
+      (lib.nixon.macvlan.makeMacvlanProfile "enp0s1")
       { gitea = "git"; hass = "homeassistant"; };
   };
 
