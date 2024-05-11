@@ -6,7 +6,7 @@
     nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
       system = "aarch64-linux";
       lib = nixpkgs.lib.extend (final: prev: {
-        mowbark = import ./mowbark/lib { lib = final; };
+        nixon = import ./nixon/lib { lib = final; };
       });
       modules =
         [ ({ pkgs, ... }: {

@@ -10,8 +10,6 @@
       ./hardware-configuration.nix
     ];
 
-  pow = lib.mowbark.macvlan.mow "brr";
-
   # Enable flakes
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
@@ -26,25 +24,8 @@
   networking.networkmanager = {
     enable = true;
     ensureProfiles.profiles = lib.attrsets.mapAttrs'
-    (name: hostname: lib.attrsets.nameValuePair "macvlan-enp0s1.${name}" {
-      connection = {
-        id = "macvlan-enp0s1.${name}";
-        type = "macvlan";
-        interface-name = "enp0s1.${name}";
-      };
-      macvlan = {
-        mode = "1";
-        parent = "enp0s1";
-      };
-      ipv4 = {
-        dhcp-hostname = "${hostname}";
-        method = "auto";
-      };
-      ipv6 = {
-        addr-gen-mode = "default";
-        method = "auto";
-      };
-    }) { gitea = "git"; hass = "homeassistant"; };
+      (lib.nixon.macvlan.makeMacvlanProfile enp0s1)
+      { gitea = "git"; hass = "homeassistant"; };
   };
 
   # Set your time zone.
