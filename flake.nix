@@ -5,12 +5,9 @@
 
     nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
       system = "aarch64-linux";
-      _module.args = {
-        mowbark = import ./mowbark { lib = nixpkgs.lib; };
-      };
-      #lib = nixpkgs.lib.extend (final: prev: {
-      #  mowbark = import ./mowbark { lib = final; };
-      #});
+      lib = nixpkgs.lib.extend (final: prev: {
+        mowbark = import ./mowbark/lib { lib = final; };
+      });
       modules =
         [ ({ pkgs, ... }: {
             # Let 'nixos-version --json' know about the Git revision
