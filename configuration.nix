@@ -66,6 +66,7 @@ in
         ];
         macvlan = [
           "macvlan-hass"
+          "macvlan-gitea"
         ];
         routes = [
           # create default routes
