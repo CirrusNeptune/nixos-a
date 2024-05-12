@@ -126,7 +126,33 @@ in
   # Enable the X11 windowing system.
   # services.xserver.enable = true;
 
+  services.desktopManager.plasma6.enable = true;
 
+  systemd.services.kwinSession = {
+    enable = true;
+    description = "KWin Session";
+    after = [ "systemd-user-sessions.service" ];
+    wantedBy = [ "graphical.target" ];
+    serviceConfig = {
+      Type = "simple";
+      #ExecStart = "/usr/bin/systemctl --wait --user start kwinsession.target";
+      ExecStart = "${lib.getBin pkgs.kdePackages.kwin}/bin/kwin_wayland";
+      User = "a";
+      Group = "a";
+      PAMName = "login";
+      TTYPath = /dev/tty7;
+      TTYReset = "yes";
+      TTYVHangup = "yes";
+      TTYVTDisallocate = "yes";
+      StandardInput = "tty-fail";
+      StandardError = "journal";
+      UtmpIdentifier = "tty7";
+      UtmpMode = "user";
+    };
+    environment = {
+      XDG_SESSION_TYPE = "wayland";
+    };
+  };
   
 
   # Configure keymap in X11
@@ -151,7 +177,7 @@ in
         hashedPassword = "$y$j9T$4OwHrG/9t08OLgF.l0pqj0$JJu2hTsddDPF4o12pZUWi0zSap8eStNvymaYt9Ss272";
       };
       a = {
-        hashedPassword = "$y$j9T$L5eVjV3L2iSwRcGMLuU3H0$XpzHeXGYEG3fwbaY4bP/TYy7V3VKSJW0yC0iqgAul2.";
+        hashedPassword = "$y$j9T$4OwHrG/9t08OLgF.l0pqj0$JJu2hTsddDPF4o12pZUWi0zSap8eStNvymaYt9Ss272";
         isNormalUser = true;
         extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
         #packages = with pkgs; [
