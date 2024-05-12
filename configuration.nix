@@ -171,6 +171,7 @@ in
       StandardError = "journal";
     };
   };
+  systemd.defaultUnit = "graphical.target";
   hardware.opengl.enable = true;
   
 
