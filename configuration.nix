@@ -107,6 +107,7 @@ in
 
   # Set your time zone.
   time.timeZone = timeZone;
+  environment.etc.timezone.text = timeZone;
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
@@ -164,6 +165,7 @@ in
       homeassistant = {
         volumes = [
           "/var/home-assistant:/config"
+          "/etc/timezone:/etc/timezone:ro"
           "/etc/localtime:/etc/localtime:ro"
         ];
         environment.TZ = timeZone;
