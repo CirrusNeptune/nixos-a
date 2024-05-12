@@ -137,7 +137,7 @@ in
       Type = "simple";
       ExecStart = "/usr/bin/systemctl --wait --user start kwin-session.target";
       User = "a";
-      Group = "a";
+      Group = "users";
       PAMName = "login";
       TTYPath = /dev/tty7;
       TTYReset = "yes";
