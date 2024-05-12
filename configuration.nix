@@ -166,6 +166,7 @@ in
   services.cage = {
     enable = true;
     user = "a";
+    extraArguments = [ "-s" ];
     program = "${lib.getBin pkgs.kodi-wayland}/bin/kodi-standalone";
   };
   systemd.defaultUnit = "graphical.target";
