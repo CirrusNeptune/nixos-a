@@ -128,7 +128,7 @@ in
 
   services.desktopManager.plasma6.enable = true;
 
-  security.pam.services.login.kwallet.enable = false;
+  security.pam.services.login.kwallet.enable = lib.mkForce false;
   systemd.services.kwin-session = {
     #enable = false;
     description = "KWin Session";
