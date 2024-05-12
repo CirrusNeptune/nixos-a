@@ -129,7 +129,7 @@ in
   services.desktopManager.plasma6.enable = true;
 
   systemd.services.kwin-session = {
-    enable = false;
+    #enable = false;
     description = "KWin Session";
     after = [ "systemd-user-sessions.service" ];
     wantedBy = [ "graphical.target" ];
