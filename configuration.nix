@@ -10,7 +10,7 @@ let
     hass = 8123;
   };
   timeZone = "America/Los_Angeles";
-  makeIpHost = nodeId: "10.0.10.${nodeId}";
+  makeIpHost = nodeId: "10.0.10.${toString nodeId}";
 in
 {
   imports =
