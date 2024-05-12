@@ -34,8 +34,8 @@ in
   #    (lib.nixon.macvlan.makeMacvlanProfile ethernetInterface)
   #    { gitea = "git"; hass = "homeassistant"; };
   #};
-  #networking.useNetworkd = true;
-  #networking.useDHCP = false;
+  networking.useNetworkd = true;
+  networking.useDHCP = false;
   systemd.network = {
     enable = true;
     netdevs = {
