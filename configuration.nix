@@ -4,6 +4,13 @@
 
 { config, lib, pkgs, ... }:
 
+let
+  ethernetInterface = "enp0s1";
+  ports = {
+    hass = 8123;
+  };
+  timeZone = "America/Los_Angeles";
+in
 {
   imports =
     [ # Include the results of the hardware scan.
@@ -21,15 +28,39 @@
   # Pick only one of the below networking options.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
   # networking.networkmanager.enable = true;  # Easiest to use and most distros use this by default.
-  networking.networkmanager = {
+  #networking.networkmanager = {
+  #  enable = true;
+  #  ensureProfiles.profiles = lib.attrsets.mapAttrs'
+  #    (lib.nixon.macvlan.makeMacvlanProfile ethernetInterface)
+  #    { gitea = "git"; hass = "homeassistant"; };
+  #};
+  #networking.useNetworkd = true;
+  #networking.useDHCP = false;
+  systemd.network = {
     enable = true;
-    ensureProfiles.profiles = lib.attrsets.mapAttrs'
-      (lib.nixon.macvlan.makeMacvlanProfile "enp0s1")
-      { gitea = "git"; hass = "homeassistant"; };
+    netdevs = {
+
+    };
+    networks = {
+      "10-lan" = {
+        # match the interface by name
+        matchConfig.Name = "${ethernetInterface}";
+        address = [
+          # configure addresses including subnet mask
+          "10.0.0.2/24"
+        ];
+        routes = [
+          # create default routes
+          { routeConfig.Gateway = "10.0.0.1"; }
+        ];
+        # make the routes on this interface a dependency for network-online.target
+        linkConfig.RequiredForOnline = "routable";
+      };
+    };
   };
 
   # Set your time zone.
-  time.timeZone = "America/Los_Angeles";
+  time.timeZone = timeZone;
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
@@ -79,6 +110,22 @@
     vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     wget
   ];
+
+  # Add docker containers
+  #virtualisation.oci-containers = {
+  #  backend = "podman";
+  #  containers.homeassistant = {
+  #    volumes = [ "/var/home-assistant:/config" ];
+  #    environment.TZ = timeZone;
+  #    image = "ghcr.io/home-assistant/home-assistant:stable"; # Warning: if the tag does not change, the image will not be updated
+  #    ports = [
+  #    ];
+  #    extraOptions = [
+  #      "--network=bridge"
+  #      "--device=/dev/ttyACM0:/dev/ttyACM0"  # Example, change this to match your own hardware
+  #    ];
+  #  };
+  #};
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
