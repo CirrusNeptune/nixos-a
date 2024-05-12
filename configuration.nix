@@ -153,31 +153,6 @@ in
       XDG_SESSION_TYPE = "wayland";
     };
   };
-  systemd.services.kwin-session = {
-    #enable = false;
-    description = "KWin Session";
-    after = [ "systemd-user-sessions.service" ];
-    wantedBy = [ "graphical.target" ];
-    serviceConfig = {
-      Type = "simple";
-      ExecStart = "${lib.getBin pkgs.kdePackages.plasma-workspace}/bin/startplasma-wayland";
-      User = "a";
-      Group = "users";
-      PAMName = "login";
-      TTYPath = /dev/tty7;
-      TTYReset = "yes";
-      TTYVHangup = "yes";
-      TTYVTDisallocate = "yes";
-      StandardInput = "tty-fail";
-      StandardOutput = "journal";
-      StandardError = "journal";
-      UtmpIdentifier = "tty7";
-      UtmpMode = "user";
-    };
-    environment = {
-      XDG_SESSION_TYPE = "wayland";
-    };
-  };
   services.cage = {
     enable = true;
     user = "a";
