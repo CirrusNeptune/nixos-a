@@ -144,13 +144,22 @@ in
   # services.xserver.libinput.enable = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.a = {
-    isNormalUser = true;
-    extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
-    #packages = with pkgs; [
-    #  firefox
-    #  tree
-    #];
+  users = {
+    mutableUsers = false;
+    users = {
+      root = {
+        hashedPassword = "$y$j9T$4OwHrG/9t08OLgF.l0pqj0$JJu2hTsddDPF4o12pZUWi0zSap8eStNvymaYt9Ss272";
+      };
+      a = {
+        hashedPassword = "$y$j9T$4OwHrG/9t08OLgF.l0pqj0$JJu2hTsddDPF4o12pZUWi0zSap8eStNvymaYt9Ss272";
+        isNormalUser = true;
+        extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
+        #packages = with pkgs; [
+        #  firefox
+        #  tree
+        #];
+      };
+    };
   };
 
   # List packages installed in system profile. To search, run:
