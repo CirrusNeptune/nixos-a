@@ -145,7 +145,7 @@ in
       TTYReset = "yes";
       TTYVHangup = "yes";
       TTYVTDisallocate = "yes";
-      StandardInput = "tty-fail";
+      #StandardInput = "tty-fail";
       StandardOutput = "journal";
       StandardError = "journal";
       UtmpIdentifier = "tty6";
