@@ -36,6 +36,7 @@ in
   #    (lib.nixon.macvlan.makeMacvlanProfile ethernetInterface)
   #    { gitea = "git"; hass = "homeassistant"; };
   #};
+  # TODO: Make metaprogrammable
   networking.useNetworkd = true;
   networking.useDHCP = false;
   systemd.network = {
@@ -175,7 +176,7 @@ in
           "${hassHost}:80:8123"
         ];
         extraOptions = [
-          "--network=bridge"
+          #"--network=bridge"
           #"--device=/dev/ttyACM0:/dev/ttyACM0"  # Example, change this to match your own hardware
         ];
       };
@@ -191,7 +192,7 @@ in
           "${giteaHost}:80:3000"
         ];
         extraOptions = [
-          "--network=bridge"
+          #"--network=bridge"
         ];
         environment = {
           USER_UID = "1000";
@@ -212,7 +213,7 @@ in
   # List services that you want to enable:
 
   # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
+  services.openssh.enable = true;
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];

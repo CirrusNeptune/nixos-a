@@ -1,7 +1,10 @@
 {
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.11";
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.11";
+    sops-nix.url = "github:github:Mic92/sops-nix/b6cb5de";
+  };
 
-  outputs = { self, nixpkgs }: {
+  outputs = { self, nixpkgs, sops-nix }: {
 
     nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
       system = "aarch64-linux";
@@ -17,6 +20,7 @@
             # Use configuration.nix for everything
             imports = [ ./configuration.nix ];
           })
+          sops-nix.nixosModules.sops
         ];
     };
   };
