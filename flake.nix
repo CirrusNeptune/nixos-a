@@ -1,11 +1,13 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.11";
+    nixpkgs-stable.url = "github:NixOS/nixpkgs/release-23.11";
     sops-nix.url = "github:Mic92/sops-nix/b6cb5de";
   };
 
-  outputs = { self, nixpkgs, sops-nix }: {
-
+  outputs = { self, nixpkgs-stable, sops-nix }:
+  let
+    nixpkgs = nixpkgs-stable;
+  in {
     nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
       system = "aarch64-linux";
       lib = nixpkgs.lib.extend (final: prev: {
