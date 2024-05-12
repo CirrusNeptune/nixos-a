@@ -6,14 +6,12 @@
 
 let
   ethernetInterface = "enp0s1";
-  ports = {
-    hass = 8123;
-  };
   timeZone = "America/Los_Angeles";
   makeIpHost = nodeId: "10.0.10.${toString nodeId}";
   gatewayHost = makeIpHost 1;
   lanHost = makeIpHost 2;
   hassHost = makeIpHost 3;
+  giteaHost = makeIpHost 4;
 in
 {
   imports =
@@ -50,6 +48,13 @@ in
         };
         macvlanConfig.Mode = "bridge";
       };
+      "30-gitea-hass" = {
+        netdevConfig = {
+          Kind = "macvlan";
+          Name = "macvlan-gitea";
+        };
+        macvlanConfig.Mode = "bridge";
+      };
     };
     networks = {
       "10-lan" = {
@@ -75,6 +80,20 @@ in
         address = [
           # configure addresses including subnet mask
           (hassHost + "/24")
+        ];
+        routes = [
+          # create default routes
+          { routeConfig.Gateway = gatewayHost; }
+        ];
+        # make the routes on this interface a dependency for network-online.target
+        linkConfig.RequiredForOnline = "routable";
+      };
+      "30-gitea-hass" = {
+        # match the interface by name
+        matchConfig.Name = "macvlan-gitea";
+        address = [
+          # configure addresses including subnet mask
+          (giteaHost + "/24")
         ];
         routes = [
           # create default routes
@@ -141,17 +160,41 @@ in
   # Add docker containers
   virtualisation.oci-containers = {
     backend = "podman";
-    containers.homeassistant = {
-      volumes = [ "/var/home-assistant:/config" ];
-      environment.TZ = timeZone;
-      image = "ghcr.io/home-assistant/home-assistant:2024.5.3";
-      ports = [
-        "${hassHost}:80:8123"
-      ];
-      extraOptions = [
-        "--network=bridge"
-        #"--device=/dev/ttyACM0:/dev/ttyACM0"  # Example, change this to match your own hardware
-      ];
+    containers = {
+      homeassistant = {
+        volumes = [
+          "/var/home-assistant:/config"
+          "/etc/localtime:/etc/localtime:ro"
+        ];
+        environment.TZ = timeZone;
+        image = "ghcr.io/home-assistant/home-assistant:2024.5.3";
+        ports = [
+          "${hassHost}:80:8123"
+        ];
+        extraOptions = [
+          "--network=bridge"
+          #"--device=/dev/ttyACM0:/dev/ttyACM0"  # Example, change this to match your own hardware
+        ];
+      };
+      gitea = {
+        volumes = [
+          "/var/gitea:/data"
+          "/etc/timezone:/etc/timezone:ro"
+          "/etc/localtime:/etc/localtime:ro"
+        ];
+        environment.TZ = timeZone;
+        image = "gitea/gitea:1.21.11";
+        ports = [
+          "${giteaHost}:80:3000"
+        ];
+        extraOptions = [
+          "--network=bridge"
+        ];
+        environment = {
+          USER_UID = "1000";
+          USER_GID = "1000";
+        };
+      };
     };
   };
 
