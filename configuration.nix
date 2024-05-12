@@ -11,6 +11,9 @@ let
   };
   timeZone = "America/Los_Angeles";
   makeIpHost = nodeId: "10.0.10.${toString nodeId}";
+  gatewayHost = makeIpHost 1;
+  lanHost = makeIpHost 2;
+  hassHost = makeIpHost 3;
 in
 {
   imports =
@@ -54,14 +57,14 @@ in
         matchConfig.Name = "${ethernetInterface}";
         address = [
           # configure addresses including subnet mask
-          (makeIpHost 2 + "/24")
+          (lanHost + "/24")
         ];
         macvlan = [
           "macvlan-hass"
         ];
         routes = [
           # create default routes
-          { routeConfig.Gateway = makeIpHost 1; }
+          { routeConfig.Gateway = gatewayHost; }
         ];
         # make the routes on this interface a dependency for network-online.target
         linkConfig.RequiredForOnline = "routable";
@@ -71,11 +74,11 @@ in
         matchConfig.Name = "macvlan-hass";
         address = [
           # configure addresses including subnet mask
-          (makeIpHost 3 + "/24")
+          (hassHost + "/24")
         ];
         routes = [
           # create default routes
-          { routeConfig.Gateway = makeIpHost 1; }
+          { routeConfig.Gateway = gatewayHost; }
         ];
         # make the routes on this interface a dependency for network-online.target
         linkConfig.RequiredForOnline = "routable";
@@ -136,20 +139,21 @@ in
   ];
 
   # Add docker containers
-  #virtualisation.oci-containers = {
-  #  backend = "podman";
-  #  containers.homeassistant = {
-  #    volumes = [ "/var/home-assistant:/config" ];
-  #    environment.TZ = timeZone;
-  #    image = "ghcr.io/home-assistant/home-assistant:stable"; # Warning: if the tag does not change, the image will not be updated
-  #    ports = [
-  #    ];
-  #    extraOptions = [
-  #      "--network=bridge"
-  #      "--device=/dev/ttyACM0:/dev/ttyACM0"  # Example, change this to match your own hardware
-  #    ];
-  #  };
-  #};
+  virtualisation.oci-containers = {
+    backend = "podman";
+    containers.homeassistant = {
+      volumes = [ "/var/home-assistant:/config" ];
+      environment.TZ = timeZone;
+      image = "ghcr.io/home-assistant/home-assistant:2024.5.3";
+      ports = [
+        "${hassHost}:80:8123"
+      ];
+      extraOptions = [
+        "--network=bridge"
+        #"--device=/dev/ttyACM0:/dev/ttyACM0"  # Example, change this to match your own hardware
+      ];
+    };
+  };
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
