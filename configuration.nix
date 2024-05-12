@@ -40,7 +40,13 @@ in
   systemd.network = {
     enable = true;
     netdevs = {
-
+      "20-macvlan-hass" = {
+        netdevConfig = {
+          Kind = "macvlan";
+          Name = "macvlan-hass";
+        };
+        macvlanConfig.Mode = "bridge";
+      };
     };
     networks = {
       "10-lan" = {
@@ -49,6 +55,20 @@ in
         address = [
           # configure addresses including subnet mask
           (makeIpHost 2 + "/24")
+        ];
+        routes = [
+          # create default routes
+          { routeConfig.Gateway = makeIpHost 1; }
+        ];
+        # make the routes on this interface a dependency for network-online.target
+        linkConfig.RequiredForOnline = "routable";
+      };
+      "20-macvlan-hass" = {
+        # match the interface by name
+        matchConfig.Name = "macvlan-hass";
+        address = [
+          # configure addresses including subnet mask
+          (makeIpHost 3 + "/24")
         ];
         routes = [
           # create default routes
