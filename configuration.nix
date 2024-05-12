@@ -131,22 +131,32 @@ in
   systemd.services.kwin-session = {
     #enable = false;
     description = "KWin Session";
-    after = [ "systemd-user-sessions.service" ];
+    after = [
+      "systemd-user-sessions.service"
+      "plymouth-start.service"
+      "plymouth-quit.service"
+      "systemd-logind.service"
+      "getty@tty2.service"
+    ];
+    before = [ "graphical.target" ];
+    wants = [ "dbus.socket" "systemd-logind.service" "plymouth-quit.service"];
     wantedBy = [ "graphical.target" ];
+    conflicts = [ "getty@tty2.service" ];
+    unitConfig.ConditionPathExists = "/dev/tty2";
     serviceConfig = {
       Type = "simple";
       ExecStart = "${lib.getBin pkgs.kdePackages.plasma-workspace}/bin/startplasma-wayland";
       User = "a";
       Group = "users";
       PAMName = "login";
-      TTYPath = /dev/tty7;
+      TTYPath = /dev/tty2;
       TTYReset = "yes";
       TTYVHangup = "yes";
       TTYVTDisallocate = "yes";
       StandardInput = "tty-fail";
       StandardOutput = "journal";
       StandardError = "journal";
-      UtmpIdentifier = "tty7";
+      UtmpIdentifier = "tty2";
       UtmpMode = "user";
     };
     environment = {
