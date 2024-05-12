@@ -56,6 +56,9 @@ in
           # configure addresses including subnet mask
           (makeIpHost 2 + "/24")
         ];
+        macvlan = [
+          "macvlan-hass"
+        ];
         routes = [
           # create default routes
           { routeConfig.Gateway = makeIpHost 1; }
