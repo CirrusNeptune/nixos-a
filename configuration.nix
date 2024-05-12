@@ -128,15 +128,14 @@ in
 
   services.desktopManager.plasma6.enable = true;
 
-  systemd.services.kwinSession = {
-    enable = true;
+  systemd.services.kwin-session = {
+    enable = false;
     description = "KWin Session";
     after = [ "systemd-user-sessions.service" ];
     wantedBy = [ "graphical.target" ];
     serviceConfig = {
       Type = "simple";
-      #ExecStart = "/usr/bin/systemctl --wait --user start kwinsession.target";
-      ExecStart = "${lib.getBin pkgs.kdePackages.kwin}/bin/kwin_wayland";
+      ExecStart = "/usr/bin/systemctl --wait --user start kwin-session.target";
       User = "a";
       Group = "a";
       PAMName = "login";
@@ -151,6 +150,22 @@ in
     };
     environment = {
       XDG_SESSION_TYPE = "wayland";
+    };
+  };
+  systemd.user.targets.kwin-session = {
+    description = "KWin Session Target";
+    after = [ "kwin-session.target" ];
+    bindsTo = [ "kwin-session.target" ];
+  };
+  systemd.user.services.kwin = {
+    description = "kwin";
+    wantedBy = [ "graphical-session.target" ];
+    serviceConfig = {
+      Type = "simple";
+      ExecStart = "${lib.getBin pkgs.kdePackages.kwin}/bin/kwin_wayland";
+      TimeoutStartSec = 60;
+      WatchdogSec = 20;
+      StandardError = "journal";
     };
   };
   
