@@ -136,19 +136,19 @@ in
     wantedBy = [ "graphical.target" ];
     serviceConfig = {
       Type = "simple";
-      #ExecStart = "/usr/bin/systemctl --wait --user start kwin-session.target";
-      ExecStart = "/usr/bin/startplasma-wayland";
+      ExecStart = "/usr/bin/systemctl --wait --user start kwin-session.target";
+      #ExecStart = "/usr/bin/startplasma-wayland";
       User = "a";
       Group = "users";
       PAMName = "login";
-      TTYPath = /dev/tty6;
+      TTYPath = /dev/tty7;
       TTYReset = "yes";
       TTYVHangup = "yes";
       TTYVTDisallocate = "yes";
-      #StandardInput = "tty-fail";
+      StandardInput = "tty-fail";
       StandardOutput = "journal";
       StandardError = "journal";
-      UtmpIdentifier = "tty6";
+      UtmpIdentifier = "tty7";
       UtmpMode = "user";
     };
     environment = {
@@ -165,7 +165,7 @@ in
     wantedBy = [ "graphical-session.target" ];
     serviceConfig = {
       Type = "simple";
-      ExecStart = "${lib.getBin pkgs.kdePackages.kwin}/bin/kwin_wayland";
+      ExecStart = "/usr/bin/startplasma-wayland";
       TimeoutStartSec = 60;
       WatchdogSec = 20;
       StandardError = "journal";
