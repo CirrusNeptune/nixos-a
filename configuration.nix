@@ -136,8 +136,8 @@ in
     wantedBy = [ "graphical.target" ];
     serviceConfig = {
       Type = "simple";
-      ExecStart = "/usr/bin/systemctl --wait --user start kwin-session.target";
-      #ExecStart = "/usr/bin/startplasma-wayland";
+      ExecStart = "${lib.getBin pkgs.kdePackages.plasma-workspace}/bin/startplasma-wayland";
+      #ExecStart = "/usr/bin/systemctl --wait --user start kwin-session.target";
       User = "a";
       Group = "users";
       PAMName = "login";
