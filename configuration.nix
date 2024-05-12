@@ -10,6 +10,7 @@ let
     hass = 8123;
   };
   timeZone = "America/Los_Angeles";
+  makeIpHost = nodeId: "10.0.10.${nodeId}";
 in
 {
   imports =
@@ -47,11 +48,11 @@ in
         matchConfig.Name = "${ethernetInterface}";
         address = [
           # configure addresses including subnet mask
-          "10.0.0.2/24"
+          (makeIpHost 2 + "/24")
         ];
         routes = [
           # create default routes
-          { routeConfig.Gateway = "10.0.0.1"; }
+          { routeConfig.Gateway = makeIpHost 1; }
         ];
         # make the routes on this interface a dependency for network-online.target
         linkConfig.RequiredForOnline = "routable";
