@@ -128,7 +128,7 @@ in
 
   services.desktopManager.plasma6.enable = true;
 
-  security.pam.services.login.kwallet.enable = lib.mkForce false;
+  #security.pam.services.login.kwallet.enable = lib.mkForce false;
   systemd.services.kwin-session = {
     #enable = false;
     description = "KWin Session";
@@ -141,14 +141,14 @@ in
       User = "a";
       Group = "users";
       PAMName = "login";
-      TTYPath = /dev/tty7;
+      TTYPath = /dev/tty6;
       TTYReset = "yes";
       TTYVHangup = "yes";
       TTYVTDisallocate = "yes";
       StandardInput = "tty-fail";
       StandardOutput = "journal";
       StandardError = "journal";
-      UtmpIdentifier = "tty7";
+      UtmpIdentifier = "tty6";
       UtmpMode = "user";
     };
     environment = {
