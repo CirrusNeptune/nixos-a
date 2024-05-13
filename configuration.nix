@@ -60,7 +60,7 @@ in
       };
     };
     networks = {
-      "10-lan" = {
+      "50-lan" = {
         # match the interface by name
         matchConfig.Name = "${ethernetInterface}";
         address = [
@@ -94,6 +94,10 @@ in
         ];
         # make the routes on this interface a dependency for network-online.target
         linkConfig.RequiredForOnline = "routable";
+        networkConfig = {
+          IPForward = true;
+          ConfigureWithoutCarrier = true;
+        };
       };
       "30-macvlan-gitea" = {
         # match the interface by name
@@ -108,6 +112,10 @@ in
         ];
         # make the routes on this interface a dependency for network-online.target
         linkConfig.RequiredForOnline = "routable";
+        networkConfig = {
+          IPForward = true;
+          ConfigureWithoutCarrier = true;
+        };
       };
     };
   };
