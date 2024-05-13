@@ -60,7 +60,7 @@ in
       };
     };
     networks = {
-      "50-lan" = {
+      "10-lan" = {
         # match the interface by name
         matchConfig.Name = "${ethernetInterface}";
         address = [
@@ -76,14 +76,7 @@ in
           { routeConfig.Gateway = gatewayHost; }
         ];
         # make the routes on this interface a dependency for network-online.target
-        linkConfig = {
-          RequiredForOnline = "routable";
-          #Promiscuous = true;
-        };
-        networkConfig = {
-          #IPForward = true;
-          #ConfigureWithoutCarrier = true;
-        };
+        linkConfig.RequiredForOnline = "routable";
       };
       "20-macvlan-hass" = {
         # match the interface by name
@@ -98,10 +91,6 @@ in
         ];
         # make the routes on this interface a dependency for network-online.target
         linkConfig.RequiredForOnline = "routable";
-        networkConfig = {
-          #IPForward = true;
-          #ConfigureWithoutCarrier = true;
-        };
       };
       "30-macvlan-gitea" = {
         # match the interface by name
@@ -116,10 +105,6 @@ in
         ];
         # make the routes on this interface a dependency for network-online.target
         linkConfig.RequiredForOnline = "routable";
-        networkConfig = {
-          #IPForward = true;
-          #ConfigureWithoutCarrier = true;
-        };
       };
     };
   };
@@ -150,7 +135,6 @@ in
   services.desktopManager.plasma6.enable = true;
 
   systemd.services.kwin-session = {
-    #enable = false;
     description = "KWin Session";
     after = [
       "systemd-user-sessions.service"
