@@ -78,7 +78,7 @@ in
         # make the routes on this interface a dependency for network-online.target
         linkConfig = {
           RequiredForOnline = "routable";
-          Promiscuous = "true";
+          Promiscuous = true;
         };
       };
       "20-macvlan-hass" = {
