@@ -193,7 +193,7 @@ in
   };
   systemd.defaultUnit = "graphical.target";
   hardware.opengl.enable = true;
-  
+
 
   # Configure keymap in X11
   # services.xserver.xkb.layout = "us";
@@ -220,10 +220,9 @@ in
         hashedPassword = "$y$j9T$4OwHrG/9t08OLgF.l0pqj0$JJu2hTsddDPF4o12pZUWi0zSap8eStNvymaYt9Ss272";
         isNormalUser = true;
         extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
-        #packages = with pkgs; [
-        #  firefox
-        #  tree
-        #];
+        packages = with pkgs; [
+          firefox
+        ];
       };
     };
   };
