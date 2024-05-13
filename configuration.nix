@@ -80,6 +80,10 @@ in
           RequiredForOnline = "routable";
           Promiscuous = true;
         };
+        networkConfig = {
+          IPForward = true;
+          ConfigureWithoutCarrier = true;
+        };
       };
       "20-macvlan-hass" = {
         # match the interface by name
