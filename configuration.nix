@@ -78,11 +78,11 @@ in
         # make the routes on this interface a dependency for network-online.target
         linkConfig = {
           RequiredForOnline = "routable";
-          Promiscuous = true;
+          #Promiscuous = true;
         };
         networkConfig = {
-          IPForward = true;
-          ConfigureWithoutCarrier = true;
+          #IPForward = true;
+          #ConfigureWithoutCarrier = true;
         };
       };
       "20-macvlan-hass" = {
@@ -99,8 +99,8 @@ in
         # make the routes on this interface a dependency for network-online.target
         linkConfig.RequiredForOnline = "routable";
         networkConfig = {
-          IPForward = true;
-          ConfigureWithoutCarrier = true;
+          #IPForward = true;
+          #ConfigureWithoutCarrier = true;
         };
       };
       "30-macvlan-gitea" = {
@@ -117,8 +117,8 @@ in
         # make the routes on this interface a dependency for network-online.target
         linkConfig.RequiredForOnline = "routable";
         networkConfig = {
-          IPForward = true;
-          ConfigureWithoutCarrier = true;
+          #IPForward = true;
+          #ConfigureWithoutCarrier = true;
         };
       };
     };
