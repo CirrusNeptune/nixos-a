@@ -5,7 +5,7 @@
   };
 
   outputs = { self, nixpkgs, sops-nix }: {
-    nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
+    nixosConfigurations.a = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       lib = nixpkgs.lib.extend (final: prev: {
         nixon = import ./nixon/lib { lib = final; };
