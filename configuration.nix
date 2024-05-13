@@ -49,14 +49,14 @@ in
           Kind = "macvlan";
           Name = "macvlan-hass";
         };
-        macvlanConfig.Mode = "bridge";
+        macvlanConfig.Mode = "vepa";
       };
-      "30-gitea-hass" = {
+      "30-macvlan-gitea" = {
         netdevConfig = {
           Kind = "macvlan";
           Name = "macvlan-gitea";
         };
-        macvlanConfig.Mode = "bridge";
+        macvlanConfig.Mode = "vepa";
       };
     };
     networks = {
@@ -92,7 +92,7 @@ in
         # make the routes on this interface a dependency for network-online.target
         linkConfig.RequiredForOnline = "routable";
       };
-      "30-gitea-hass" = {
+      "30-macvlan-gitea" = {
         # match the interface by name
         matchConfig.Name = "macvlan-gitea";
         address = [
