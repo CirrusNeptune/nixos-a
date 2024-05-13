@@ -177,6 +177,9 @@ in
     user = "a";
     extraArguments = [ "-s" ];
     program = "${lib.getBin pkgs.kodi-wayland}/bin/kodi-standalone";
+    environment = {
+      KODI_AE_SINK = "ALSA";
+    };
   };
   systemd.defaultUnit = "graphical.target";
   hardware.opengl.enable = true;
