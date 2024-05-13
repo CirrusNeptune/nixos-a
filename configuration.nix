@@ -5,9 +5,9 @@
 { config, lib, pkgs, ... }:
 
 let
-  ethernetInterface = "enp0s1";
+  ethernetInterface = "eno2";
   timeZone = "America/Los_Angeles";
-  makeIpHost = nodeId: "10.0.10.${toString nodeId}";
+  makeIpHost = nodeId: "10.0.0.${toString nodeId}";
   gatewayHost = makeIpHost 1;
   lanHost = makeIpHost 2;
   hassHost = makeIpHost 3;
@@ -26,7 +26,7 @@ in
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  networking.hostName = "nixos"; # Define your hostname.
+  networking.hostName = "a"; # Define your hostname.
   # Pick only one of the below networking options.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
   # networking.networkmanager.enable = true;  # Easiest to use and most distros use this by default.
