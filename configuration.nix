@@ -108,6 +108,10 @@ in
       };
     };
   };
+  services.resolved = {
+    domains = [ "mow" ];
+    fallbackDns = [ "10.0.0.1" ];
+  };
 
   # Set your time zone.
   time.timeZone = timeZone;
