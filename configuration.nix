@@ -181,6 +181,12 @@ in
       KODI_AE_SINK = "ALSA";
     };
   };
+  systemd.services."cage-tty1".serviceConfig = {
+    Restart = "always";
+    RestartSec = 5;
+    StartLimitBurst = 6;
+    StartLimitInterval = 30;
+  };
   systemd.defaultUnit = "graphical.target";
   hardware.opengl.enable = true;
   
