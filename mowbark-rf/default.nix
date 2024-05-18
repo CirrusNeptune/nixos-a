@@ -9,6 +9,8 @@ rustPlatform.buildRustPackage {
     rev = "802340ccc01e0960ba6d338d3bf8e16d3058c5f5";
   };
 
+  cargoHash = lib.fakeHash;
+
   cargoLock = {
     lockFile = ./Cargo.lock;
     #allowBuiltinFetchGit = true;
