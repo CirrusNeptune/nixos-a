@@ -21,11 +21,11 @@
             system.configurationRevision = lib.mkIf (self ? rev) self.rev;
 
             # Package overlays
-            #nixpkgs.overlays = [
-            #  (final: prev: {
-            #    mowbark-rf = final.callPackage ./mowbark-rf {};
-            #  })
-            #];
+            nixpkgs.overlays = [
+              (final: prev: {
+                mowbark-rf = final.callPackage ./mowbark-rf {};
+              })
+            ];
 
             # Use configuration.nix for everything
             imports = [ ./configuration.nix ];
