@@ -23,7 +23,7 @@ rec {
   #  name = "mowbark-rf";
   #  src = ./.;
   #};
-  blah = lib.trace src {};
+  #blah = lib.trace src {};
 }
 #{
   #systemd.services.mowbark-rf = {
