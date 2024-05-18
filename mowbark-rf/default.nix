@@ -1,4 +1,4 @@
-{ lib, fetchFromGithub, symlinkJoin, rustPlatform, ... }:
+{ lib, fetchFromGithub, rustPlatform, ... }:
 rustPlatform.buildRustPackage {
   pname = "mowbark-rf";
   version = "0.0.1";
@@ -6,23 +6,10 @@ rustPlatform.buildRustPackage {
   src = fetchFromGithub {
     owner = "CirrusNeptune";
     repo = "nexus-revo-io";
-    rev = "0feaa6052d3429c6ddfc1727bd157d5bbc8aa731";
+    rev = "802340ccc01e0960ba6d338d3bf8e16d3058c5f5";
   };
-  #src = symlinkJoin {
-  #  name = "mowbark-rf-workspace";
-  #  paths = [
-  #    fetchFromGithub {
-  #      owner = "CirrusNeptune";
-  #      repo = "libftd2xx-cc1101";
-  #      rev = "3ba5aaa4bda7af31a31850eb0ec6d5101b593f34";
-  #    }
-  #    fetchFromGithub {
-  #      owner = "CirrusNeptune";
-  #      repo = "nexus-revo-io";
-  #      rev = "0feaa6052d3429c6ddfc1727bd157d5bbc8aa731";
-  #    }
-  #  ];
-  #};
+
+  cargoLock.lockFile = ./Cargo.lock;
 }
 #{
   #systemd.services.mowbark-rf = {
