@@ -6,10 +6,11 @@
   };
 
   outputs = { self, nixpkgs, sops-nix, crate2nix_stable }: {
-    nixosConfigurations.a = nixpkgs.lib.trace crate2nix_stable.lib.tools nixpkgs.lib.nixosSystem {
+    nixosConfigurations.a = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       lib = nixpkgs.lib.extend (final: prev: {
         a = import ./lib { lib = final; };
+        crate2nix = crate2nix_stable.lib;
       });
       modules =
         [ ({ pkgs, ... }: {
