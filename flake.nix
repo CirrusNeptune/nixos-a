@@ -7,20 +7,25 @@
 
   outputs = { self, nixpkgs, sops-nix, crate2nix_stable }:
   let
-    pkgs = nixpkgs.extend (final: prev: {
-      lib = final.lib.extend (final: prev: {
-        a = import ./lib { lib = final; };
-        crate2nix = crate2nix_stable.lib;
-      });
+    lib = nixpkgs.lib.extend (final: prev: {
+      a = import ./lib { lib = final; };
+      crate2nix = crate2nix_stable.lib;
     });
   in {
-    nixosConfigurations.a = pkgs.lib.nixosSystem {
+    nixosConfigurations.a = lib.nixosSystem {
       system = "x86_64-linux";
       modules =
         [ ({ pkgs, ... }: {
             # Let 'nixos-version --json' know about the Git revision
             # of this flake.
-            system.configurationRevision = pkgs.lib.mkIf (self ? rev) self.rev;
+            system.configurationRevision = lib.mkIf (self ? rev) self.rev;
+
+            # Package overlays
+            nixpkgs.overlays = [
+              (final: prev: {
+                mowbark-rf = final.callPackage ./mowbark-rf {};
+              })
+            ];
 
             # Use configuration.nix for everything
             imports = [ ./configuration.nix ];
