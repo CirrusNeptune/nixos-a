@@ -1,6 +1,6 @@
-{ lib, pkgs, ... }:
+{ lib, pkgs, symlinkJoin, ... }:
 let
-  src = lib.symlinkJoin {
+  src = symlinkJoin {
     name = "mowbark-rf-workspace";
     paths = [
       lib.fetchFromGithub {
