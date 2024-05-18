@@ -13,7 +13,7 @@ rustPlatform.buildRustPackage {
     lockFile = ./Cargo.lock;
     #allowBuiltinFetchGit = true;
     outputHashes = {
-      "libftd2xx-cc1101-0.1.0" = lib.fakeHash;
+      "libftd2xx-cc1101-0.1.0" = "sha256-Vz/YMNSK3ay0xTVT3ic6d4/h61IDl2yUUJ17lsHpoNU=";
     };
   };
 }
