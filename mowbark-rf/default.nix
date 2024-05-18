@@ -3,7 +3,8 @@
 #  mowbark-rf = pkgs.callPackage ./Cargo.nix { inherit pkgs; };
 #in
 {
-  mowbark-rf = import ./Cargo.nix { inherit pkgs; };
+  #mowbark-rf = import ./Cargo.nix { inherit pkgs; };
+  blah = lib.trace pkgs.crate2Nix {};
 }
 #{
   #systemd.services.mowbark-rf = {
