@@ -1,11 +1,14 @@
 { lib, pkgs, ... }:
 let
-  crate2nix_tools = lib.crate2nix.tools { inherit lib pkgs; };
+  crate2nixTools = lib.crate2nix.tools { inherit lib pkgs; };
   #mowbark-rf = pkgs.callPackage ./Cargo.nix { inherit pkgs; };
 in
-{
-  #mowbark-rf = import ./Cargo.nix { inherit pkgs; };
-  blah = lib.trace crate2nix_tools {};
+rec {
+  mowbark-rf = crate2nixTools.appliedCargoNix {
+    name = "mowbark-rf";
+    src = ./.;
+  };
+  blah = lib.trace mowbark-rf {};
 }
 #{
   #systemd.services.mowbark-rf = {
