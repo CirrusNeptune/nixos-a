@@ -12,6 +12,9 @@ rustPlatform.buildRustPackage {
   cargoLock = {
     lockFile = ./Cargo.lock;
     #allowBuiltinFetchGit = true;
+    outputHashes = {
+      "libftd2xx-cc1101-0.1.0" = lib.fakeHash;
+    };
   };
 }
 #{
