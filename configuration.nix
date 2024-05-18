@@ -190,6 +190,14 @@ in
   systemd.defaultUnit = "graphical.target";
   hardware.opengl.enable = true;
 
+  systemd.services.mowbark-rf = {
+    description = "Mowbark RF";
+    wantedBy = [ "podman-homeassistant.service" ];
+    serviceConfig = {
+      Type = "simple";
+      ExecStart = "${lib.getBin pkgs.mowbark-rf}/bin/mowbark-rf";
+    };
+  };
 
   # Configure keymap in X11
   # services.xserver.xkb.layout = "us";
@@ -229,7 +237,6 @@ in
     vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     wget
     git
-    mowbark-rf
   ];
 
   # Add docker containers
