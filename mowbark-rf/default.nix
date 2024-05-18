@@ -1,6 +1,6 @@
 { lib, pkgs, ... }:
 let
-  mowbark-rf = pkgs.callPackage ./Cargo.nix {};
+  mowbark-rf = pkgs.callPackage ./Cargo.nix { inherit pkgs; };
 in lib.trace mowbark-rf {}
 #{
   #systemd.services.mowbark-rf = {
