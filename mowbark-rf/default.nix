@@ -4,7 +4,7 @@
 #in
 {
   #mowbark-rf = import ./Cargo.nix { inherit pkgs; };
-  blah = lib.trace pkgs.crate2nix {};
+  blah = lib.trace pkgs.crate2nix.tools {};
 }
 #{
   #systemd.services.mowbark-rf = {
