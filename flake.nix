@@ -5,18 +5,20 @@
     crate2nix_stable.url = "github:nix-community/crate2nix/0.14.0";
   };
 
-  outputs = { self, nixpkgs, sops-nix, crate2nix_stable }: {
-    nixosConfigurations.a = nixpkgs.lib.nixosSystem {
+  outputs = { self, nixpkgs, sops-nix, crate2nix_stable }:
+  let
+    lib = nixpkgs.lib.extend (final: prev: {
+      a = import ./lib { lib = final; };
+      crate2nix = crate2nix_stable.lib;
+    });
+  in {
+    nixosConfigurations.a = lib.nixosSystem {
       system = "x86_64-linux";
-      lib = nixpkgs.lib.extend (final: prev: {
-        a = import ./lib { lib = final; };
-        crate2nix = crate2nix_stable.lib;
-      });
       modules =
         [ ({ pkgs, ... }: {
             # Let 'nixos-version --json' know about the Git revision
             # of this flake.
-            system.configurationRevision = nixpkgs.lib.mkIf (self ? rev) self.rev;
+            system.configurationRevision = lib.mkIf (self ? rev) self.rev;
 
             # Use configuration.nix for everything
             imports = [ ./configuration.nix ];
