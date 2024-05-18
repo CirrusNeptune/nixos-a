@@ -6,7 +6,7 @@ rustPlatform.buildRustPackage {
   src = fetchFromGitHub {
     owner = "CirrusNeptune";
     repo = "nexus-revo-io";
-    rev = "802340ccc01e0960ba6d338d3bf8e16d3058c5f5";
+    rev = "c3f68022d813911e5fda9ae6e52c97dc0f593a20";
     hash = "sha256-Vz/YMNSK3ay0xTVT3ic6d4/h61IDl2yUUJ17lsHpoNU=";
   };
 
