@@ -1,4 +1,4 @@
-{ lib, fetchFromGithub, rustPlatform, ... }:
+{ lib, fetchFromGitHub, rustPlatform, ... }:
 rustPlatform.buildRustPackage {
   pname = "mowbark-rf";
   version = "0.0.1";
