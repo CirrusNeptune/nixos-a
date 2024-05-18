@@ -1,7 +1,7 @@
 { lib, pkgs, ... }:
 let
   mowbark-rf = pkgs.callPackage ./Cargo.nix {};
-in lib.debug.trace mowbark-rf {}
+in lib.trace mowbark-rf {}
 #{
   #systemd.services.mowbark-rf = {
   #  description = "Mowbark RF";
