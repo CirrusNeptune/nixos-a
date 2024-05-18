@@ -9,7 +9,12 @@ rustPlatform.buildRustPackage {
     rev = "802340ccc01e0960ba6d338d3bf8e16d3058c5f5";
   };
 
-  cargoLock.lockFile = ./Cargo.lock;
+  cargoLock = {
+    lockFile = ./Cargo.lock;
+    outputHashes = {
+      "libftd2xx-cc1101-0.1.0" = lib.fakeHash;
+    };
+  };
 }
 #{
   #systemd.services.mowbark-rf = {
