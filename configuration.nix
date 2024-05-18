@@ -17,6 +17,7 @@ in
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
+      ./mowbark-rf
     ];
 
   # Enable flakes
@@ -35,7 +36,7 @@ in
   #networking.networkmanager = {
   #  enable = true;
   #  ensureProfiles.profiles = lib.attrsets.mapAttrs'
-  #    (lib.nixon.macvlan.makeMacvlanProfile ethernetInterface)
+  #    (lib.a.macvlan.makeMacvlanProfile ethernetInterface)
   #    { gitea = "git"; hass = "homeassistant"; };
   #};
   # TODO: Make metaprogrammable

@@ -8,7 +8,7 @@
     nixosConfigurations.a = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       lib = nixpkgs.lib.extend (final: prev: {
-        nixon = import ./nixon/lib { lib = final; };
+        a = import ./lib { lib = final; };
       });
       modules =
         [ ({ pkgs, ... }: {
