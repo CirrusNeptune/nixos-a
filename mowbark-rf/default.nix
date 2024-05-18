@@ -1,7 +1,8 @@
 { lib, pkgs, ... }:
 let
   mowbark-rf = pkgs.callPackage ./Cargo.nix {};
-in {
+in lib.debug.trace mowbark-rf {}
+#{
   #systemd.services.mowbark-rf = {
   #  description = "Mowbark RF";
   #  wantedBy = [ "podman-homeassistant.service" ];
@@ -10,4 +11,4 @@ in {
   #    ExecStart = "${lib.getBin mowbark-rf}/bin/nexus-revo-io";
   #  };
   #};
-}
+#}
