@@ -7,7 +7,7 @@ rustPlatform.buildRustPackage {
     owner = "CirrusNeptune";
     repo = "nexus-revo-io";
     rev = "268462f0dcef45cb30417d58d796e4832ba423e1";
-    hash = "";
+    hash = "sha256-AQ8AS5drLahClzhZT1VULxNkd5NVKmQ7poztQEb9K9Y=";
   };
 
   cargoLock = {
