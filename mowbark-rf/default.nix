@@ -11,7 +11,7 @@ rustPlatform.buildRustPackage {
 
   cargoLock = {
     lockFile = ./Cargo.lock;
-    allowBuiltinFetchGit = true;
+    #allowBuiltinFetchGit = true;
   };
 }
 #{
