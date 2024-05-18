@@ -5,8 +5,8 @@
     crate2nix_stable.url = "github:nix-community/crate2nix/0.14.0";
   };
 
-  outputs = { self, nixpkgs, sops-nix }: {
-    nixosConfigurations.a = nixpkgs.lib.nixosSystem {
+  outputs = { self, nixpkgs, sops-nix, crate2nix_stable }: {
+    nixosConfigurations.a = nixpkgs.lib.trace crate2nix_stable nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       lib = nixpkgs.lib.extend (final: prev: {
         a = import ./lib { lib = final; };
