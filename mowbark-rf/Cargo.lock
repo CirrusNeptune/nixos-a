@@ -339,7 +339,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "nexus-revo-io"
+name = "mowbark-rf"
 version = "0.1.0"
 dependencies = [
  "bitstream-io",
