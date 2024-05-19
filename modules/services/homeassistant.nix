@@ -17,6 +17,7 @@ in {
 
   config = lib.mkIf cfg.enable {
     a.services.mowbark-rf.enable = true;
+    a.services.lirc.enable = true;
     virtualisation.oci-containers = {
       containers = {
         homeassistant = {

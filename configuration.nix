@@ -39,7 +39,7 @@ in
     networks = {
       "10-lan" = {
         # match the interface by name
-        matchConfig.Name = "${ethernetInterface}";
+        matchConfig.Name = ethernetInterface;
         address = [
           # configure addresses including subnet mask
           (lanHost + "/24")
