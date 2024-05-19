@@ -7,29 +7,35 @@
 
   outputs = { self, nixpkgs, sops-nix, crate2nix_stable }:
   let
+    # Extend lib
     lib = nixpkgs.lib.extend (final: prev: {
       a = import ./lib { lib = final; };
       crate2nix = crate2nix_stable.lib;
     });
   in {
+    # Module extensions
+    #nixosModules.default = import ./modules;
+
+    # Configuration for host a
     nixosConfigurations.a = lib.nixosSystem {
       system = "x86_64-linux";
-      modules =
-        [ ({ pkgs, ... }: {
-            # Let 'nixos-version --json' know about the Git revision
-            # of this flake.
-            system.configurationRevision = lib.mkIf (self ? rev) self.rev;
+      extraModules = import ./modules/module-list.nix;
+      modules = [
+        self.nixosModules.default
+        ({ pkgs, ... }: {
+          # Let 'nixos-version --json' know about the Git revision
+          # of this flake.
+          system.configurationRevision = lib.mkIf (self ? rev) self.rev;
 
-            # Package overlays
-            nixpkgs.overlays = [
-              (final: prev: import ./pkgs final)
-            ];
+          # Package overlays
+          nixpkgs.overlays = [
+            (final: prev: import ./pkgs final)
+          ];
 
-            # Use configuration.nix for everything
-            imports = [ ./configuration.nix ];
-          })
-          sops-nix.nixosModules.sops
-        ];
+          # Use configuration.nix for everything
+          imports = [ ./configuration.nix ];
+        })
+      ];
     };
   };
 }

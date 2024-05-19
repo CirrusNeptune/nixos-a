@@ -1,0 +1,3 @@
+[
+  ./services/mowbark-rf.nix
+]

@@ -32,33 +32,10 @@ in
   # Pick only one of the below networking options.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
   # networking.networkmanager.enable = true;  # Easiest to use and most distros use this by default.
-  #networking.networkmanager = {
-  #  enable = true;
-  #  ensureProfiles.profiles = lib.attrsets.mapAttrs'
-  #    (lib.a.macvlan.makeMacvlanProfile ethernetInterface)
-  #    { gitea = "git"; hass = "homeassistant"; };
-  #};
-  # TODO: Make metaprogrammable
   networking.useNetworkd = true;
   networking.useDHCP = false;
   systemd.network = {
     enable = true;
-    #netdevs = {
-    #  "20-macvlan-hass" = {
-    #    netdevConfig = {
-    #      Kind = "macvlan";
-    #      Name = "macvlan-hass";
-    #    };
-    #    macvlanConfig.Mode = "bridge";
-    #  };
-    #  "30-macvlan-gitea" = {
-    #    netdevConfig = {
-    #      Kind = "macvlan";
-    #      Name = "macvlan-gitea";
-    #    };
-    #    macvlanConfig.Mode = "bridge";
-    #  };
-    #};
     networks = {
       "10-lan" = {
         # match the interface by name
@@ -69,10 +46,6 @@ in
           (hassHost + "/24")
           (giteaHost + "/24")
         ];
-        #macvlan = [
-        #  "macvlan-hass"
-        #  "macvlan-gitea"
-        #];
         routes = [
           # create default routes
           { routeConfig.Gateway = gatewayHost; }
@@ -80,34 +53,6 @@ in
         # make the routes on this interface a dependency for network-online.target
         linkConfig.RequiredForOnline = "routable";
       };
-      #"20-macvlan-hass" = {
-      #  # match the interface by name
-      #  matchConfig.Name = "macvlan-hass";
-      #  address = [
-      #    # configure addresses including subnet mask
-      #    (hassHost + "/24")
-      #  ];
-      #  routes = [
-      #    # create default routes
-      #    { routeConfig.Gateway = gatewayHost; }
-      #  ];
-      #  # make the routes on this interface a dependency for network-online.target
-      #  linkConfig.RequiredForOnline = "routable";
-      #};
-      #"30-macvlan-gitea" = {
-      #  # match the interface by name
-      #  matchConfig.Name = "macvlan-gitea";
-      #  address = [
-      #    # configure addresses including subnet mask
-      #    (giteaHost + "/24")
-      #  ];
-      #  routes = [
-      #    # create default routes
-      #    { routeConfig.Gateway = gatewayHost; }
-      #  ];
-      #  # make the routes on this interface a dependency for network-online.target
-      #  linkConfig.RequiredForOnline = "routable";
-      #};
     };
   };
   services.resolved = {
@@ -192,20 +137,22 @@ in
   systemd.defaultUnit = "graphical.target";
   hardware.opengl.enable = true;
 
-  systemd.services.mowbark-rf = {
-    description = "Mowbark RF";
-    wantedBy = [ "podman-homeassistant.service" ];
-    serviceConfig = {
-      Type = "simple";
-      ExecStart = "${lib.getBin pkgs.mowbark-rf}/bin/mowbark-rf";
-    };
-  };
+  #systemd.services.mowbark-rf = {
+  #  description = "Mowbark RF";
+  #  wantedBy = [ "podman-homeassistant.service" ];
+  #  serviceConfig = {
+  #    Type = "simple";
+  #    ExecStart = "${lib.getBin pkgs.mowbark-rf}/bin/mowbark-rf";
+  #  };
+  #};
 
-  services.udev.extraRules =
-  ''
-  SUBSYSTEM=="usb", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6014", MODE="0666"
-  '';
-  boot.blacklistedKernelModules = [ "ftdi_sio" ];
+  #services.udev.extraRules =
+  #''
+  #SUBSYSTEM=="usb", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6014", MODE="0666"
+  #'';
+  #boot.blacklistedKernelModules = [ "ftdi_sio" ];
+
+  services.mowbark-rf.enable = true;
 
   # Configure keymap in X11
   # services.xserver.xkb.layout = "us";
