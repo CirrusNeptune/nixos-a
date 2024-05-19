@@ -15,7 +15,6 @@
       system = "x86_64-linux";
       extraModules = import ./modules/module-list.nix;
       modules = [
-        #self.nixosModules.default
         ({ pkgs, ... }: {
           # Let 'nixos-version --json' know about the Git revision
           # of this flake.
