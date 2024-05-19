@@ -43,22 +43,22 @@ in
   networking.useDHCP = false;
   systemd.network = {
     enable = true;
-    netdevs = {
-      "20-macvlan-hass" = {
-        netdevConfig = {
-          Kind = "macvlan";
-          Name = "macvlan-hass";
-        };
-        macvlanConfig.Mode = "bridge";
-      };
-      "30-macvlan-gitea" = {
-        netdevConfig = {
-          Kind = "macvlan";
-          Name = "macvlan-gitea";
-        };
-        macvlanConfig.Mode = "bridge";
-      };
-    };
+    #netdevs = {
+    #  "20-macvlan-hass" = {
+    #    netdevConfig = {
+    #      Kind = "macvlan";
+    #      Name = "macvlan-hass";
+    #    };
+    #    macvlanConfig.Mode = "bridge";
+    #  };
+    #  "30-macvlan-gitea" = {
+    #    netdevConfig = {
+    #      Kind = "macvlan";
+    #      Name = "macvlan-gitea";
+    #    };
+    #    macvlanConfig.Mode = "bridge";
+    #  };
+    #};
     networks = {
       "10-lan" = {
         # match the interface by name
@@ -66,39 +66,13 @@ in
         address = [
           # configure addresses including subnet mask
           (lanHost + "/24")
-        ];
-        macvlan = [
-          "macvlan-hass"
-          "macvlan-gitea"
-        ];
-        routes = [
-          # create default routes
-          { routeConfig.Gateway = gatewayHost; }
-        ];
-        # make the routes on this interface a dependency for network-online.target
-        linkConfig.RequiredForOnline = "routable";
-      };
-      "20-macvlan-hass" = {
-        # match the interface by name
-        matchConfig.Name = "macvlan-hass";
-        address = [
-          # configure addresses including subnet mask
           (hassHost + "/24")
-        ];
-        routes = [
-          # create default routes
-          { routeConfig.Gateway = gatewayHost; }
-        ];
-        # make the routes on this interface a dependency for network-online.target
-        linkConfig.RequiredForOnline = "routable";
-      };
-      "30-macvlan-gitea" = {
-        # match the interface by name
-        matchConfig.Name = "macvlan-gitea";
-        address = [
-          # configure addresses including subnet mask
           (giteaHost + "/24")
         ];
+        #macvlan = [
+        #  "macvlan-hass"
+        #  "macvlan-gitea"
+        #];
         routes = [
           # create default routes
           { routeConfig.Gateway = gatewayHost; }
@@ -106,11 +80,39 @@ in
         # make the routes on this interface a dependency for network-online.target
         linkConfig.RequiredForOnline = "routable";
       };
+      #"20-macvlan-hass" = {
+      #  # match the interface by name
+      #  matchConfig.Name = "macvlan-hass";
+      #  address = [
+      #    # configure addresses including subnet mask
+      #    (hassHost + "/24")
+      #  ];
+      #  routes = [
+      #    # create default routes
+      #    { routeConfig.Gateway = gatewayHost; }
+      #  ];
+      #  # make the routes on this interface a dependency for network-online.target
+      #  linkConfig.RequiredForOnline = "routable";
+      #};
+      #"30-macvlan-gitea" = {
+      #  # match the interface by name
+      #  matchConfig.Name = "macvlan-gitea";
+      #  address = [
+      #    # configure addresses including subnet mask
+      #    (giteaHost + "/24")
+      #  ];
+      #  routes = [
+      #    # create default routes
+      #    { routeConfig.Gateway = gatewayHost; }
+      #  ];
+      #  # make the routes on this interface a dependency for network-online.target
+      #  linkConfig.RequiredForOnline = "routable";
+      #};
     };
   };
   services.resolved = {
     domains = [ "mow" ];
-    fallbackDns = [ "10.0.0.1" ];
+    fallbackDns = [ gatewayHost ];
   };
 
   # Set your time zone.
