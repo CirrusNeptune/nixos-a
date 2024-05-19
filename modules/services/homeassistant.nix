@@ -12,7 +12,7 @@ let
     imageName = "ghcr.io/home-assistant/home-assistant";
     finalImageTag = "2024.5.4";
     imageDigest = "sha256:6f5eeb8360d9d58ff096c7259366993b4b01ebe11251c2b83c9329daad441b00";
-    sha256 = "";
+    sha256 = "sha256-yWyOEBCrKuFp7SEfDbdiFPPYwSSg0t9fSqPEs2ow7Is=";
   };
 
   dockerImage = pkgs.dockerTools.buildImage {
