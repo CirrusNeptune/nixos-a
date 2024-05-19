@@ -19,7 +19,7 @@ let
     name = "homeassistant-mowbark";
     tag = "latest";
 
-    fromImage = someBaseImage;
+    fromImage = dockerBase;
     fromImageName = null;
     fromImageTag = "latest";
     runAsRoot = ''
