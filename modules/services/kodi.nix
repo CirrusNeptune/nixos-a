@@ -23,7 +23,7 @@ in {
     systemd.services."cage-tty1" = {
       unitConfig = {
         StartLimitBurst = 6;
-        StartLimitIntervalSec = 30;
+        StartLimitIntervalSec = 45;
       };
       serviceConfig = {
         Restart = "always";
