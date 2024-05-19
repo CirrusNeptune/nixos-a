@@ -47,7 +47,7 @@ in {
             "/etc/timezone:/etc/timezone:ro"
             "/etc/localtime:/etc/localtime:ro"
           ];
-          image = dockerImage;
+          imageFile = dockerImage;
           ports = [
             "${cfg.host}:80:8123"
           ];
