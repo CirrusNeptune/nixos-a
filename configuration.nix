@@ -203,6 +203,7 @@ in
   ''
   SUBSYSTEM=="usb", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6014", MODE="0666"
   '';
+  boot.blacklistedKernelModules = [ "ftdi_sio" ];
 
   # Configure keymap in X11
   # services.xserver.xkb.layout = "us";
