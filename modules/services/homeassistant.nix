@@ -1,10 +1,31 @@
 { config, lib, pkgs, ... }:
 let
   cfg = config.a.services.homeassistant;
+
   mowbarkRfUdevRule = pkgs.writeTextFile {
     name = "mowbark-rf-udev-rule";
     text = ''SUBSYSTEM=="usb", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6014", MODE="0666"'';
     destination = "/etc/udev/rules.d/99-mowbark-rf.rules";
+  };
+
+  dockerBase = pkgs.dockerTools.pullImage {
+    imageName = "ghcr.io/home-assistant/home-assistant:stable";
+    finalImageTag = "2024.5.4";
+    imageDigest = "sha256:6f5eeb8360d9d58ff096c7259366993b4b01ebe11251c2b83c9329daad441b00";
+    sha256 = "";
+  };
+
+  dockerImage = pkgs.dockerTools.buildImage {
+    name = "homeassistant-mowbark";
+    tag = "latest";
+
+    fromImage = someBaseImage;
+    fromImageName = null;
+    fromImageTag = "latest";
+    runAsRoot = ''
+      #!${pkgs.runtimeShell}
+      pip3 install lirc
+    '';
   };
 in {
   options.a.services.homeassistant = {
@@ -26,7 +47,7 @@ in {
             "/etc/timezone:/etc/timezone:ro"
             "/etc/localtime:/etc/localtime:ro"
           ];
-          image = "ghcr.io/home-assistant/home-assistant:2024.5.3";
+          image = dockerImage;
           ports = [
             "${cfg.host}:80:8123"
           ];
