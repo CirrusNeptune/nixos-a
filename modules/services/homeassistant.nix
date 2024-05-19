@@ -10,7 +10,7 @@ let
 
   dockerBase = pkgs.dockerTools.pullImage {
     imageName = "ghcr.io/home-assistant/home-assistant:stable";
-    finalImageTag = "2024.5.4";
+    #finalImageTag = "2024.5.4";
     imageDigest = "sha256:6f5eeb8360d9d58ff096c7259366993b4b01ebe11251c2b83c9329daad441b00";
     sha256 = "";
   };
