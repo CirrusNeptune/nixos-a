@@ -108,6 +108,14 @@ in {
       [lircd]
       nodaemon = False
     '';
+
+    users.users.lirc = {
+      uid = config.ids.uids.lirc;
+      group = "lirc";
+      description = "LIRC user for lircd";
+    };
+
+    users.groups.lirc.gid = config.ids.gids.lirc;
   } // (makeLircService "lircd-nakar"
     [ "--driver=ftdi" "--device=serial=B000YH8J" ]
     ''
