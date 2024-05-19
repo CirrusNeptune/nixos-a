@@ -14,7 +14,7 @@ let
     };
 
     systemd.services."${service}" = let
-      configFile = pkgs.writeText "${service}.conf" (builtins.concatStringsSep "\n" remoteConf);
+      configFile = pkgs.writeText "${service}.conf" remoteConf;
     in {
       description = "LIRC ${service} daemon";
       after = [ "network.target" ];
