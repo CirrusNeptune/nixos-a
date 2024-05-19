@@ -1,4 +1,5 @@
 [
-  ./services/mowbark-rf.nix
+  ./services/gitea.nix
   ./services/homeassistant.nix
+  ./services/mowbark-rf.nix
 ]

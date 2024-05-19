@@ -179,49 +179,14 @@ in
   ];
 
   # Add docker containers
-  virtualisation.oci-containers = {
-    backend = "podman";
-    containers = {
-      #homeassistant = {
-      #  volumes = [
-      #    "/var/home-assistant:/config"
-      #    "/etc/timezone:/etc/timezone:ro"
-      #    "/etc/localtime:/etc/localtime:ro"
-      #  ];
-      #  environment.TZ = timeZone;
-      #  image = "ghcr.io/home-assistant/home-assistant:2024.5.3";
-      #  ports = [
-      #    "${hassHost}:80:8123"
-      #  ];
-      #  extraOptions = [
-      #    #"--network=bridge"
-      #    #"--device=/dev/ttyACM0:/dev/ttyACM0"  # Example, change this to match your own hardware
-      #  ];
-      #};
-      gitea = {
-        volumes = [
-          "/var/gitea:/data"
-          "/etc/timezone:/etc/timezone:ro"
-          "/etc/localtime:/etc/localtime:ro"
-        ];
-        environment.TZ = timeZone;
-        image = "gitea/gitea:1.21.11";
-        ports = [
-          "${giteaHost}:80:3000"
-        ];
-        extraOptions = [
-          #"--network=bridge"
-        ];
-        environment = {
-          USER_UID = "1000";
-          USER_GID = "1000";
-        };
-      };
-    };
-  };
+  virtualisation.oci-containers.backend = "podman";
   a.services.homeassistant = {
     enable = true;
     host = hassHost;
+  };
+  a.services.gitea = {
+    enable = true;
+    host = giteaHost;
   };
 
   # Some programs need SUID wrappers, can be configured further or are
