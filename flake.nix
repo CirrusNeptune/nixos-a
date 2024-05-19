@@ -22,9 +22,7 @@
 
             # Package overlays
             nixpkgs.overlays = [
-              (final: prev: {
-                mowbark-rf = final.callPackage ./mowbark-rf {};
-              })
+              (final: prev: import ./pkgs final)
             ];
 
             # Use configuration.nix for everything
