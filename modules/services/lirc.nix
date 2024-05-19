@@ -4,7 +4,7 @@ let
 
   makeLircService = (service: extraArgs: remoteConf: {
     systemd.sockets."${service}" = {
-      description = "LIRC daemon socket";
+      description = "LIRC ${service} socket";
       wantedBy = [ "sockets.target" ];
       socketConfig = {
         ListenStream = "/run/lirc/${service}";
@@ -102,7 +102,7 @@ in {
     enable = lib.mkEnableOption "Enable lirc service";
   };
 
-  config = lib.mkIf cfg.enable ({
+  config = lib.mkIf cfg.enable lib.mkMerge [{
     # Note: LIRC executables raises a warning, if lirc_options.conf do not exists
     environment.etc."lirc/lirc_options.conf".text = ''
       [lircd]
@@ -116,7 +116,7 @@ in {
     };
 
     users.groups.lirc.gid = config.ids.gids.lirc;
-  } // (makeLircService "lircd-nakar"
+  } (makeLircService "lircd-nakar"
     [ "--driver=ftdi" "--device=serial=B000YH8J" ]
     ''
       begin remote
@@ -137,7 +137,7 @@ in {
 
         ${codes}
       end remote
-    '') // (makeLircService "lircd-nakaw"
+    '') (makeLircService "lircd-nakaw"
     [ "--driver=ftdix" "--device=serial=D30GHI2M,output=2" ]
     ''
       begin remote
@@ -158,5 +158,5 @@ in {
 
         ${codes}
       end remote
-    ''));
+    '')];
 }
