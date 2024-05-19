@@ -102,7 +102,7 @@ in {
     enable = lib.mkEnableOption "Enable lirc service";
   };
 
-  config = lib.mkIf cfg.enable lib.mkMerge [{
+  config = lib.mkIf cfg.enable (lib.mkMerge [{
     # Note: LIRC executables raises a warning, if lirc_options.conf do not exists
     environment.etc."lirc/lirc_options.conf".text = ''
       [lircd]
@@ -158,5 +158,5 @@ in {
 
         ${codes}
       end remote
-    '')];
+    '')]);
 }
