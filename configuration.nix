@@ -136,23 +136,7 @@ in
   };
   systemd.defaultUnit = "graphical.target";
   hardware.opengl.enable = true;
-
-  #systemd.services.mowbark-rf = {
-  #  description = "Mowbark RF";
-  #  wantedBy = [ "podman-homeassistant.service" ];
-  #  serviceConfig = {
-  #    Type = "simple";
-  #    ExecStart = "${lib.getBin pkgs.mowbark-rf}/bin/mowbark-rf";
-  #  };
-  #};
-
-  #services.udev.extraRules =
-  #''
-  #SUBSYSTEM=="usb", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6014", MODE="0666"
-  #'';
-  #boot.blacklistedKernelModules = [ "ftdi_sio" ];
-
-  services.mowbark-rf.enable = true;
+  a.services.mowbark-rf.enable = true;
 
   # Configure keymap in X11
   # services.xserver.xkb.layout = "us";
@@ -198,22 +182,22 @@ in
   virtualisation.oci-containers = {
     backend = "podman";
     containers = {
-      homeassistant = {
-        volumes = [
-          "/var/home-assistant:/config"
-          "/etc/timezone:/etc/timezone:ro"
-          "/etc/localtime:/etc/localtime:ro"
-        ];
-        environment.TZ = timeZone;
-        image = "ghcr.io/home-assistant/home-assistant:2024.5.3";
-        ports = [
-          "${hassHost}:80:8123"
-        ];
-        extraOptions = [
-          #"--network=bridge"
-          #"--device=/dev/ttyACM0:/dev/ttyACM0"  # Example, change this to match your own hardware
-        ];
-      };
+      #homeassistant = {
+      #  volumes = [
+      #    "/var/home-assistant:/config"
+      #    "/etc/timezone:/etc/timezone:ro"
+      #    "/etc/localtime:/etc/localtime:ro"
+      #  ];
+      #  environment.TZ = timeZone;
+      #  image = "ghcr.io/home-assistant/home-assistant:2024.5.3";
+      #  ports = [
+      #    "${hassHost}:80:8123"
+      #  ];
+      #  extraOptions = [
+      #    #"--network=bridge"
+      #    #"--device=/dev/ttyACM0:/dev/ttyACM0"  # Example, change this to match your own hardware
+      #  ];
+      #};
       gitea = {
         volumes = [
           "/var/gitea:/data"
@@ -234,6 +218,10 @@ in
         };
       };
     };
+  };
+  a.services.homeassistant = {
+    enable = true;
+    host = hassHost;
   };
 
   # Some programs need SUID wrappers, can be configured further or are
