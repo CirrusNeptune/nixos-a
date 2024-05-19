@@ -40,7 +40,7 @@ let
         ExecStart = ''
           ${pkgs.lirc}/bin/lircd --nodaemon \
             --output=/run/lirc/${service} \
-            ${escapeShellArgs extraArgs} \
+            ${lib.escapeShellArgs extraArgs} \
             ${configFile}
         '';
         User = "lirc";
