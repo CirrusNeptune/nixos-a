@@ -24,7 +24,6 @@ in {
             "/etc/timezone:/etc/timezone:ro"
             "/etc/localtime:/etc/localtime:ro"
           ];
-          environment.TZ = timeZone;
           image = "ghcr.io/home-assistant/home-assistant:2024.5.3";
           ports = [
             "${cfg.host}:80:8123"
