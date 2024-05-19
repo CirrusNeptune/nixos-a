@@ -16,6 +16,7 @@ in {
   };
 
   config = lib.mkIf cfg.enable {
+    a.services.mowbark-rf.enable = true;
     virtualisation.oci-containers = {
       containers = {
         homeassistant = {

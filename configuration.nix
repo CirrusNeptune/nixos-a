@@ -78,42 +78,9 @@ in
 
   # Enable the X11 windowing system.
   # services.xserver.enable = true;
-
-  services.desktopManager.plasma6.enable = true;
-
-  systemd.services.kwin-session = {
-    description = "KWin Session";
-    after = [
-      "systemd-user-sessions.service"
-      "plymouth-start.service"
-      "plymouth-quit.service"
-      "systemd-logind.service"
-      "getty@tty2.service"
-    ];
-    before = [ "graphical.target" ];
-    wants = [ "dbus.socket" "systemd-logind.service" "plymouth-quit.service"];
-    wantedBy = [ "graphical.target" ];
-    conflicts = [ "getty@tty2.service" ];
-    unitConfig.ConditionPathExists = "/dev/tty2";
-    serviceConfig = {
-      Type = "simple";
-      ExecStart = "${lib.getBin pkgs.kdePackages.plasma-workspace}/bin/startplasma-wayland";
-      User = "a";
-      Group = "users";
-      PAMName = "login";
-      TTYPath = /dev/tty2;
-      TTYReset = "yes";
-      TTYVHangup = "yes";
-      TTYVTDisallocate = "yes";
-      StandardInput = "tty-fail";
-      StandardOutput = "journal";
-      StandardError = "journal";
-      UtmpIdentifier = "tty2";
-      UtmpMode = "user";
-    };
-    environment = {
-      XDG_SESSION_TYPE = "wayland";
-    };
+  a.services.kwin-session = {
+    enable = true;
+    user = "a";
   };
   a.services.kodi = {
     enable = true;
@@ -121,7 +88,6 @@ in
   };
   systemd.defaultUnit = "graphical.target";
   hardware.opengl.enable = true;
-  a.services.mowbark-rf.enable = true;
 
   # Configure keymap in X11
   # services.xserver.xkb.layout = "us";
