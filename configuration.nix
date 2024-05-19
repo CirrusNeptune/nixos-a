@@ -115,24 +115,9 @@ in
       XDG_SESSION_TYPE = "wayland";
     };
   };
-  services.cage = {
+  a.services.kodi = {
     enable = true;
     user = "a";
-    extraArguments = [ "-s" ];
-    program = "${lib.getBin pkgs.kodi-wayland}/bin/kodi-standalone";
-    environment = {
-      KODI_AE_SINK = "ALSA";
-    };
-  };
-  systemd.services."cage-tty1" = {
-    unitConfig = {
-      StartLimitBurst = 6;
-      StartLimitIntervalSec = 30;
-    };
-    serviceConfig = {
-      Restart = "always";
-      RestartSec = 5;
-    };
   };
   systemd.defaultUnit = "graphical.target";
   hardware.opengl.enable = true;
