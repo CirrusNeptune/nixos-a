@@ -302,7 +302,7 @@ rec {
             find image/$extractionID/layer -name ".wh.*" -exec bash -c 'name="$(basename {}|sed "s/^.wh.//")"; mknod "$(dirname {})/$name" c 0 0; rm {}' \;
 
             # Get the next lower directory and continue the loop.
-            lowerdir=image/$extractionID/layer''${lowerdir:+:}$lowerdir
+            lowerdir=`pwd`/image/$extractionID/layer''${lowerdir:+:}$lowerdir
           done
 
           mkdir work
