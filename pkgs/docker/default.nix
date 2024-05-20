@@ -319,7 +319,7 @@ rec {
           echo "$lowerdir"
 
           if [ -n "$lowerdir" ]; then
-            mount -t overlay overlay -olowerdir=$lowerdir,workdir=work,upperdir=layer mnt || true
+            mount -t overlay overlay -olowerdir=$lowerdir,workdir=`pwd`/work,upperdir=`pwd`/layer mnt || true
             dmesg
             sleep 1
             exit 1
