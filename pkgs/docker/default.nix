@@ -303,6 +303,7 @@ rec {
 
             # Get the next lower directory and continue the loop.
             lowerdir=image/$extractionID/layer''${lowerdir:+:}$lowerdir
+            find image/$extractionID/layer
           done
 
           mkdir work
@@ -320,7 +321,7 @@ rec {
 
           if [ -n "$lowerdir" ]; then
             set -x
-            mount -t overlay overlay -olowerdir=image/18/layer,workdir=work,upperdir=layer mnt || true
+            mount -t overlay overlay -olowerdir=$lowerdir,workdir=work,upperdir=layer mnt || true
             exit 1
           else
             mount --bind layer mnt
