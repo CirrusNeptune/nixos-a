@@ -250,7 +250,7 @@ rec {
             inherit fromImage fromImageName fromImageTag;
             memSize = buildVMMemorySize;
 
-            nativeBuildInputs = [ util-linux e2fsprogs jshon rsync jq ];
+            nativeBuildInputs = [ util-linux e2fsprogs jshon rsync jq glibc ];
           } ''
           echo "PAGESIZE"
           getconf PAGESIZE
