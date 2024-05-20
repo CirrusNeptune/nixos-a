@@ -26,6 +26,7 @@ in {
             "/var/home-assistant:/config"
             "/etc/timezone:/etc/timezone:ro"
             "/etc/localtime:/etc/localtime:ro"
+            "/run/lirc:/lircd"
           ];
           image = "ghcr.io/cirrusneptune/homeassistant-mowbark@sha256:f1d6dcba77f2f36d7e374f4acf88631ca416be28dee7a770bbd47f20004ff426";
           ports = [
