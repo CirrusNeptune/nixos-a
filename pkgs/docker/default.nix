@@ -304,6 +304,7 @@ rec {
             # Get the next lower directory and continue the loop.
             lowerdir=image/$extractionID/layer''${lowerdir:+:}$lowerdir
             find image/$extractionID/layer
+            df -h
           done
 
           mkdir work
