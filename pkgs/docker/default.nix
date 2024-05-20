@@ -11,7 +11,6 @@
 , file
 , go
 , jq
-, glibc
 , jshon
 , lib
 , makeWrapper
@@ -251,10 +250,8 @@ rec {
             inherit fromImage fromImageName fromImageTag;
             memSize = buildVMMemorySize;
 
-            nativeBuildInputs = [ util-linux e2fsprogs jshon rsync jq glibc ];
+            nativeBuildInputs = [ util-linux e2fsprogs jshon rsync jq ];
           } ''
-          echo "PAGESIZE"
-          getconf PAGESIZE
           mkdir disk
           mkfs /dev/${vmTools.hd}
           mount /dev/${vmTools.hd} disk
@@ -298,14 +295,14 @@ rec {
             echo "Unpacking layer $layerTar"
             extractionID=$((extractionID + 1))
 
-            mkdir -p image/$extractionID/layer
-            tar -C image/$extractionID/layer -xpf image/$layerTar
+            mkdir -p i/$extractionID/l
+            tar -C i/$extractionID/l -xpf image/$layerTar
             rm image/$layerTar
 
-            find image/$extractionID/layer -name ".wh.*" -exec bash -c 'name="$(basename {}|sed "s/^.wh.//")"; mknod "$(dirname {})/$name" c 0 0; rm {}' \;
+            find i/$extractionID/l -name ".wh.*" -exec bash -c 'name="$(basename {}|sed "s/^.wh.//")"; mknod "$(dirname {})/$name" c 0 0; rm {}' \;
 
             # Get the next lower directory and continue the loop.
-            lowerdir=image/$extractionID/layer''${lowerdir:+:}$lowerdir
+            lowerdir=i/$extractionID/l''${lowerdir:+:}$lowerdir
           done
 
           mkdir work
