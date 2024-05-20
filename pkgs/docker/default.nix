@@ -252,7 +252,8 @@ rec {
 
             nativeBuildInputs = [ util-linux e2fsprogs jshon rsync jq ];
           } ''
-          echo 6 > /proc/sys/kernel/printk
+          echo "PAGESIZE"
+          getconf PAGESIZE
           mkdir disk
           mkfs /dev/${vmTools.hd}
           mount /dev/${vmTools.hd} disk
