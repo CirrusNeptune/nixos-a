@@ -320,7 +320,7 @@ rec {
 
           if [ -n "$lowerdir" ]; then
             set -x
-            mount -t overlay overlay -olowerdir=image/2/layer:image/1/layer,workdir=work,upperdir=layer mnt || true
+            mount -t overlay overlay -olowerdir=image/10/layer:image/9/layer:image/8/layer:image/7/layer:image/6/layer:image/5/layer:image/4/layer:image/3/layer:image/2/layer:image/1/layer,workdir=work,upperdir=layer mnt || true
             dmesg
             sleep 1
             exit 1
