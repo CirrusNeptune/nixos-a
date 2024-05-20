@@ -7,26 +7,6 @@ let
     text = ''SUBSYSTEM=="usb", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6014", MODE="0666"'';
     destination = "/etc/udev/rules.d/99-mowbark-rf.rules";
   };
-
-  dockerBase = pkgs.dockerToolsLocal.pullImage {
-    imageName = "ghcr.io/home-assistant/home-assistant";
-    finalImageTag = "2024.5.4";
-    imageDigest = "sha256:6f5eeb8360d9d58ff096c7259366993b4b01ebe11251c2b83c9329daad441b00";
-    sha256 = "sha256-yWyOEBCrKuFp7SEfDbdiFPPYwSSg0t9fSqPEs2ow7Is=";
-  };
-
-  dockerImage = pkgs.dockerToolsLocal.buildImage {
-    name = "homeassistant-mowbark";
-    tag = "latest";
-
-    fromImage = dockerBase;
-    runAsRoot = ''
-      /usr/local/bin/pip3 install lirc
-    '';
-
-    diskSize = 8192;
-    buildVMMemorySize = 2048;
-  };
 in {
   options.a.services.homeassistant = {
     enable = lib.mkEnableOption "Enable homeassistant service";
@@ -47,8 +27,7 @@ in {
             "/etc/timezone:/etc/timezone:ro"
             "/etc/localtime:/etc/localtime:ro"
           ];
-          image = "homeassistant-mowbark:latest";
-          imageFile = dockerImage;
+          image = "ghcr.io/cirrusneptune/homeassistant-mowbark:sha256:f1d6dcba77f2f36d7e374f4acf88631ca416be28dee7a770bbd47f20004ff426";
           ports = [
             "${cfg.host}:80:8123"
           ];
