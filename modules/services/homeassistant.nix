@@ -27,7 +27,7 @@ in {
             "/etc/timezone:/etc/timezone:ro"
             "/etc/localtime:/etc/localtime:ro"
           ];
-          image = "ghcr.io/cirrusneptune/homeassistant-mowbark:sha256:f1d6dcba77f2f36d7e374f4acf88631ca416be28dee7a770bbd47f20004ff426";
+          image = "ghcr.io/cirrusneptune/homeassistant-mowbark@sha256:f1d6dcba77f2f36d7e374f4acf88631ca416be28dee7a770bbd47f20004ff426";
           ports = [
             "${cfg.host}:80:8123"
           ];
