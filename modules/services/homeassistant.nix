@@ -25,7 +25,7 @@ let
     '';
 
     diskSize = 8192;
-    buildVMMemorySize = 1024;
+    buildVMMemorySize = 2048;
   };
 in {
   options.a.services.homeassistant = {
