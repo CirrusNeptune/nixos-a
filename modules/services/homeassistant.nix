@@ -26,7 +26,7 @@ let
       pip3 install lirc
     '';
 
-    diskSize = 2048;
+    diskSize = 8192;
   };
 in {
   options.a.services.homeassistant = {
