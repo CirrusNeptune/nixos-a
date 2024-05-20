@@ -11,6 +11,7 @@
 , file
 , go
 , jq
+, glibc
 , jshon
 , lib
 , makeWrapper
