@@ -252,6 +252,7 @@ rec {
 
             nativeBuildInputs = [ util-linux e2fsprogs jshon rsync jq ];
           } ''
+          echo 6 > /proc/sys/kernel/printk
           mkdir disk
           mkfs /dev/${vmTools.hd}
           mount /dev/${vmTools.hd} disk
@@ -303,8 +304,6 @@ rec {
 
             # Get the next lower directory and continue the loop.
             lowerdir=image/$extractionID/layer''${lowerdir:+:}$lowerdir
-            find image/$extractionID/layer
-            df -h
           done
 
           mkdir work
