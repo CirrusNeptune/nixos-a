@@ -26,6 +26,8 @@ let
       #!${pkgs.runtimeShell}
       pip3 install lirc
     '';
+
+    diskSize = 2048;
   };
 in {
   options.a.services.homeassistant = {
