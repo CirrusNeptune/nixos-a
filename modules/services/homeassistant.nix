@@ -20,8 +20,6 @@ let
     tag = "latest";
 
     fromImage = dockerBase;
-    fromImageName = null;
-    fromImageTag = "latest";
     runAsRoot = ''
       pip3 install lirc
     '';
