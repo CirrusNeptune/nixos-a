@@ -2,6 +2,12 @@
 let
   cfg = config.a.services.lirc;
 
+  nakawUdevRule = pkgs.writeTextFile {
+    name = "nakaw-udev-rule";
+    text = ''SUBSYSTEM=="usb", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6015", MODE="0666"'';
+    destination = "/etc/udev/rules.d/99-nakaw.rules";
+  };
+
   makeLircService = (service: extraArgs: remoteConf: {
     systemd.sockets."${service}" = {
       description = "LIRC ${service} socket";
@@ -103,6 +109,8 @@ in {
   };
 
   config = lib.mkIf cfg.enable (lib.mkMerge [{
+    services.udev.packages = [ nakawUdevRule ];
+
     # Note: LIRC executables raises a warning, if lirc_options.conf do not exists
     environment.etc."lirc/lirc_options.conf".text = ''
       [lircd]
