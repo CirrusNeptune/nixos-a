@@ -315,6 +315,9 @@ rec {
             ${preMount}
           ''}
 
+          echo "$lowerdir"
+          dmesg
+
           if [ -n "$lowerdir" ]; then
             mount -t overlay overlay -olowerdir=$lowerdir,workdir=work,upperdir=layer mnt
           else
