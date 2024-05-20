@@ -320,6 +320,7 @@ rec {
           if [ -n "$lowerdir" ]; then
             mount -t overlay overlay -olowerdir=$lowerdir,workdir=work,upperdir=layer mnt || true
             dmesg
+            sleep 1
             exit 1
           else
             mount --bind layer mnt
