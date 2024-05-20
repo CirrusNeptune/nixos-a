@@ -21,7 +21,7 @@ let
 
     fromImage = dockerBase;
     runAsRoot = ''
-      pip3 install lirc
+      /usr/local/bin/pip3 install lirc
     '';
 
     diskSize = 8192;
