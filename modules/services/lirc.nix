@@ -15,7 +15,7 @@ let
       socketConfig = {
         ListenStream = "/run/lirc/${service}";
         SocketUser = "lirc";
-        SocketMode = "0660";
+        SocketMode = "0666";
       };
     };
 
