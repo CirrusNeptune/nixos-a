@@ -316,10 +316,11 @@ rec {
           ''}
 
           echo "$lowerdir"
-          dmesg
 
           if [ -n "$lowerdir" ]; then
-            mount -t overlay overlay -olowerdir=$lowerdir,workdir=work,upperdir=layer mnt
+            mount -t overlay overlay -olowerdir=$lowerdir,workdir=work,upperdir=layer mnt || true
+            dmesg
+            exit 1
           else
             mount --bind layer mnt
           fi
