@@ -23,7 +23,6 @@ let
     fromImageName = null;
     fromImageTag = "latest";
     runAsRoot = ''
-      #!${pkgs.runtimeShell}
       pip3 install lirc
     '';
 
