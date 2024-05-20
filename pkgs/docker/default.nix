@@ -302,7 +302,7 @@ rec {
             find image/$extractionID/layer -name ".wh.*" -exec bash -c 'name="$(basename {}|sed "s/^.wh.//")"; mknod "$(dirname {})/$name" c 0 0; rm {}' \;
 
             # Get the next lower directory and continue the loop.
-            lowerdir=`pwd`/image/$extractionID/layer''${lowerdir:+:}$lowerdir
+            lowerdir=image/$extractionID/layer''${lowerdir:+:}$lowerdir
           done
 
           mkdir work
@@ -319,7 +319,7 @@ rec {
           echo "$lowerdir"
 
           if [ -n "$lowerdir" ]; then
-            mount -t overlay overlay -olowerdir=$lowerdir,workdir=`pwd`/work,upperdir=`pwd`/layer mnt || true
+            mount -t overlay overlay -o "lowerdir=$lowerdir,workdir=work,upperdir=layer" mnt || true
             dmesg
             sleep 1
             exit 1
