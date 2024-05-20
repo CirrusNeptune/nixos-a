@@ -315,6 +315,7 @@ rec {
             ${preMount}
           ''}
 
+          pwd
           echo "$lowerdir"
 
           if [ -n "$lowerdir" ]; then
