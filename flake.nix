@@ -21,7 +21,7 @@
           system.configurationRevision = lib.mkIf (self ? rev) self.rev;
 
           # Force kernel compile with clang
-          boot.kernelPackages = pkgs.linuxPackages.override (prev: {
+          boot.kernelPackages = pkgs.linuxPackages.extend (final: prev: {
             kernel = prev.kernel.override (prev: {
               stdenv = pkgs.clangStdenv;
             });
