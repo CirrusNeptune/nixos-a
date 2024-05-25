@@ -160,7 +160,12 @@ in
   # Or disable the firewall altogether.
   networking.firewall.enable = false;
 
-  # Copy the NixOS configuration file and link it from the resulting system
+   fileSystems."/b" = {
+       device = "/dev/disk/by-uuid/bc630d37-a38a-4221-9a6f-c04288306d1f";
+       fsType = "ext4"; #  sudo lsblk -f
+   };
+
+  # Copy the Nix:wqOS configuration file and link it from the resulting system
   # (/run/current-system/configuration.nix). This is useful in case you
   # accidentally delete configuration.nix.
   # system.copySystemConfiguration = true;
