@@ -24,6 +24,7 @@
           boot.kernelPackages = pkgs.linuxPackages.extend (final: prev: {
             kernel = prev.kernel.override (prev: {
               stdenv = pkgs.gcc14Stdenv;
+              buildPackages = pkgs.buildPackages // { stdenv = pkgs.buildPackages.gcc14Stdenv; };
             });
           });
 
