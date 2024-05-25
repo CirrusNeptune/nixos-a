@@ -29,7 +29,7 @@ in {
             "/etc/localtime:/etc/localtime:ro"
             "/run/lirc:/lircd"
           ];
-          image = "ghcr.io/cirrusneptune/homeassistant-mowbark@sha256:main";
+          image = "ghcr.io/cirrusneptune/homeassistant-mowbark:main";
           ports = [
             "${cfg.host}:80:8123"
           ];

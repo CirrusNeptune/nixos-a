@@ -6,8 +6,8 @@ rustPlatform.buildRustPackage {
   src = fetchFromGitHub {
     owner = "CirrusNeptune";
     repo = "nexus-revo-io";
-    rev = "656b040afb38c7a2bf2680f34fa1d727bb94f2ee";
-    hash = "sha256-zlKu7lHeBzX9kUIRDDFaZuNo3CKjSg7s0kmViUUy6Wo=";
+    rev = "56bdc9c2f6231f97fb746d6681de71b80d96c263";
+    hash = "sha256-EuK5qi3gWZscw3VoXTlZikTj2BKy27WFTXIrK9R1Nfo=";
   };
 
   cargoLock = {
