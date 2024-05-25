@@ -22,6 +22,7 @@
 
           # Package overlays
           nixpkgs.overlays = [
+            (final: prev: { linuxKernel = prev.linuxKernel.override { stdenv = prev.gcc14Stdenv; }; })
             (final: prev: import ./pkgs final)
           ];
 
