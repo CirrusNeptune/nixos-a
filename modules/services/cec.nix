@@ -29,7 +29,10 @@ in {
     boot.kernelPatches = [{
       name = "pulse8-cec-module";
       patch = null;
-      extraConfig = "USB_PULSE8_CEC m";
+      extraConfig = ''
+        MEDIA_CEC_SUPPORT y
+        USB_PULSE8_CEC m
+      '';
     }];
     services.udev.packages = [ cecAutostartUdevRule pulse8CecAutoattachUdevRule ];
     systemd.services = {
