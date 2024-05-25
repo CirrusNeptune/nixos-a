@@ -22,6 +22,7 @@
 
           # Package overlays
           nixpkgs.overlays = [
+            (final: prev: { default-gcc-version = 14; })
             (final: prev: import ./pkgs final)
           ];
 
