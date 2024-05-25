@@ -20,10 +20,10 @@
           # of this flake.
           system.configurationRevision = lib.mkIf (self ? rev) self.rev;
 
-          # Force kernel compile with clang
+          # Force kernel compile with gcc14
           boot.kernelPackages = pkgs.linuxPackages.extend (final: prev: {
             kernel = prev.kernel.override (prev: {
-              stdenv = pkgs.clangStdenv;
+              stdenv = pkgs.gcc14Stdenv;
             });
           });
 
