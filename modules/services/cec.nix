@@ -26,6 +26,7 @@ in {
   };
 
   config = lib.mkIf cfg.enable {
+    boot.extraModulePackages = with config.boot.kernelPackages; [ pulse8-cec ];
     services.udev.packages = [ cecAutostartUdevRule pulse8CecAutoattachUdevRule ];
     systemd.services = {
       cec0-configure = {
