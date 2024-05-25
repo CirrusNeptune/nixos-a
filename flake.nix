@@ -22,7 +22,10 @@
 
           # Package overlays
           nixpkgs.overlays = [
-            (final: prev: { linux = prev.linux.override { stdenv = prev.clangStdenv; }; })
+            (final: prev: { linux = prev.linux.override {
+              stdenv = prev.clangStdenv;
+              buildPackages = prev.buildPackages // { stdenv = prev.buildPackages.clangStdenv; };
+            }; })
             (final: prev: import ./pkgs final)
           ];
 
