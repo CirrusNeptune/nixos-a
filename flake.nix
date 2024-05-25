@@ -20,12 +20,15 @@
           # of this flake.
           system.configurationRevision = lib.mkIf (self ? rev) self.rev;
 
+          # Force kernel compile with clang
+          boot.kernelPackages = pkgs.linuxPackages.override (prev: {
+            kernel = prev.kernel.override (prev: {
+              stdenv = pkgs.clangStdenv;
+            });
+          });
+
           # Package overlays
           nixpkgs.overlays = [
-            (final: prev: { linux = prev.linux.override {
-              stdenv = prev.clangStdenv;
-              buildPackages = prev.buildPackages // { stdenv = prev.buildPackages.clangStdenv; };
-            }; })
             (final: prev: import ./pkgs final)
           ];
 
