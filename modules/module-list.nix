@@ -1,4 +1,5 @@
 [
+  ./services/cec.nix
   ./services/gitea.nix
   ./services/homeassistant.nix
   ./services/kodi.nix
