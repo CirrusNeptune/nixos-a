@@ -26,14 +26,14 @@ in {
   };
 
   config = lib.mkIf cfg.enable {
-    boot.kernelPatches = [{
-      name = "pulse8-cec-module";
-      patch = null;
-      extraConfig = ''
-        MEDIA_CEC_SUPPORT y
-        USB_PULSE8_CEC m
-      '';
-    }];
+    #boot.kernelPatches = [{
+    #  name = "pulse8-cec-module";
+    #  patch = null;
+    #  extraConfig = ''
+    #    MEDIA_CEC_SUPPORT y
+    #    USB_PULSE8_CEC m
+    #  '';
+    #}];
     services.udev.packages = [ cecAutostartUdevRule pulse8CecAutoattachUdevRule ];
     systemd.services = {
       cec0-configure = {
