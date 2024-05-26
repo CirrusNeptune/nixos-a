@@ -138,6 +138,7 @@ in
     enable = true;
     host = hassHost;
   };
+  a.services.cec.cecPhysAddr = "1.1.0.0";
   a.services.gitea = {
     enable = true;
     host = giteaHost;

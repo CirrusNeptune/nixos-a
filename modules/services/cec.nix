@@ -23,6 +23,10 @@ let
 in {
   options.a.services.cec = {
     enable = lib.mkEnableOption "Enable cec service";
+    cecPhysAddr = lib.mkOption {
+      type = lib.types.str;
+      description = "CEC Physical Address";
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -40,7 +44,7 @@ in {
         description = "CEC0 Configure";
         serviceConfig = {
           Type = "oneshot";
-          ExecStart = ''${lib.getBin pkgs.v4l-utils}/bin/cec-ctl --device=0 "--osd-name=%H" --playback --phys-addr=1.1.0.0'';
+          ExecStart = ''${lib.getBin pkgs.v4l-utils}/bin/cec-ctl --device=0 "--osd-name=%H" --playback --phys-addr=${cfg.cecPhysAddr}'';
         };
       };
       "pulse8-cec-attach@" = {
