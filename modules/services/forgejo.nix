@@ -33,5 +33,19 @@ in {
         };
       };
     };
+
+    services.gitea-actions-runner = {
+      package = pkgs.forgejo-runner;
+      instances.mowbark = {
+        enable = true;
+        name = "ci";
+        url = "http://git.mow";
+        labels = [
+          # type ":host" does not depend on docker/podman/lxc
+          "native:host"
+        ];
+        tokenFile = "/var/lib/forgejo/runner_token";
+      };
+    };
   };
 }
