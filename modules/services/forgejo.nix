@@ -41,8 +41,7 @@ in {
         name = "ci";
         url = "http://git.mow";
         labels = [
-          # type ":host" does not depend on docker/podman/lxc
-          "native:host"
+          ":docker:"
         ];
         tokenFile = "/var/lib/forgejo/runner_token";
       };
