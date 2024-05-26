@@ -20,11 +20,11 @@
           # of this flake.
           system.configurationRevision = lib.mkIf (self ? rev) self.rev;
 
-          # Force kernel compile with gcc12
+          # Force kernel compile with gcc14
           boot.kernelPackages = pkgs.linuxPackages.extend (final: prev: {
             kernel = prev.kernel.override (prev: {
-              stdenv = pkgs.gcc12Stdenv;
-              buildPackages = pkgs.buildPackages // { stdenv = pkgs.buildPackages.gcc12Stdenv; };
+              stdenv = pkgs.gcc14Stdenv;
+              buildPackages = pkgs.buildPackages // { stdenv = pkgs.buildPackages.gcc14Stdenv; };
             });
           });
 
