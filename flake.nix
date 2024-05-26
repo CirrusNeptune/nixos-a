@@ -20,14 +20,6 @@
           # of this flake.
           system.configurationRevision = lib.mkIf (self ? rev) self.rev;
 
-          # Force kernel compile with gcc14
-          #boot.kernelPackages = pkgs.linuxPackages.extend (final: prev: {
-          #  kernel = prev.kernel.override (prev: {
-          #    stdenv = pkgs.gcc14Stdenv;
-          #    buildPackages = pkgs.buildPackages // { stdenv = pkgs.buildPackages.gcc14Stdenv; };
-          #  });
-          #});
-
           # Package overlays
           nixpkgs.overlays = [
             (final: prev: import ./pkgs final)
