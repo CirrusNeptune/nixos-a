@@ -19,7 +19,7 @@ in
       ./hardware-configuration.nix
     ];
 
-  boot.loader.grub.memtest86.enable = true;
+  boot.loader.systemd-boot.memtest86.enable = true;
 
   # Enable flakes
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
