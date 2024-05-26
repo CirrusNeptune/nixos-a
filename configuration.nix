@@ -11,7 +11,7 @@ let
   gatewayHost = makeIpHost 1;
   lanHost = makeIpHost 2;
   hassHost = makeIpHost 3;
-  giteaHost = makeIpHost 4;
+  forgejoHost = makeIpHost 4;
 in
 {
   imports =
@@ -46,7 +46,7 @@ in
           # configure addresses including subnet mask
           (lanHost + "/24")
           (hassHost + "/24")
-          (giteaHost + "/24")
+          (forgejoHost + "/24")
         ];
         routes = [
           # create default routes
@@ -139,9 +139,9 @@ in
     host = hassHost;
   };
   a.services.cec.cecPhysAddr = "1.1.0.0";
-  a.services.gitea = {
+  a.services.forgejo = {
     enable = true;
-    host = giteaHost;
+    host = forgejoHost;
   };
 
   # Some programs need SUID wrappers, can be configured further or are
