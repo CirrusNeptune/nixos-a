@@ -88,7 +88,7 @@ in
     enable = true;
     user = "a";
   };
-  systemd.defaultUnit = "multi-user.target";
+  systemd.defaultUnit = lib.mkForce "multi-user.target";
   hardware.opengl.enable = true;
 
   # Configure keymap in X11
