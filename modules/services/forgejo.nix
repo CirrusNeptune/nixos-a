@@ -43,7 +43,7 @@ in {
         labels = [
           ":docker:"
         ];
-        tokenFile = "/var/lib/forgejo/runner_token";
+        token = "7efimPRH2Cxq4i5TkjA19nUTuGWujOBJXxoJEawf";
       };
     };
   };
