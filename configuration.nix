@@ -20,6 +20,7 @@ in
     ];
 
   boot.loader.systemd-boot.memtest86.enable = true;
+  nixpkgs.config.allowUnfree = true;
 
   # Enable flakes
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
