@@ -168,6 +168,41 @@ in
        fsType = "ext4"; #  sudo lsblk -f
    };
 
+  # https://nixos.wiki/wiki/Samba
+  # deleted hosts params, user stuff,
+  # make sure to run smbpasswd -a a as sudos
+  services.samba = {
+      enable = true;
+      securityType = "user";
+      openFirewall = true;
+      extraConfig = ''
+        workgroup = WORKGROUP
+        server string = smbnix
+        netbios name = smbnix
+        security = user
+        #use sendfile = yes
+        #max protocol = smb2
+        # note: localhost is the ipv6 localhost ::1
+      '';
+      shares = {
+        public = {
+          path = "/b/multimedia";
+          browseable = "yes";
+          "read only" = "no";
+          "guest ok" = "yes";
+          "create mask" = "0644";
+          "directory mask" = "0755";
+        };
+      };
+  };
+
+  services.samba-wsdd = {
+    enable = true;
+    openFirewall = true;
+  };
+
+  networking.firewall.allowPing = true;
+
   # Copy the Nix:wqOS configuration file and link it from the resulting system
   # (/run/current-system/configuration.nix). This is useful in case you
   # accidentally delete configuration.nix.
@@ -190,6 +225,5 @@ in
   #
   # For more information, see `man configuration.nix` or https://nixos.org/manual/nixos/stable/options#opt-system.stateVersion .
   system.stateVersion = "23.11"; # Did you read the comment?
-
 }
 
