@@ -1,6 +1,8 @@
 { config, lib, pkgs, ... }:
 let
   cfg = config.a.services.kodi;
+  #kodi-package = pkgs.kodi-wayland.withPackages {
+  #}
 in {
   options.a.services.kodi = {
     enable = lib.mkEnableOption "Enable kodi service";

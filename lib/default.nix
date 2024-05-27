@@ -2,5 +2,6 @@
 let
   callLibs = file: import file { inherit lib; };
 in {
-  mkCageService = callLibs ./mkCageService.nix;
+  makeCageService = callLibs ./make-cage-service.nix;
+  makeGamescopeService = callLibs ./make-gamescope-service.nix;
 }

@@ -88,6 +88,10 @@ in
     enable = true;
     user = "a";
   };
+  a.services.steam = {
+    enable = true;
+    user = "a";
+  };
   systemd.defaultUnit = lib.mkForce "graphical.target";
   hardware.opengl.enable = true;
 
