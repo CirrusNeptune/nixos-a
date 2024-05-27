@@ -89,10 +89,17 @@ in
     enable = true;
     user = "a";
   };
-  a.services.steam = {
+  #a.services.steam = {
+  #  enable = true;
+  #  user = "a";
+  #};
+  programs.steam = {
     enable = true;
-    user = "a";
+    gamescopeSession = {
+      enable = true;
+    };
   };
+
   systemd.defaultUnit = lib.mkForce "graphical.target";
   hardware.opengl.enable = true;
 
