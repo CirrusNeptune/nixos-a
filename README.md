@@ -1,3 +1,4 @@
+# Dev Setup
 1. Clone flake repo: https://github.com/CirrusNeptune/nixos-a
   a. configuration.nix is the main configuration
   b. pkgs dir contains our custom packages
