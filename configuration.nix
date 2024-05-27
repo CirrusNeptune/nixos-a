@@ -102,7 +102,11 @@ in
   programs.gamescope.capSysNice = true;
 
   systemd.defaultUnit = lib.mkForce "multi-user.target";
-  hardware.opengl.enable = true;
+  hardware.opengl = {
+    driSupport = true;
+    driSupport32Bit = true;
+    enable = true;
+  };
 
   # Configure keymap in X11
   # services.xserver.xkb.layout = "us";
