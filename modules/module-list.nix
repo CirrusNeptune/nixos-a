@@ -7,4 +7,5 @@
   ./services/kwin-session.nix
   ./services/lirc.nix
   ./services/mowbark-rf.nix
+  ./services/steam.nix
 ]
