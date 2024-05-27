@@ -1,8 +1,10 @@
 { config, lib, pkgs, ... }:
 let
   cfg = config.a.services.kodi;
-  #kodi-package = pkgs.kodi-wayland.withPackages {
-  #}
+  kodi-package = (pkgs.kodi-wayland.withPackages
+    (kodiPkgs: with kodiPkgs; [
+      joystick
+    ]));
 in {
   options.a.services.kodi = {
     enable = lib.mkEnableOption "Enable kodi service";
@@ -12,7 +14,7 @@ in {
     };
   };
 
-  config = lib.mkIf cfg.enable (lib.a.makeCageService {
+  config = lib.mkIf cfg.enable (lib.a.makeGamescopeService {
     inherit config lib pkgs;
     service = "kodi";
     tty = "tty1";
