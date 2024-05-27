@@ -19,7 +19,7 @@ in {
     service = "kodi";
     tty = "tty1";
     user = cfg.user;
-    program = "${lib.getBin pkgs.kodi-wayland}/bin/kodi-standalone";
+    program = "${lib.getBin kodi-package}/bin/kodi-standalone";
     environment = {
       KODI_AE_SINK = "ALSA";
     };
