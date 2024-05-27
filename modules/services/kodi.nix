@@ -10,25 +10,14 @@ in {
     };
   };
 
-  config = lib.mkIf cfg.enable {
-    services.cage = {
-      enable = true;
-      user = cfg.user;
-      extraArguments = [ "-s" ];
-      program = "${lib.getBin pkgs.kodi-wayland}/bin/kodi-standalone";
-      environment = {
-        KODI_AE_SINK = "ALSA";
-      };
+  config = lib.mkIf cfg.enable (lib.a.mkCageService {
+    inherit config lib pkgs;
+    service = "kodi";
+    tty = "tty1";
+    user = cfg.user;
+    program = "${lib.getBin pkgs.kodi-wayland}/bin/kodi-standalone";
+    environment = {
+      KODI_AE_SINK = "ALSA";
     };
-    systemd.services."cage-tty1" = {
-      unitConfig = {
-        StartLimitBurst = 6;
-        StartLimitIntervalSec = 45;
-      };
-      serviceConfig = {
-        Restart = "always";
-        RestartSec = 5;
-      };
-    };
-  };
+  });
 }

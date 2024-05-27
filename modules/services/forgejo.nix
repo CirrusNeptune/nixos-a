@@ -40,9 +40,7 @@ in {
         enable = true;
         name = "ci";
         url = "http://git.mow";
-        labels = [
-          ":docker:"
-        ];
+        labels = [ ":docker:" ];
         token = "7efimPRH2Cxq4i5TkjA19nUTuGWujOBJXxoJEawf";
       };
     };
