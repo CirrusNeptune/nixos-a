@@ -34,7 +34,7 @@
     serviceConfig = {
       #Restart = "always";
       #RestartSec = 5;
-      ExecStart = "${pkgs.gamescope}/bin/gamescope";
+      ExecStart = "${pkgs.gamescope}/bin/gamescope -- ${program}";
       #ExecStart = ''
       #  ${pkgs.gamescope}/bin/gamescope \
       #    ${lib.escapeShellArgs gamescopeArguments} \
