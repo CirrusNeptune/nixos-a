@@ -89,12 +89,19 @@ in
     enable = true;
     user = "a";
   };
-  a.services.steam = {
+  #a.services.steam = {
+  #  enable = true;
+  #  user = "a";
+  #};
+  programs.steam = {
     enable = true;
-    user = "a";
+    gamescopeSession = {
+      enable = true;
+    };
   };
+  programs.gamescope.capSysNice = true;
 
-  systemd.defaultUnit = lib.mkForce "graphical.target";
+  systemd.defaultUnit = lib.mkForce "multi-user.target";
   hardware.opengl.enable = true;
 
   # Configure keymap in X11
