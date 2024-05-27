@@ -89,15 +89,9 @@ in
     enable = true;
     user = "a";
   };
-  #a.services.steam = {
-  #  enable = true;
-  #  user = "a";
-  #};
-  programs.steam = {
+  a.services.steam = {
     enable = true;
-    gamescopeSession = {
-      enable = true;
-    };
+    user = "a";
   };
 
   systemd.defaultUnit = lib.mkForce "graphical.target";

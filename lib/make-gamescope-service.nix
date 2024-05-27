@@ -34,12 +34,11 @@
     serviceConfig = {
       #Restart = "always";
       #RestartSec = 5;
-      ExecStart = "${pkgs.gamescope}/bin/gamescope -- ${program} ${lib.escapeShellArgs args}";
-      #ExecStart = ''
-      #  ${pkgs.gamescope}/bin/gamescope \
-      #    ${lib.escapeShellArgs gamescopeArguments} \
-      #    -- ${program} ${lib.escapeShellArgs args}
-      #'';
+      ExecStart = ''
+        ${pkgs.gamescope}/bin/gamescope \
+          ${lib.escapeShellArgs gamescopeArguments} \
+          -- ${program} ${lib.escapeShellArgs args}
+      '';
       User = user;
       Group = "users";
 
@@ -62,9 +61,7 @@
       PAMName = "gamescope";
     };
 
-    environment = environment // {
-      XDG_SESSION_TYPE = "wayland";
-    };
+    inherit environment;
   };
 
   security.polkit.enable = true;

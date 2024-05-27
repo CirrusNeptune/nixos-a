@@ -1,12 +1,6 @@
 { config, lib, pkgs, ... }:
 let
   cfg = config.a.services.steam;
-  steam-package = pkgs.steam.override (prev: {
-    buildFHSEnv = pkgs.buildFHSEnv.override {
-      # use the setuid wrapped bubblewrap
-      bubblewrap = "${config.security.wrapperDir}/..";
-    };
-  });
 in {
   options.a.services.steam = {
     enable = lib.mkEnableOption "Enable steam service";
@@ -22,18 +16,15 @@ in {
       service = "steam";
       tty = "tty3";
       user = cfg.user;
-      program = "${lib.getBin steam-package}/bin/steam";
+      program = "${lib.getBin pkgs.steam}/bin/steam";
       args = [ "-tenfoot" "-pipewire-dmabuf" ];
       gamescopeArguments = [ "--steam" ];
     })
     {
-      security.wrappers = {
-        # needed or steam fails
-        bwrap = {
-          owner = "root";
-          group = "root";
-          source = "${pkgs.bubblewrap}/bin/bwrap";
-          setuid = true;
+      programs.steam = {
+        enable = true;
+        gamescopeSession = {
+          enable = true;
         };
       };
     }
