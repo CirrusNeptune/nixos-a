@@ -60,7 +60,9 @@
       PAMName = "gamescope";
     };
 
-    inherit environment;
+    environment = environment // {
+      XDG_SESSION_TYPE = "wayland";
+    };
   };
 
   security.polkit.enable = true;
