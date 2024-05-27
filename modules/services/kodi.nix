@@ -12,7 +12,7 @@ in {
     };
   };
 
-  config = lib.mkIf cfg.enable (lib.a.mkCageService {
+  config = lib.mkIf cfg.enable (lib.a.makeCageService {
     inherit config lib pkgs;
     service = "kodi";
     tty = "tty1";
