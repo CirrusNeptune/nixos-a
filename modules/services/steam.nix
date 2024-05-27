@@ -27,6 +27,7 @@ in {
           enable = true;
         };
       };
+      programs.gamescope.capSysNice = true;
     }
   ]);
 }
