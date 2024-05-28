@@ -89,10 +89,10 @@ in
     enable = true;
     user = "a";
   };
-  #a.services.steam = {
-  #  enable = true;
-  #  user = "a";
-  #};
+  a.services.steam = {
+    enable = true;
+    user = "a";
+  };
   programs.steam = {
     enable = true;
     gamescopeSession = {
@@ -101,7 +101,7 @@ in
   };
   programs.gamescope.capSysNice = true;
 
-  systemd.defaultUnit = lib.mkForce "multi-user.target";
+  systemd.defaultUnit = lib.mkForce "graphical.target";
   hardware.opengl = {
     driSupport = true;
     driSupport32Bit = true;
