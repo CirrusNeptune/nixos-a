@@ -28,12 +28,12 @@
     restartIfChanged = false;
     unitConfig = {
       ConditionPathExists = "/dev/${tty}";
-      #StartLimitBurst = 6;
-      #StartLimitIntervalSec = 45;
+      StartLimitBurst = 6;
+      StartLimitIntervalSec = 45;
     };
     serviceConfig = {
-      #Restart = "always";
-      #RestartSec = 5;
+      Restart = "always";
+      RestartSec = 5;
       ExecStart = ''
         ${pkgs.gamescope}/bin/gamescope \
           ${lib.escapeShellArgs gamescopeArguments} \
