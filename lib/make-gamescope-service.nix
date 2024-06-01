@@ -41,7 +41,6 @@
       '';
       User = user;
       Group = "users";
-      AmbientCapabilities = [ "mow" ];
 
       IgnoreSIGPIPE = "no";
 
@@ -72,7 +71,7 @@
     account required pam_unix.so
     session required pam_unix.so
     session required pam_env.so conffile=/etc/pam/environment readenv=0
-    session required ${config.systemd.package}/lib/security/pam_systemd.so
+    session required ${config.systemd.package}/lib/security/pam_systemd.so default-capability-ambient-set=mow
   '';
 
   systemd.targets.graphical.wants = [ "${service}.service" ];
