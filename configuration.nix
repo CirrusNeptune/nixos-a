@@ -79,6 +79,14 @@ in
   #   useXkbConfig = true; # use xkb.options in tty.
   # };
 
+  security.rtkit.enable = true;
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+  };
+
   # Enable the X11 windowing system.
   # services.xserver.enable = true;
   a.services.steam = {
@@ -92,6 +100,7 @@ in
   a.services.kodi = {
     enable = true;
     user = "a";
+    alsa = !services.pipewire.enable;
   };
 
   programs.steam = {
