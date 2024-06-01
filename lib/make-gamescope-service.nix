@@ -58,7 +58,7 @@
       StandardOutput = "journal";
       StandardError = "journal";
       # Set up a full (custom) user session for the user, required by Gamescope.
-      PAMName = "gamescope";
+      PAMName = "${service}";
     };
 
     inherit environment;
@@ -66,7 +66,7 @@
 
   security.polkit.enable = true;
 
-  security.pam.services.gamescope.text = ''
+  security.pam.services."${service}".text = ''
     auth    required pam_unix.so nullok
     account required pam_unix.so
     session required pam_unix.so
