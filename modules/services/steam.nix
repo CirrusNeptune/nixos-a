@@ -16,9 +16,9 @@ in {
       service = "steam";
       tty = "tty3";
       user = cfg.user;
-      program = "${lib.getBin pkgs.steam}/bin/steam";
-      args = [ "-tenfoot" "-pipewire-dmabuf" ];
-      gamescopeArguments = [ "--steam" ];
+      program = "${lib.getBin pkgs.coreutils}/bin/env";
+      args = [];
+      gamescopeArguments = [];
     })
     {
       programs.steam = {
