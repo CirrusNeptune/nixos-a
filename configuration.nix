@@ -20,6 +20,7 @@ in
     ];
 
   boot.loader.systemd-boot.memtest86.enable = true;
+  nixpkgs.config.allowUnfree = true;
 
   # Enable flakes
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
@@ -78,8 +79,21 @@ in
   #   useXkbConfig = true; # use xkb.options in tty.
   # };
 
+  # Pipewire audio
+  security.rtkit.enable = true;
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+  };
+
   # Enable the X11 windowing system.
   # services.xserver.enable = true;
+  a.services.steam = {
+    enable = true;
+    user = "a";
+  };
   a.services.kwin-session = {
     enable = true;
     user = "a";
@@ -88,8 +102,23 @@ in
     enable = true;
     user = "a";
   };
-  systemd.defaultUnit = lib.mkForce "multi-user.target";
-  hardware.opengl.enable = true;
+
+  programs.steam = {
+    enable = true;
+    gamescopeSession = {
+      enable = true;
+    };
+  };
+  programs.gamescope.capSysNice = true;
+
+  systemd.defaultUnit = lib.mkForce "graphical.target";
+
+  hardware.opengl = {
+    driSupport = true;
+    driSupport32Bit = true;
+    enable = true;
+  };
+
 
   # Configure keymap in X11
   # services.xserver.xkb.layout = "us";
@@ -115,7 +144,7 @@ in
       a = {
         hashedPassword = "$y$j9T$4OwHrG/9t08OLgF.l0pqj0$JJu2hTsddDPF4o12pZUWi0zSap8eStNvymaYt9Ss272";
         isNormalUser = true;
-        extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
+        extraGroups = [ "wheel" "video" "render" ];
         packages = with pkgs; [
           firefox
         ];
@@ -138,7 +167,7 @@ in
     enable = true;
     host = hassHost;
   };
-  a.services.cec.cecPhysAddr = "1.1.0.0";
+  a.services.cec.cecPhysAddr = "1.3.0.0";
   a.services.forgejo = {
     enable = true;
     host = forgejoHost;
