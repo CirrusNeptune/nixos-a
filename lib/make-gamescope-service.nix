@@ -41,6 +41,7 @@
       '';
       User = user;
       Group = "users";
+      AmbientCapabilities = [ "mow" ];
 
       IgnoreSIGPIPE = "no";
 
