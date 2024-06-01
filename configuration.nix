@@ -12,7 +12,6 @@ let
   lanHost = makeIpHost 2;
   hassHost = makeIpHost 3;
   forgejoHost = makeIpHost 4;
-  enablePipewire = true;
 in
 {
   imports =
@@ -83,7 +82,7 @@ in
   # Pipewire audio
   security.rtkit.enable = true;
   services.pipewire = {
-    enable = enablePipewire;
+    enable = true;
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
@@ -102,7 +101,6 @@ in
   a.services.kodi = {
     enable = true;
     user = "a";
-    alsa = !enablePipewire;
   };
 
   programs.steam = {
@@ -169,7 +167,7 @@ in
     enable = true;
     host = hassHost;
   };
-  a.services.cec.cecPhysAddr = "1.1.0.0";
+  a.services.cec.cecPhysAddr = "1.3.0.0";
   a.services.forgejo = {
     enable = true;
     host = forgejoHost;
