@@ -71,7 +71,7 @@
     account required pam_unix.so
     session required pam_unix.so
     session required pam_env.so conffile=/etc/pam/environment readenv=0
-    session required ${config.systemd.package}/lib/security/pam_systemd.so default-capability-ambient-set=~cap_wake_alarm
+    session required ${config.systemd.package}/lib/security/pam_systemd.so default-capability-ambient-set=
   '';
 
   systemd.targets.graphical.wants = [ "${service}.service" ];
