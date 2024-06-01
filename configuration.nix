@@ -93,12 +93,12 @@ in
     enable = true;
     user = "a";
   };
-  programs.steam = {
-    enable = true;
-    gamescopeSession = {
-      enable = true;
-    };
-  };
+#  programs.steam = {
+ #   enable = true;
+ #   gamescopeSession = {
+  #    enable = true;
+ #   };
+#  };
   programs.gamescope.capSysNice = true;
 
   systemd.defaultUnit = lib.mkForce "graphical.target";
@@ -107,6 +107,7 @@ in
     driSupport32Bit = true;
     enable = true;
   };
+
 
   # Configure keymap in X11
   # services.xserver.xkb.layout = "us";
