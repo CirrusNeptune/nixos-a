@@ -12,6 +12,7 @@ let
   lanHost = makeIpHost 2;
   hassHost = makeIpHost 3;
   forgejoHost = makeIpHost 4;
+  enablePipewire = true;
 in
 {
   imports =
@@ -79,9 +80,10 @@ in
   #   useXkbConfig = true; # use xkb.options in tty.
   # };
 
+  # Pipewire audio
   security.rtkit.enable = true;
   services.pipewire = {
-    enable = true;
+    enable = enablePipewire;
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
@@ -100,7 +102,7 @@ in
   a.services.kodi = {
     enable = true;
     user = "a";
-    alsa = !services.pipewire.enable;
+    alsa = !enablePipewire;
   };
 
   programs.steam = {
