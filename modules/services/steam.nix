@@ -16,8 +16,8 @@ in {
       service = "steam";
       tty = "tty3";
       user = cfg.user;
-      program = "${lib.getBin pkgs.bash}/bin/bash -c \"${lib.getBin pkgs.libcap}/bin/capsh --print > /home/a/mowsteam.txt 2>&1\"";
-      args = [];
+      program = "${lib.getBin pkgs.steam}/bin/steam";
+      args = [ "-tenfoot" "-pipewire-dmabuf" ];
       gamescopeArguments = [ "--steam" ];
     })
     {
