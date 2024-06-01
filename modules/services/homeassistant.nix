@@ -35,6 +35,7 @@ in {
           ];
           extraOptions = [
             "--device=/dev/cec0:/dev/cec0"
+            "--device=/dev/cec1:/dev/cec1"
           ];
         };
       };
