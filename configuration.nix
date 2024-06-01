@@ -81,6 +81,10 @@ in
 
   # Enable the X11 windowing system.
   # services.xserver.enable = true;
+  a.services.steam = {
+    enable = true;
+    user = "a";
+  };
   a.services.kwin-session = {
     enable = true;
     user = "a";
@@ -89,19 +93,17 @@ in
     enable = true;
     user = "a";
   };
-  a.services.steam = {
+
+  programs.steam = {
     enable = true;
-    user = "a";
+    gamescopeSession = {
+      enable = true;
+    };
   };
-#  programs.steam = {
- #   enable = true;
- #   gamescopeSession = {
-  #    enable = true;
- #   };
-#  };
   programs.gamescope.capSysNice = true;
 
   systemd.defaultUnit = lib.mkForce "graphical.target";
+
   hardware.opengl = {
     driSupport = true;
     driSupport32Bit = true;
