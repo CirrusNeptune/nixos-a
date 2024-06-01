@@ -16,7 +16,7 @@ in {
       service = "steam";
       tty = "tty3";
       user = cfg.user;
-      program = "${lib.getBin pkgs.bash}/bin/bash -c \"${lib.getBin pkgs.coreutils}/bin/id -u > /home/a/mowsteam.txt && ${lib.getBin pkgs.coreutils}/bin/id -u -r >> /home/a/mowsteam.txt 2>&1\"";
+      program = "${lib.getBin pkgs.bash}/bin/bash -c \"${lib.getBin pkgs.libcap}/bin/capsh --print > /home/a/mowsteam.txt 2>&1\"";
       args = [];
       gamescopeArguments = [ "--steam" ];
     })
