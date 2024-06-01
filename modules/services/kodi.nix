@@ -24,7 +24,7 @@ in {
     tty = "tty1";
     user = cfg.user;
     program = "${lib.getBin kodi-package}/bin/kodi-standalone";
-  } // optionalAttrs cfg.alsa {
+  } // lib.optionalAttrs cfg.alsa {
     environment = {
       KODI_AE_SINK = "ALSA";
     };
