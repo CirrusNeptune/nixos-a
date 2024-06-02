@@ -4,6 +4,15 @@ let
   kodi-package = (pkgs.kodi-wayland.withPackages
     (kodiPkgs: with kodiPkgs; [
       joystick
+      visualization-fishbmc
+      visualization-goom
+      visualization-matrix
+      visualization-pictureit
+      visualization-projectm
+      visualization-shadertoy
+      visualization-spectrum
+      visualization-starburst
+      visualization-waveform
     ]));
 in {
   options.a.services.kodi = {
