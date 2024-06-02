@@ -28,15 +28,30 @@ in {
             "/etc/timezone:/etc/timezone:ro"
             "/etc/localtime:/etc/localtime:ro"
             "/run/lirc:/lircd"
+            "/dev:/dev"
           ];
           image = "ghcr.io/cirrusneptune/homeassistant-mowbark:main";
           ports = [
             "${cfg.host}:80:8123"
           ];
           extraOptions = [
-            "--device=/dev/cec0:/dev/cec0"
+            #"--device=/dev/cec0:/dev/cec0"
+            "--hostuser=homeassistant"
           ];
+          user = "homeassistant";
         };
+      };
+    };
+
+    users = {
+      users.homeassistant = {
+        isNormalUser = true;
+        group = "homeassistant";
+        extraGroups = [ "video" ];
+        uid = 1100;
+      };
+      groups.homeassistant = {
+        gid = 1100;
       };
     };
   };
