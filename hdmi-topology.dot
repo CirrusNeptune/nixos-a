@@ -1,0 +1,37 @@
+digraph {
+  layout=neato
+  splines=curved
+  overlap=false
+  outputorder=nodesfirst
+
+  tv [label=TV pos="0,0!"];
+  nakamichi [label="Nakamichi" pos="0,-2!"];
+  ps5 [label="PS5" pos="1,-4!"];
+  switch [label="Switch" pos="-2,-2!"];
+  snes [label="SNES" pos="3,-4!"];
+  wiiu [label="WiiU" pos="5,-4!"];
+  a [label="A" pos="-1,-4!"];
+  pulse8 [label="Pulse8" pos="-2,-3!"];
+
+  nakamichi -> tv [label="8K" taillabel="" headlabel=""];
+  ps5 -> nakamichi [label="NC" taillabel="" headlabel=""];
+  switch -> tv [label="NinW" taillabel="" headlabel=""];
+  snes -> tv [label="Micro" taillabel="" headlabel=""];
+  wiiu -> tv [label="NC" taillabel="" headlabel=""];
+  pulse8 -> nakamichi [label="?" taillabel="" headlabel=""];
+  a -> nakamichi [label="HSHE" taillabel="" headlabel="4"];
+}
+
+// HSHE = High-speed HDMI with ethernet
+// ? = Mystery cable
+// NC = No cable
+// NinW = Nintendo White cable
+
+// Need PS5 Cable
+// Need WiiU Cable
+// Need PC to Nakamichi
+// Move PC to WiiU
+
+// Monoprice 8K Certified Ultra High Speed HDMI Cable - Braided
+// HDMI 2.1, 8K@60Hz, 4K@120Hz, 48Gbps, HDR, VRR, CL2 In-Wall Rated, 3ft, Black (1 Pack)
+// https://a.co/d/hqQrR1z
