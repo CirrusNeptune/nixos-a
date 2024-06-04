@@ -119,7 +119,6 @@ in
     enable = true;
   };
 
-
   # Configure keymap in X11
   # services.xserver.xkb.layout = "us";
   # services.xserver.xkb.options = "eurosign:e,caps:escape";
@@ -147,6 +146,7 @@ in
         extraGroups = [ "wheel" "video" "render" ];
         packages = with pkgs; [
           firefox
+          intiface-central
         ];
       };
     };
