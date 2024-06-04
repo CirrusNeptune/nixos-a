@@ -1,4 +1,5 @@
 [
+  ./services/borgbackup.nix
   ./services/cec.nix
   ./services/forgejo.nix
   ./services/homeassistant.nix

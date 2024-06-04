@@ -35,8 +35,9 @@ in {
             "${cfg.host}:80:8123"
           ];
           extraOptions = [
-            #"--device=/dev/cec0:/dev/cec0"
             "--hostuser=homeassistant"
+            "--group-add=26"
+            "--device-cgroup-rule=\"c *:* rw\""
           ];
           user = "homeassistant";
         };

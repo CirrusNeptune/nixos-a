@@ -172,6 +172,7 @@ in
     enable = true;
     host = forgejoHost;
   };
+  a.services.borgbackup.enable = true;
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
