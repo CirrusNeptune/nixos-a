@@ -236,6 +236,9 @@ in
   hardware.bluetooth.enable = true; # enables support for Bluetooth
   hardware.bluetooth.powerOnBoot = true; # powers up the default Bluetooth controller on boot
 
+  # nix-ld config for jetbrains remote server
+  a.extensions.jetbrains-ld.enable = true;
+
   # Copy the Nix:wqOS configuration file and link it from the resulting system
   # (/run/current-system/configuration.nix). This is useful in case you
   # accidentally delete configuration.nix.

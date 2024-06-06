@@ -1,4 +1,5 @@
 [
+  ./extensions/jetbrains-ld.nix
   ./services/borgbackup.nix
   ./services/cec.nix
   ./services/forgejo.nix
