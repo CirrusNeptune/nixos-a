@@ -1,0 +1,226 @@
+diff --git a/drivers/input/console-filter.h b/drivers/input/console-filter.h
+new file mode 100644
+index 000000000..c46f3dcdb
+--- /dev/null
++++ b/drivers/input/console-filter.h
+@@ -0,0 +1,68 @@
++#ifndef __LINUX_CONSOLE_FILTER_H
++#define __LINUX_CONSOLE_FILTER_H
++
++#include <linux/vt_kern.h>
++
++static inline pid_t get_client_sid(void)
++{
++	struct task_struct *task = current;
++	struct task_struct *parent = NULL;
++	pid_t sid = 0;
++
++	rcu_read_lock();
++	for (;;) {
++		parent = rcu_dereference(task->real_parent);
++		if (parent == task)
++			break;
++		if (task_pid_nr(parent) == 1) {
++			sid = task_session_vnr(task);
++			break;
++		}
++		task = parent;
++	}
++	rcu_read_unlock();
++
++	return sid;
++}
++
++static inline int get_console_of_sid(pid_t sid)
++{
++	int i;
++	struct vc_data *vc;
++	struct tty_struct *tty;
++	unsigned long flags;
++	struct pid *session;
++	int console = -1;
++
++	for (i = 1; i < MAX_NR_CONSOLES; ++i) {
++		vc = vc_cons[i].d;
++		if (!vc)
++			continue;
++		tty = tty_port_tty_get(&vc->port);
++		if (!tty)
++			continue;
++
++		spin_lock_irqsave(&tty->ctrl.lock, flags);
++		session = tty->ctrl.session;
++		if (session && pid_vnr(session) == sid) {
++			console = i;
++			i = MAX_NR_CONSOLES;
++		}
++		spin_unlock_irqrestore(&tty->ctrl.lock, flags);
++
++		tty_kref_put(tty);
++	}
++
++	return console;
++}
++
++static inline int get_client_console(void)
++{
++	pid_t client_sid = get_client_sid();
++	if (client_sid == 0)
++		return -1;
++
++	return get_console_of_sid(client_sid);
++}
++
++#endif /* __LINUX_CONSOLE_FILTER_H */
+diff --git a/drivers/input/evdev.c b/drivers/input/evdev.c
+index 95f90699d..48a4b7cb3 100644
+--- a/drivers/input/evdev.c
++++ b/drivers/input/evdev.c
+@@ -24,6 +24,8 @@
+ #include <linux/device.h>
+ #include <linux/cdev.h>
+ #include "input-compat.h"
++#include <linux/dev_printk.h>
++#include "console-filter.h"
+ 
+ struct evdev {
+ 	int open;
+@@ -35,6 +37,7 @@ struct evdev {
+ 	struct device dev;
+ 	struct cdev cdev;
+ 	bool exist;
++	bool allow_console_filtering;
+ };
+ 
+ struct evdev_client {
+@@ -47,6 +50,7 @@ struct evdev_client {
+ 	struct evdev *evdev;
+ 	struct list_head node;
+ 	enum input_clock_type clk_type;
++	int console;
+ 	bool revoked;
+ 	unsigned long *evmasks[EV_CNT];
+ 	unsigned int bufsize;
+@@ -294,16 +298,32 @@ static void evdev_events(struct input_handle *handle,
+ 	struct evdev *evdev = handle->private;
+ 	struct evdev_client *client;
+ 	ktime_t *ev_time = input_get_timestamp(handle->dev);
++	int active_console = -1;
++	if (evdev->allow_console_filtering) {
++		active_console = fg_console;
++		dev_dbg(&evdev->dev, "active_console: %d\n", active_console);
++	}
+ 
+ 	rcu_read_lock();
+ 
+ 	client = rcu_dereference(evdev->grab);
+ 
+-	if (client)
+-		evdev_pass_values(client, vals, count, ev_time);
+-	else
+-		list_for_each_entry_rcu(client, &evdev->client_list, node)
++	if (active_console != -1) {
++		if (client) {
++			if (client->console == -1 || client->console == active_console)
++				evdev_pass_values(client, vals, count, ev_time);
++		} else {
++			list_for_each_entry_rcu(client, &evdev->client_list, node)
++				if (client->console == -1 || client->console == active_console)
++					evdev_pass_values(client, vals, count, ev_time);
++		}
++	} else {
++		if (client)
+ 			evdev_pass_values(client, vals, count, ev_time);
++		else
++			list_for_each_entry_rcu(client, &evdev->client_list, node)
++				evdev_pass_values(client, vals, count, ev_time);
++	}
+ 
+ 	rcu_read_unlock();
+ }
+@@ -488,6 +508,13 @@ static int evdev_open(struct inode *inode, struct file *file)
+ 	if (error)
+ 		goto err_free_client;
+ 
++	if (evdev->allow_console_filtering) {
++		client->console = get_client_console();
++		dev_dbg(&evdev->dev, "console %d\n", client->console);
++	} else {
++		client->console = -1;
++	}
++
+ 	file->private_data = client;
+ 	stream_open(inode, file);
+ 
+@@ -1330,6 +1357,12 @@ static void evdev_cleanup(struct evdev *evdev)
+ 	}
+ }
+ 
++static __always_inline bool allow_console_filtering(struct input_dev *dev)
++{
++	struct input_id *input_id = &dev->id;
++	return input_id->product == 0xb13 && input_id->vendor == 0x45e;
++}
++
+ /*
+  * Create new evdev device. Note that input core serializes calls
+  * to connect and disconnect.
+@@ -1359,6 +1392,7 @@ static int evdev_connect(struct input_handler *handler, struct input_dev *dev,
+ 	spin_lock_init(&evdev->client_lock);
+ 	mutex_init(&evdev->mutex);
+ 	evdev->exist = true;
++	evdev->allow_console_filtering = allow_console_filtering(dev);
+ 
+ 	dev_no = minor;
+ 	/* Normalize device number if it falls into legacy range */
+diff --git a/drivers/input/joydev.c b/drivers/input/joydev.c
+index 5824bca02..aac4963cb 100644
+--- a/drivers/input/joydev.c
++++ b/drivers/input/joydev.c
+@@ -23,6 +23,8 @@
+ #include <linux/init.h>
+ #include <linux/device.h>
+ #include <linux/cdev.h>
++#include <linux/dev_printk.h>
++#include "console-filter.h"
+ 
+ MODULE_AUTHOR("Vojtech Pavlik <vojtech@ucw.cz>");
+ MODULE_DESCRIPTION("Joystick device interfaces");
+@@ -59,6 +61,7 @@ struct joydev_client {
+ 	int head;
+ 	int tail;
+ 	int startup;
++	int console;
+ 	spinlock_t buffer_lock; /* protects access to buffer, head and tail */
+ 	struct fasync_struct *fasync;
+ 	struct joydev *joydev;
+@@ -115,6 +118,8 @@ static void joydev_event(struct input_handle *handle,
+ 	struct joydev *joydev = handle->private;
+ 	struct joydev_client *client;
+ 	struct js_event event;
++	int active_console = fg_console;
++	dev_dbg(&joydev->dev, "active_console: %d\n", active_console);
+ 
+ 	switch (type) {
+ 
+@@ -144,7 +149,9 @@ static void joydev_event(struct input_handle *handle,
+ 
+ 	rcu_read_lock();
+ 	list_for_each_entry_rcu(client, &joydev->client_list, node)
+-		joydev_pass_event(client, &event);
++		if (client->console == -1 || active_console == -1 ||
++			client->console == active_console)
++			joydev_pass_event(client, &event);
+ 	rcu_read_unlock();
+ 
+ 	wake_up_interruptible(&joydev->wait);
+@@ -273,6 +280,9 @@ static int joydev_open(struct inode *inode, struct file *file)
+ 	if (error)
+ 		goto err_free_client;
+ 
++	client->console = get_client_console();
++	dev_dbg(&joydev->dev, "console %d\n", client->console);
++
+ 	file->private_data = client;
+ 	stream_open(inode, file);
+ 

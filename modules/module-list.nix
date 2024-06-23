@@ -1,5 +1,6 @@
 [
   ./extensions/jetbrains-ld.nix
+  ./extensions/xpad-console-filter.nix
   ./services/borgbackup.nix
   ./services/cec.nix
   ./services/forgejo.nix
