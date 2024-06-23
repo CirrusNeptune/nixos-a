@@ -31,24 +31,31 @@ in {
             "/dev:/dev"
           ];
           image = "ghcr.io/cirrusneptune/homeassistant-mowbark:main";
+          #image = "localhost/hatest";
           ports = [
             "${cfg.host}:80:8123"
           ];
           extraOptions = [
             "--hostuser=homeassistant"
+            "--group-add=3"
             "--group-add=26"
             "--device-cgroup-rule=\"c *:* rw\""
+            "--cap-add=SYS_TTY_CONFIG"
+            "--cap-add=SETPCAP"
           ];
           user = "homeassistant";
         };
       };
     };
 
+    # Allow VT_ACTIVATE for switching tty
+    systemd.services.podman-homeassistant.serviceConfig.AmbientCapabilities = [ "CAP_SYS_TTY_CONFIG" ];
+
     users = {
       users.homeassistant = {
         isNormalUser = true;
         group = "homeassistant";
-        extraGroups = [ "video" ];
+        extraGroups = [ "video" "tty" ];
         uid = 1100;
       };
       groups.homeassistant = {

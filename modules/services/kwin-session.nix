@@ -19,27 +19,31 @@ in {
         "plymouth-start.service"
         "plymouth-quit.service"
         "systemd-logind.service"
-        "getty@tty2.service"
+        "getty@tty3.service"
       ];
       before = [ "graphical.target" ];
-      wants = [ "dbus.socket" "systemd-logind.service" "plymouth-quit.service"];
+      wants = [
+        "dbus.socket"
+        "systemd-logind.service"
+        "plymouth-quit.service"
+      ];
       wantedBy = [ "graphical.target" ];
-      conflicts = [ "getty@tty2.service" ];
-      unitConfig.ConditionPathExists = "/dev/tty2";
+      conflicts = [ "getty@tty3.service" ];
+      unitConfig.ConditionPathExists = "/dev/tty3";
       serviceConfig = {
         Type = "simple";
         ExecStart = "${lib.getBin pkgs.kdePackages.plasma-workspace}/bin/startplasma-wayland";
         User = cfg.user;
         Group = "users";
         PAMName = "login";
-        TTYPath = /dev/tty2;
+        TTYPath = /dev/tty3;
         TTYReset = "yes";
         TTYVHangup = "yes";
         TTYVTDisallocate = "yes";
         StandardInput = "tty-fail";
         StandardOutput = "journal";
         StandardError = "journal";
-        UtmpIdentifier = "tty2";
+        UtmpIdentifier = "tty3";
         UtmpMode = "user";
       };
       environment = {

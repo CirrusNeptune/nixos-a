@@ -1,6 +1,6 @@
 diff --git a/drivers/input/console-filter.h b/drivers/input/console-filter.h
 new file mode 100644
-index 000000000..c46f3dcdb
+index 000000000..c0142f121
 --- /dev/null
 +++ b/drivers/input/console-filter.h
 @@ -0,0 +1,68 @@
@@ -40,7 +40,7 @@ index 000000000..c46f3dcdb
 +	struct pid *session;
 +	int console = -1;
 +
-+	for (i = 1; i < MAX_NR_CONSOLES; ++i) {
++	for (i = 0; i < MAX_NR_CONSOLES; ++i) {
 +		vc = vc_cons[i].d;
 +		if (!vc)
 +			continue;

@@ -14,7 +14,7 @@ in {
     (lib.a.makeGamescopeService {
       inherit config lib pkgs;
       service = "steam";
-      tty = "tty3";
+      tty = "tty2";
       user = cfg.user;
       program = "${lib.getBin pkgs.steam}/bin/steam";
       args = [ "-tenfoot" "-pipewire-dmabuf" ];
