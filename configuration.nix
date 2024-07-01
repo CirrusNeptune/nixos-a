@@ -159,6 +159,8 @@ in
     wget
     git
     gdb
+    vlc
+    libvlc
   ];
 
   # Add docker containers
