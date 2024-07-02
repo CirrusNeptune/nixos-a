@@ -7,6 +7,14 @@ let
     text = ''SUBSYSTEM=="usb", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6014", MODE="0666"'';
     destination = "/etc/udev/rules.d/99-mowbark-rf.rules";
   };
+
+  haImage = pkgs.dockerTools.pullImage {
+    imageName = "ghcr.io/cirrusneptune/homeassistant-mowbark";
+    imageDigest = "sha256:3913eb18a4826e674a981caa0c04bf2825077c751c062d90357670723872ff75";
+    sha256 = "sha256-NCLawUZMW+sk8jdkudHk6qy6AhChyrS81Juvgk012Io=";
+    finalImageTag = "a";
+    finalImageName = "localhost/homeassistant-a";
+  };
 in {
   options.a.services.homeassistant = {
     enable = lib.mkEnableOption "Enable homeassistant service";
@@ -30,7 +38,9 @@ in {
             "/run/lirc:/lircd"
             "/dev:/dev"
           ];
-          image = "ghcr.io/cirrusneptune/homeassistant-mowbark:main";
+          imageFile = haImage;
+          image = "localhost/homeassistant-a:a";
+          #image = "ghcr.io/cirrusneptune/homeassistant-mowbark:sha256-f8c8f7b4ff489822490aa40a5343e9772431b640069176da086e132a839d0c25";
           #image = "localhost/hatest";
           ports = [
             "${cfg.host}:80:8123"
@@ -49,7 +59,7 @@ in {
     };
 
     # Allow VT_ACTIVATE for switching tty
-    systemd.services.podman-homeassistant.serviceConfig.AmbientCapabilities = [ "CAP_SYS_TTY_CONFIG" ];
+    #systemd.services.podman-homeassistant.serviceConfig.AmbientCapabilities = [ "CAP_SYS_TTY_CONFIG" ];
 
     users = {
       users.homeassistant = {
