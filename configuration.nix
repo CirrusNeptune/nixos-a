@@ -163,6 +163,9 @@ in
     libvlc
   ];
 
+
+
+
   # Add docker containers
   virtualisation.oci-containers.backend = "podman";
   a.services.homeassistant = {
