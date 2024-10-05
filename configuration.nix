@@ -103,14 +103,6 @@ in
     user = "a";
   };
 
-  programs.steam = {
-    enable = true;
-    gamescopeSession = {
-      enable = true;
-    };
-  };
-  programs.gamescope.capSysNice = true;
-
   systemd.defaultUnit = lib.mkForce "graphical.target";
 
   hardware.opengl = {
@@ -159,6 +151,7 @@ in
     wget
     git
     gdb
+    file
   ];
 
   # Add docker containers
@@ -193,37 +186,37 @@ in
   # Or disable the firewall altogether.
   networking.firewall.enable = false;
 
-   fileSystems."/b" = {
-       device = "/dev/disk/by-uuid/bc630d37-a38a-4221-9a6f-c04288306d1f";
-       fsType = "ext4"; #  sudo lsblk -f
-   };
+  fileSystems."/b" = {
+    device = "/dev/disk/by-uuid/bc630d37-a38a-4221-9a6f-c04288306d1f";
+    fsType = "ext4"; #  sudo lsblk -f
+  };
 
   # https://nixos.wiki/wiki/Samba
   # deleted hosts params, user stuff,
   # make sure to run smbpasswd -a a as sudos
   services.samba = {
-      enable = true;
-      securityType = "user";
-      openFirewall = true;
-      extraConfig = ''
-        workgroup = WORKGROUP
-        server string = smbnix
-        netbios name = smbnix
-        security = user
-        #use sendfile = yes
-        #max protocol = smb2
-        # note: localhost is the ipv6 localhost ::1
-      '';
-      shares = {
-        public = {
-          path = "/b/multimedia";
-          browseable = "yes";
-          "read only" = "no";
-          "guest ok" = "yes";
-          "create mask" = "0644";
-          "directory mask" = "0755";
-        };
+    enable = true;
+    securityType = "user";
+    openFirewall = true;
+    extraConfig = ''
+      workgroup = WORKGROUP
+      server string = smbnix
+      netbios name = smbnix
+      security = user
+      #use sendfile = yes
+      #max protocol = smb2
+      # note: localhost is the ipv6 localhost ::1
+    '';
+    shares = {
+      public = {
+        path = "/b/multimedia";
+        browseable = "yes";
+        "read only" = "no";
+        "guest ok" = "yes";
+        "create mask" = "0644";
+        "directory mask" = "0755";
       };
+    };
   };
 
   services.samba-wsdd = {
