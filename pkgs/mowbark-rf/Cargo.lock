@@ -256,7 +256,7 @@ dependencies = [
 [[package]]
 name = "libftd2xx-cc1101"
 version = "0.1.0"
-source = "git+https://github.com/CirrusNeptune/libftd2xx-cc1101.git?branch=mowbark-rf#3ba5aaa4bda7af31a31850eb0ec6d5101b593f34"
+source = "git+https://github.com/CirrusNeptune/libftd2xx-cc1101.git?branch=mowbark-rf#74156a992469baac392dd8b8556c8537a15c1eb1"
 dependencies = [
  "ftdi-mpsse",
  "libftd2xx",
@@ -270,7 +270,7 @@ dependencies = [
 [[package]]
 name = "libftd2xx-cc1101-derive"
 version = "0.1.0"
-source = "git+https://github.com/CirrusNeptune/libftd2xx-cc1101.git?branch=mowbark-rf#3ba5aaa4bda7af31a31850eb0ec6d5101b593f34"
+source = "git+https://github.com/CirrusNeptune/libftd2xx-cc1101.git?branch=mowbark-rf#74156a992469baac392dd8b8556c8537a15c1eb1"
 dependencies = [
  "quote",
  "syn 1.0.109",
