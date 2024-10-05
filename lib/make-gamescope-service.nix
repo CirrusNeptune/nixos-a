@@ -9,6 +9,7 @@
   args ? [],
   gamescopeArguments ? [],
   environment ? {},
+  path ? [],
   ...
 }: let
   mkIntegerSeq = start: end: lib.strings.concatMapStringsSep "," toString (lib.lists.range start end);
@@ -64,6 +65,7 @@ in {
     };
 
     inherit environment;
+    inherit path;
   };
 
   security.polkit.enable = true;

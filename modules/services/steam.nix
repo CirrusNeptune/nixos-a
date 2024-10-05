@@ -18,7 +18,12 @@ in {
       user = cfg.user;
       program = "${lib.getBin pkgs.steam}/bin/steam";
       args = [ "-tenfoot" "-pipewire-dmabuf" ];
-      gamescopeArguments = [ "--steam" ];
+      gamescopeArguments = [ "--steam" "--rt" "--mangoapp" "--hdr-enabled" "--adaptive-sync" ];
+      environment = {
+        MANGOHUD = "1";
+        MANGOHUD_CONFIG = "cpu_temp,gpu_temp,ram,vram";
+      };
+      path = [ pkgs.mangohud ];
     })
     {
       programs.steam = {
