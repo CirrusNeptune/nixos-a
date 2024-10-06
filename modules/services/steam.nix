@@ -16,12 +16,22 @@ in {
       service = "steam";
       tty = "tty2";
       user = cfg.user;
+      #user = "root";
+      #program = "/run/current-system/sw/bin/runuser";
+      #args = [ "-u" cfg.user "--" "${lib.getBin pkgs.steam}/bin/steam" "-tenfoot" "-pipewire-dmabuf" ];
       program = "${lib.getBin pkgs.steam}/bin/steam";
       args = [ "-tenfoot" "-pipewire-dmabuf" ];
-      gamescopeArguments = [ "--steam" "--rt" "--mangoapp" "--hdr-enabled" "--adaptive-sync" ];
+      gamescopeArguments = [
+        "--steam"
+        "--rt"
+        #"--mangoapp"
+        "--hdr-enabled"
+      ];
+      #program = "/run/current-system/sw/bin/bash";
+      #args = [ "-c" "cat /proc/self/status" ];
       environment = {
-        MANGOHUD = "1";
-        MANGOHUD_CONFIG = "cpu_temp,gpu_temp,ram,vram";
+        #MANGOHUD = "1";
+        #MANGOHUD_CONFIG = "cpu_temp,gpu_temp,ram,vram";
       };
       path = [ pkgs.mangohud ];
     })
@@ -33,6 +43,15 @@ in {
         };
       };
       programs.gamescope.capSysNice = true;
+      programs.gamemode = {
+        enable = true;
+        settings = {
+          general = {
+            renice = 10;
+          };
+        };
+      };
+      #security.wrappers.gamescope.capabilities = lib.mkForce "cap_sys_nice+p";
     }
   ]);
 }

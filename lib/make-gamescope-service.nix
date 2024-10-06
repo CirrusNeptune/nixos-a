@@ -37,8 +37,13 @@ in {
     serviceConfig = {
       Restart = "always";
       RestartSec = 5;
+      #ExecStart = ''
+      #  ${pkgs.gamescope}/bin/gamescope \
+      #    ${lib.escapeShellArgs gamescopeArguments} \
+      #    -- ${program} ${lib.escapeShellArgs args}
+      #'';
       ExecStart = ''
-        ${pkgs.gamescope}/bin/gamescope \
+        ${config.security.wrapperDir}/gamescope \
           ${lib.escapeShellArgs gamescopeArguments} \
           -- ${program} ${lib.escapeShellArgs args}
       '';
@@ -62,6 +67,9 @@ in {
       StandardError = "journal";
       # Set up a full (custom) user session for the user, required by Gamescope.
       PAMName = "${service}";
+
+      #Capabilities = [ "CAP_SYS_NICE" ];
+      #AmbientCapabilities = [ "CAP_SYS_NICE" ];
     };
 
     inherit environment;
@@ -76,8 +84,9 @@ in {
     auth    required pam_unix.so nullok
     account required pam_unix.so
     session required pam_unix.so
-    session required pam_env.so conffile=/etc/pam/environment readenv=0
-    session required ${config.systemd.package}/lib/security/pam_systemd.so default-capability-ambient-set=~${mkIntegerSeq 0 63}
+    #session required pam_env.so conffile=/etc/pam/environment readenv=0
+    session required ${config.systemd.package}/lib/security/pam_systemd.so
+    #session required ${config.systemd.package}/lib/security/pam_systemd.so default-capability-ambient-set=~${mkIntegerSeq 0 63}
   '';
 
   systemd.targets.graphical.wants = [ "${service}.service" ];

@@ -23,6 +23,19 @@
           # Package overlays
           nixpkgs.overlays = [
             (final: prev: import ./pkgs final)
+            (final: prev: {
+              steam = prev.steam.override {
+                extraPkgs = pkgs: with pkgs; [
+                   mangohud
+                   gamemode
+                ];
+                buildFHSEnv = pkgs.buildFHSEnv.override {
+                  # use the setuid wrapped bubblewrap
+                  bubblewrap = "/run/wrappers/bin/..";
+                };
+                #extraBwrapArgs = [ "--unshare-user" "--uid" "1000" ];
+              };
+            })
           ];
 
           # Use configuration.nix for everything
