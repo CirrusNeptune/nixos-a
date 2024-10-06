@@ -109,6 +109,7 @@ in
     driSupport = true;
     driSupport32Bit = true;
     enable = true;
+    #extraPackages = [pkgs.mangohud];
   };
 
   # Configure keymap in X11
