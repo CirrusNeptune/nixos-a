@@ -132,7 +132,7 @@ in {
       #packages = with pkgs; [
       #  gcc gnumake flex bison ncurses pahole perl bc elfutils openssl
       #];
-      shell = "/home/linuxdev/shell.sh";
+      #shell = "/home/linuxdev/shell.sh";
     };
   };
 }
