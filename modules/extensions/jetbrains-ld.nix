@@ -86,6 +86,7 @@ in {
       openssl
       p11-kit
       pango
+      pcre2
       pixman
       python3
       speex
@@ -126,13 +127,19 @@ in {
       libselinux
     ];
 
-    users.users.linuxdev = {
-      hashedPassword = "$y$j9T$4OwHrG/9t08OLgF.l0pqj0$JJu2hTsddDPF4o12pZUWi0zSap8eStNvymaYt9Ss272";
-      isNormalUser = true;
-      #packages = with pkgs; [
-      #  gcc gnumake flex bison ncurses pahole perl bc elfutils openssl
-      #];
-      #shell = "/home/linuxdev/shell.sh";
+    users.users = {
+      linuxdev = {
+        hashedPassword = "$y$j9T$4OwHrG/9t08OLgF.l0pqj0$JJu2hTsddDPF4o12pZUWi0zSap8eStNvymaYt9Ss272";
+        isNormalUser = true;
+        #packages = with pkgs; [
+        #  gcc gnumake flex bison ncurses pahole perl bc elfutils openssl
+        #];
+        #shell = "/home/linuxdev/shell.sh";
+      };
+      pipewiredev = {
+        hashedPassword = "$y$j9T$4OwHrG/9t08OLgF.l0pqj0$JJu2hTsddDPF4o12pZUWi0zSap8eStNvymaYt9Ss272";
+        isNormalUser = true;
+      };
     };
   };
 }
