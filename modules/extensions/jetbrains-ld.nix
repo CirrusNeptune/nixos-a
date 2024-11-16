@@ -4,6 +4,10 @@ let
 in {
   options.a.extensions.jetbrains-ld = {
     enable = lib.mkEnableOption "Enable jetbrains-ld extension";
+    users = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      description = "Dev users to create";
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -127,19 +131,19 @@ in {
       libselinux
     ];
 
-    users.users = {
-      linuxdev = {
-        hashedPassword = "$y$j9T$4OwHrG/9t08OLgF.l0pqj0$JJu2hTsddDPF4o12pZUWi0zSap8eStNvymaYt9Ss272";
-        isNormalUser = true;
-        #packages = with pkgs; [
-        #  gcc gnumake flex bison ncurses pahole perl bc elfutils openssl
-        #];
-        #shell = "/home/linuxdev/shell.sh";
-      };
-      pipewiredev = {
-        hashedPassword = "$y$j9T$4OwHrG/9t08OLgF.l0pqj0$JJu2hTsddDPF4o12pZUWi0zSap8eStNvymaYt9Ss272";
-        isNormalUser = true;
-      };
+    users.users = lib.attrsets.genAttrs cfg.users (name: {
+      hashedPassword = "$y$j9T$4OwHrG/9t08OLgF.l0pqj0$JJu2hTsddDPF4o12pZUWi0zSap8eStNvymaYt9Ss272";
+      isNormalUser = true;
+      packages = with pkgs; [
+        refresh-profile
+      ];
+    });
+
+    system.activationScripts.build-dev-profile = {
+      text = ''
+        ${lib.concatStringsSep "\n" (lib.lists.forEach cfg.users
+          (name: "echo building dev profile for ${toString name} in ${toString config.users.users.${name}.home}"))}
+      '';
     };
   };
 }

@@ -231,7 +231,10 @@ in
   hardware.bluetooth.powerOnBoot = true; # powers up the default Bluetooth controller on boot
 
   # nix-ld config for jetbrains remote server
-  a.extensions.jetbrains-ld.enable = true;
+  a.extensions.jetbrains-ld = {
+    enable = true;
+    users = [ "linuxdev" "pipewiredev" ];
+  };
 
   # Filter xpad events to clients of the active VT session
   a.extensions.xpad-console-filter.enable = true;
