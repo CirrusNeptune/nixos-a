@@ -1,17 +1,38 @@
 { config, lib, pkgs, ... }:
+with lib;
 let
   cfg = config.a.extensions.jetbrains-ld;
+  userOpts = { name, config, ... }: {
+    options = {
+      devPackages = mkOption {
+        type = types.listOf types.package;
+        default = [];
+        example = literalExpression "[ pkgs.firefox pkgs.thunderbird ]";
+        description = ''
+          The set of packages that should be made available to the user.
+          This is in contrast to {option}`environment.systemPackages`,
+          which adds packages to all users.
+        '';
+      };
+      environment = mkOption {
+        type = types.attrsOf types.str;
+        default = {};
+      };
+    };
+  };
 in {
   options.a.extensions.jetbrains-ld = {
-    enable = lib.mkEnableOption "Enable jetbrains-ld extension";
-    users = lib.mkOption {
-      type = lib.types.listOf lib.types.str;
-      description = "Dev users to create";
+    enable = mkEnableOption "Enable jetbrains-ld extension";
+    users = mkOption {
+      default = {};
+      type = with types; attrsOf (submodule userOpts);
+      description = "Dev users to create with their packages";
     };
   };
 
-  config = lib.mkIf cfg.enable {
+  config = mkIf cfg.enable {
     programs.nix-ld.enable = true;
+    programs.nix-ld.package = pkgs.nix-ld-rs;
     programs.nix-ld.libraries = with pkgs; [
       SDL
       SDL2
@@ -131,19 +152,24 @@ in {
       libselinux
     ];
 
-    users.users = lib.attrsets.genAttrs cfg.users (name: {
+    users.users = mapAttrs (name: user: {
       hashedPassword = "$y$j9T$4OwHrG/9t08OLgF.l0pqj0$JJu2hTsddDPF4o12pZUWi0zSap8eStNvymaYt9Ss272";
       isNormalUser = true;
-      packages = with pkgs; [
-        refresh-profile
-      ];
-    });
+    }) cfg.users;
 
-    system.activationScripts.build-dev-profile = {
-      text = ''
-        ${lib.concatStringsSep "\n" (lib.lists.forEach cfg.users
-          (name: "echo building dev profile for ${toString name} in ${toString config.users.users.${name}.home}"))}
+    system.activationScripts = mapAttrs' (name: user: nameValuePair "build-dev-profile-${name}" {
+      text = let
+        userCfg = config.users.users.${name};
+        userName = userCfg.name;
+        groupName = userCfg.group;
+        homeDir = userCfg.home;
+        unwrappedCC = pkgs.stdenv.cc.cc;
+        hostPlatformConfig = pkgs.stdenv.hostPlatform.config;
+        shell = pkgs.mkShell { name = "${name}-shell"; packages = [ pkgs.stdenv.cc.libc_dev pkgs.curl pkgs.wget ] ++ user.devPackages; inputsFrom = user.devPackages; };
+      in ''
+        echo setting up dev profile for ${userName} in ${homeDir}
+        printf "$(tail -n +6 ${shell} | ${pkgs.gnused}/bin/sed '/^declare -x \(PWD=.*\|OLDPWD\|HOME=.*\|TEMP=.*\|TEMPDIR=.*\|TMP=.*\|TMPDIR=.*\|NIX_ENFORCE_PURITY=.*\|SSL_CERT_FILE=.*\|NIX_SSL_CERT_FILE=.*\)/d')\ndeclare -x BINDGEN_EXTRA_CLANG_ARGS=\"-idirafter ${unwrappedCC}/lib/gcc/${hostPlatformConfig}/${unwrappedCC.version}/include \$NIX_CFLAGS_COMPILE\"\n${concatStringsSep "\n" (lib.mapAttrsToList (n: v: "declare -x ${escapeShellArg n}=${escapeShellArg v}") user.environment)}" | ${pkgs.coreutils}/bin/install --mode=0644 --owner=${userName} --group=${groupName} /dev/stdin ${homeDir}/.bash_profile
       '';
-    };
+    }) cfg.users;
   };
 }

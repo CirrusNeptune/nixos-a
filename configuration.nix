@@ -233,7 +233,10 @@ in
   # nix-ld config for jetbrains remote server
   a.extensions.jetbrains-ld = {
     enable = true;
-    users = [ "linuxdev" "pipewiredev" ];
+    users = {
+      linuxdev = { devPackages = [ pkgs.linux ]; };
+      pipewiredev = { devPackages = [ pkgs.pkg-config pkgs.pipewire ]; environment = { PIPEWIRE_RUNTIME_DIR = "/run/user/1000"; }; };
+    };
   };
 
   # Filter xpad events to clients of the active VT session
