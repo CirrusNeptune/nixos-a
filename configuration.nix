@@ -51,7 +51,7 @@ in
         ];
         routes = [
           # create default routes
-          { routeConfig.Gateway = gatewayHost; }
+          { Gateway = gatewayHost; }
         ];
         # make the routes on this interface a dependency for network-online.target
         linkConfig.RequiredForOnline = "routable";
@@ -105,11 +105,9 @@ in
 
   systemd.defaultUnit = lib.mkForce "graphical.target";
 
-  hardware.opengl = {
-    driSupport = true;
-    driSupport32Bit = true;
+  hardware.graphics = {
     enable = true;
-    #extraPackages = [pkgs.mangohud];
+    enable32Bit = true;
   };
 
   # Configure keymap in X11
@@ -197,25 +195,22 @@ in
   # make sure to run smbpasswd -a a as sudos
   services.samba = {
     enable = true;
-    securityType = "user";
     openFirewall = true;
-    extraConfig = ''
-      workgroup = WORKGROUP
-      server string = smbnix
-      netbios name = smbnix
-      security = user
-      #use sendfile = yes
-      #max protocol = smb2
-      # note: localhost is the ipv6 localhost ::1
-    '';
-    shares = {
-      public = {
-        path = "/b/multimedia";
-        browseable = "yes";
+    settings = {
+      "global" = {
+        "workgroup" = "WORKGROUP";
+        "server string" = "smbnix";
+        "netbios name" = "smbnix";
+        "security" = "user";
+      };
+      "public" = {
+        "path" = "/b/multimedia";
         "read only" = "no";
+        "browseable" = "yes";
         "guest ok" = "yes";
         "create mask" = "0644";
         "directory mask" = "0755";
+        "comment" = "Multimedia samba share.";
       };
     };
   };
