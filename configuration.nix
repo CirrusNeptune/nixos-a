@@ -5,7 +5,7 @@
 { config, lib, pkgs, ... }:
 
 let
-  ethernetInterface = "eno2";
+  ethernetInterface = "wlo1";
   timeZone = "America/Los_Angeles";
   makeIpHost = nodeId: "10.0.0.${toString nodeId}";
   gatewayHost = makeIpHost 1;
@@ -37,6 +37,14 @@ in
   # networking.networkmanager.enable = true;  # Easiest to use and most distros use this by default.
   networking.useNetworkd = true;
   networking.useDHCP = false;
+  networking.wireless = {
+    enable = true;
+    networks = {
+      "JAMzzz" = {
+        pskRaw = "b9fcbf4ea7cb96951df15481c5547c46c9019b336fe8943544214ff52468d596";
+      };
+    };
+  };
   systemd.network = {
     enable = true;
     networks = {
