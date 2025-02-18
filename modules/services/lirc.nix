@@ -2,9 +2,10 @@
 let
   cfg = config.a.services.lirc;
 
+  # When you swap IR devices the vendor id and product id needs updated. See ./docs/ir.md for more details
   nakawUdevRule = pkgs.writeTextFile {
     name = "nakaw-udev-rule";
-    text = ''SUBSYSTEM=="usb", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6015", MODE="0666"'';
+    text = ''SUBSYSTEM=="usb", ATTRS{idVendor}=="1781", ATTRS{idProduct}=="0938", MODE="0666"'';
     destination = "/etc/udev/rules.d/99-nakaw.rules";
   };
 
