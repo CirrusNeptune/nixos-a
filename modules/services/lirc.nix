@@ -126,7 +126,7 @@ in {
 
     users.groups.lirc.gid = config.ids.gids.lirc;
   } (makeLircService "lircd-nakar"
-    [ "--driver=ftdi" "--device=serial=B000YH8J" ]
+    [ "--driver=default" ]
     ''
       begin remote
         name  nakar
@@ -147,7 +147,7 @@ in {
         ${codes}
       end remote
     '') (makeLircService "lircd-nakaw"
-    [ "--driver=ftdix" "--device=serial=D30GHI2M,output=2" ]
+    [ "--driver=default" ]
     ''
       begin remote
         name  nakaw
