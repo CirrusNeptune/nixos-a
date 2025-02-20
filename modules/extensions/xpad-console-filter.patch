@@ -73,7 +73,7 @@ index 000000000..c0142f121
 +
 +#endif /* __LINUX_CONSOLE_FILTER_H */
 diff --git a/drivers/input/evdev.c b/drivers/input/evdev.c
-index 95f90699d..48a4b7cb3 100644
+index 95f90699d..5f2ab87f3 100644
 --- a/drivers/input/evdev.c
 +++ b/drivers/input/evdev.c
 @@ -24,6 +24,8 @@
@@ -152,20 +152,22 @@ index 95f90699d..48a4b7cb3 100644
  	file->private_data = client;
  	stream_open(inode, file);
  
-@@ -1330,6 +1357,12 @@ static void evdev_cleanup(struct evdev *evdev)
+@@ -1330,6 +1357,14 @@ static void evdev_cleanup(struct evdev *evdev)
  	}
  }
  
 +static __always_inline bool allow_console_filtering(struct input_dev *dev)
 +{
 +	struct input_id *input_id = &dev->id;
-+	return input_id->product == 0xb13 && input_id->vendor == 0x45e;
++	dev_dbg(&dev->dev, "allow_console_filtering: vendor: 0x%04X, product: 0x%04X, bustype: 0x%04X, version: 0x%04X\n", input_id->vendor, input_id->product, input_id->bustype, input_id->version);
++	return (input_id->product == 0xb13 && input_id->vendor == 0x45e)
++		|| (input_id->product == 0xce6 && input_id->vendor == 0x54c);
 +}
 +
  /*
   * Create new evdev device. Note that input core serializes calls
   * to connect and disconnect.
-@@ -1359,6 +1392,7 @@ static int evdev_connect(struct input_handler *handler, struct input_dev *dev,
+@@ -1359,6 +1394,7 @@ static int evdev_connect(struct input_handler *handler, struct input_dev *dev,
  	spin_lock_init(&evdev->client_lock);
  	mutex_init(&evdev->mutex);
  	evdev->exist = true;
@@ -224,3 +226,102 @@ index 5824bca02..aac4963cb 100644
  	file->private_data = client;
  	stream_open(inode, file);
  
+diff --git a/drivers/media/rc/keymaps/rc-shockwave.c b/drivers/media/rc/keymaps/rc-shockwave.c
+new file mode 100644
+index 000000000..082f27152
+--- /dev/null
++++ b/drivers/media/rc/keymaps/rc-shockwave.c
+@@ -0,0 +1,79 @@
++//
++// Created by linuxdev on 2/20/25.
++//
++
++#include <media/rc-map.h>
++#include <linux/module.h>
++
++static struct rc_map_table shockwave_table[] = {
++	//	{0xFE01, KEY_POWER}
++	//	{0xFA05, KEY_MUTE}
++	//	{0xFD02, TV}
++	//	{0xCD32, HDMI2}
++	//	{0xCC33, HDMI3}
++	//	{0xCB34, HDMI4}
++	//	{0xCA35, Opt}
++	//	{0xC936, Coax}
++	//	{0xC837, Bt}
++	//	{0xC738, Aux}
++	//	{0xBA45, USB}
++	//	{0xDC23, Music}
++	//	{0xDF20, Movie}
++	//	{0xDE21, Game}
++	//	{0xDA25, Night}
++	//	{0x9F60, NoDSP}
++	//	{0xA758, AllChStereo}
++	//	{0xA659, Surround}
++	//	{0x9B64, Setup}
++	//	{0x9E61, InfoStop}
++	//	{0x9D62, Return}
++	//	{0xB748, SsePlus}
++	//	{0xB649, SseMinus}
++	//	{0xAF50, Left}
++	//	{0xAE51, Right}
++	//	{0xB847, Enter}
++	//	{0xEF10, BassPlus}
++	//	{0xC639, BassMinus}
++		{0xFB04, KEY_VOLUMEUP}
++		{0xFC03, KEY_VOLUMEDOWN}
++	//	{0xEB14, CenterPlus}
++	//	{0xBF40, CenterMinus}
++	//	{0xEA15, TreblePlus}
++	//	{0xBB44, TrebleMinus}
++	//	{0xEE11, SurroundSidePlus}
++	//	{0xBE41, SurroundSideMinus}
++	//	{0xBD42, SurroundBackPlus}
++	//	{0xBC43, SurroundBackMinus}
++	//	{0xAA55, SystemMemory1}
++	//	{0xA956, SystemMemory2}
++	//	{0x8F70, SystemMemory3}
++	//	{0xB946, BtPlayPause}
++	//	{0x9A65, BtStop}
++	//	{0xD926, BtPrevTrack}
++	//	{0xD827, BtNextTrack}
++};
++
++static struct rc_map_list shockwave_map = {
++		.map = {
++				.scan     = shockwave_table,
++				.size     = ARRAY_SIZE(shockwave_table),
++				.rc_proto = RC_PROTO_NEC,
++				.name     = RC_MAP_SHOCKWAVE,
++		}
++};
++
++static int __init init_rc_map_shockwave(void)
++{
++	return rc_map_register(&shockwave_map);
++}
++
++static void __exit exit_rc_map_shockwave(void)
++{
++	rc_map_unregister(&shockwave_map);
++}
++
++module_init(init_rc_map_shockwave)
++module_exit(exit_rc_map_shockwave)
++
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Max Wright <maxwright378@gmail.com>");
+\ No newline at end of file
+diff --git a/include/media/rc-map.h b/include/media/rc-map.h
+index 4676545ff..b4eceea0d 100644
+--- a/include/media/rc-map.h
++++ b/include/media/rc-map.h
+@@ -347,6 +347,8 @@ struct rc_map *rc_map_get(const char *name);
+ #define RC_MAP_XBOX_DVD                  "rc-xbox-dvd"
+ #define RC_MAP_ZX_IRDEC                  "rc-zx-irdec"
+ 
++#define RC_MAP_SHOCKWAVE                 "rc-shockwave"
++
+ /*
+  * Please, do not just append newer Remote Controller names at the end.
+  * The names should be ordered in alphabetical order

@@ -5,7 +5,7 @@ let
   # When you swap IR devices the vendor id and product id needs updated. See ./docs/ir.md for more details
   nakawUdevRule = pkgs.writeTextFile {
     name = "nakaw-udev-rule";
-    text = ''SUBSYSTEM=="usb", ATTRS{idVendor}=="1781", ATTRS{idProduct}=="0938", MODE="0666"'';
+    text = ''KERNEL=="lirc[0-9]*", MODE="0666"'';
     destination = "/etc/udev/rules.d/99-nakaw.rules";
   };
 
@@ -125,29 +125,8 @@ in {
     };
 
     users.groups.lirc.gid = config.ids.gids.lirc;
-  } (makeLircService "lircd-nakar"
-    [ "--driver=default" ]
-    ''
-      begin remote
-        name  nakar
-        bits           32
-        flags SPACE_ENC|CONST_LENGTH
-        eps            30
-        aeps          100
-
-        header       2272  1124
-        one           147   419
-        zero          147   134
-        ptrail        149
-        repeat       2271   560
-        gap          27189
-        toggle_bit_mask 0x0
-        frequency    38000
-
-        ${codes}
-      end remote
-    '') (makeLircService "lircd-nakaw"
-    [ "--driver=default" ]
+  } (makeLircService "lircd-nakaw"
+    [ "--device=/dev/lirc0" ]
     ''
       begin remote
         name  nakaw
