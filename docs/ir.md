@@ -15,26 +15,6 @@ sounds and setting the correct sound mode for the media experience.
 3. The iguana kernel sends the command to the [iguana ir device](https://www.iguanaworks.net/products/usb-ir-transceiver/) that emits the signal
 4. The receiving IR signal device takes in the command and adjusts as needed to fit the use case 
 
-
-# How To
-## How to find the device ID and Prod Id
-1. ssh into the nixos machine
-2. Assure that your new ir transceiver is plugged in
-3. Run `sudo cat /sys/kernel/debug/usb/devices | grep -E "^([TSPD]:.*|)$"`
-4. Find the device by manufacturer
-
-**Example**
-```
-> sudo cat /sys/kernel/debug/usb/devices | grep -E "^([TSPD]:.*|)$"
-...
-T:  Bus=01 Lev=01 Prnt=01 Port=04 Cnt=02 Dev#= 12 Spd=1.5  MxCh= 0
-D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS= 8 #Cfgs=  1
-P:  Vendor=1781 ProdID=0938 Rev= 0.00
-S:  Manufacturer=IguanaWorks
-S:  Product=USB IR Transceiver
-...
-```
-
 # Resources
 [lirc docs](https://www.lirc.org/html/index.html) - lirc system docs <br> 
 [iguanaworks](https://www.iguanaworks.net/) - IR transceiver manufacturer's website<br> 

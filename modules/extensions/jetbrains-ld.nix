@@ -18,6 +18,16 @@ let
         type = types.attrsOf types.str;
         default = {};
       };
+      packages = mkOption {
+        type = types.listOf types.package;
+        default = [];
+        example = literalExpression "[ pkgs.firefox pkgs.thunderbird ]";
+        description = ''
+          The set of packages that should be made available to the user.
+          This is in contrast to {option}`environment.systemPackages`,
+          which adds packages to all users.
+        '';
+      };
     };
   };
 in {
@@ -33,6 +43,7 @@ in {
   config = mkIf cfg.enable {
     programs.nix-ld.enable = true;
     programs.nix-ld.package = pkgs.nix-ld-rs;
+    # Runtime libraries required by IDE server
     programs.nix-ld.libraries = with pkgs; [
       SDL
       SDL2
@@ -165,10 +176,34 @@ in {
         homeDir = userCfg.home;
         unwrappedCC = pkgs.stdenv.cc.cc;
         hostPlatformConfig = pkgs.stdenv.hostPlatform.config;
-        shell = pkgs.mkShell { name = "${name}-shell"; packages = [ pkgs.stdenv.cc.libc_dev pkgs.curl pkgs.wget ] ++ user.devPackages; inputsFrom = user.devPackages; };
+        shell = pkgs.mkShell {
+          name = "${name}-shell";
+          packages = [ pkgs.stdenv.cc.libc_dev ] ++ user.packages ++ user.devPackages;
+          inputsFrom = user.devPackages;
+          # Bash script ran during derivation build with all dev packages in the environment.
+          # Manipulate environment as necessary before final `export`.
+          buildPhase = ''
+            { unset PWD;
+              unset OLDPWD;
+              unset HOME;
+              unset TEMP;
+              unset TEMPDIR;
+              unset TMP;
+              unset TMPDIR;
+              unset NIX_ENFORCE_PURITY;
+              unset SSL_CERT_FILE;
+              unset NIX_SSL_CERT_FILE;
+              export BINDGEN_EXTRA_CLANG_ARGS="-idirafter ${unwrappedCC}/lib/gcc/${hostPlatformConfig}/${unwrappedCC.version}/include $NIX_CFLAGS_COMPILE";
+              export SHELL=/run/current-system/sw/bin/bash;
+              ${concatStringsSep "\n" (lib.mapAttrsToList (n: v: "export ${escapeShellArg n}=${escapeShellArg v}") user.environment)}
+              export PATH=${pkgs.bashInteractive}/bin:$PATH:/run/current-system/sw/bin;
+              export;
+            } >> "$out"
+          '';
+        };
       in ''
         echo setting up dev profile for ${userName} in ${homeDir}
-        printf "$(tail -n +6 ${shell} | ${pkgs.gnused}/bin/sed '/^declare -x \(PWD=.*\|OLDPWD\|HOME=.*\|TEMP=.*\|TEMPDIR=.*\|TMP=.*\|TMPDIR=.*\|NIX_ENFORCE_PURITY=.*\|SSL_CERT_FILE=.*\|NIX_SSL_CERT_FILE=.*\)/d')\ndeclare -x BINDGEN_EXTRA_CLANG_ARGS=\"-idirafter ${unwrappedCC}/lib/gcc/${hostPlatformConfig}/${unwrappedCC.version}/include \$NIX_CFLAGS_COMPILE\"\n${concatStringsSep "\n" (lib.mapAttrsToList (n: v: "declare -x ${escapeShellArg n}=${escapeShellArg v}") user.environment)}" | ${pkgs.coreutils}/bin/install --mode=0644 --owner=${userName} --group=${groupName} /dev/stdin ${homeDir}/.bash_profile
+        ${pkgs.coreutils}/bin/install --mode=0644 --owner=${userName} --group=${groupName} ${shell} ${homeDir}/.bash_profile
       '';
     }) cfg.users;
   };

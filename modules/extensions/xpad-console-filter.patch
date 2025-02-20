@@ -73,7 +73,7 @@ index 000000000..c0142f121
 +
 +#endif /* __LINUX_CONSOLE_FILTER_H */
 diff --git a/drivers/input/evdev.c b/drivers/input/evdev.c
-index 95f90699d..48a4b7cb3 100644
+index 95f90699d..5f2ab87f3 100644
 --- a/drivers/input/evdev.c
 +++ b/drivers/input/evdev.c
 @@ -24,6 +24,8 @@
@@ -152,20 +152,22 @@ index 95f90699d..48a4b7cb3 100644
  	file->private_data = client;
  	stream_open(inode, file);
  
-@@ -1330,6 +1357,12 @@ static void evdev_cleanup(struct evdev *evdev)
+@@ -1330,6 +1357,14 @@ static void evdev_cleanup(struct evdev *evdev)
  	}
  }
  
 +static __always_inline bool allow_console_filtering(struct input_dev *dev)
 +{
 +	struct input_id *input_id = &dev->id;
-+	return input_id->product == 0xb13 && input_id->vendor == 0x45e;
++	dev_dbg(&dev->dev, "allow_console_filtering: vendor: 0x%04X, product: 0x%04X, bustype: 0x%04X, version: 0x%04X\n", input_id->vendor, input_id->product, input_id->bustype, input_id->version);
++	return (input_id->product == 0xb13 && input_id->vendor == 0x45e)
++		|| (input_id->product == 0xce6 && input_id->vendor == 0x54c);
 +}
 +
  /*
   * Create new evdev device. Note that input core serializes calls
   * to connect and disconnect.
-@@ -1359,6 +1392,7 @@ static int evdev_connect(struct input_handler *handler, struct input_dev *dev,
+@@ -1359,6 +1394,7 @@ static int evdev_connect(struct input_handler *handler, struct input_dev *dev,
  	spin_lock_init(&evdev->client_lock);
  	mutex_init(&evdev->mutex);
  	evdev->exist = true;
