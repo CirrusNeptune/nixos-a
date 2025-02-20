@@ -73,7 +73,7 @@ index 000000000..c0142f121
 +
 +#endif /* __LINUX_CONSOLE_FILTER_H */
 diff --git a/drivers/input/evdev.c b/drivers/input/evdev.c
-index 95f90699d..48a4b7cb3 100644
+index 95f90699d..5bfdb2c9e 100644
 --- a/drivers/input/evdev.c
 +++ b/drivers/input/evdev.c
 @@ -24,6 +24,8 @@
@@ -152,20 +152,21 @@ index 95f90699d..48a4b7cb3 100644
  	file->private_data = client;
  	stream_open(inode, file);
  
-@@ -1330,6 +1357,12 @@ static void evdev_cleanup(struct evdev *evdev)
+@@ -1330,6 +1357,13 @@ static void evdev_cleanup(struct evdev *evdev)
  	}
  }
  
 +static __always_inline bool allow_console_filtering(struct input_dev *dev)
 +{
 +	struct input_id *input_id = &dev->id;
-+	return input_id->product == 0xb13 && input_id->vendor == 0x45e;
++	return (input_id->product == 0xb13 && input_id->vendor == 0x45e)
++		|| (input_id->product == 0xce6 && input_id->vendor == 0x54c);
 +}
 +
  /*
   * Create new evdev device. Note that input core serializes calls
   * to connect and disconnect.
-@@ -1359,6 +1392,7 @@ static int evdev_connect(struct input_handler *handler, struct input_dev *dev,
+@@ -1359,6 +1393,7 @@ static int evdev_connect(struct input_handler *handler, struct input_dev *dev,
  	spin_lock_init(&evdev->client_lock);
  	mutex_init(&evdev->mutex);
  	evdev->exist = true;
@@ -224,3 +225,12 @@ index 5824bca02..aac4963cb 100644
  	file->private_data = client;
  	stream_open(inode, file);
  
+diff --git a/drivers/media/rc/shockwave.c b/drivers/media/rc/shockwave.c
+new file mode 100644
+index 000000000..b2ddd3fe8
+--- /dev/null
++++ b/drivers/media/rc/shockwave.c
+@@ -0,0 +1,3 @@
++//
++// Created by linuxdev on 2/20/25.
++//

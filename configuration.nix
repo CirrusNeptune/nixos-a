@@ -235,7 +235,7 @@ in
   };
 
   # Filter xpad events to clients of the active VT session
-  a.extensions.xpad-console-filter.enable = false;
+  a.extensions.xpad-console-filter.enable = true;
 
   # Copy the Nix:wqOS configuration file and link it from the resulting system
   # (/run/current-system/configuration.nix). This is useful in case you
