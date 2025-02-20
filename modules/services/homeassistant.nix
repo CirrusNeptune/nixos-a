@@ -30,7 +30,7 @@ in {
     a.services.lirc.enable = true;
     virtualisation.oci-containers = {
       containers = {
-        homeassisstant = {
+        homeassistant = {
           volumes = [
             "/var/home-assistant:/config"
             "/etc/timezone:/etc/timezone:ro"

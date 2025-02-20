@@ -18,6 +18,16 @@ let
         type = types.attrsOf types.str;
         default = {};
       };
+      packages = mkOption {
+        type = types.listOf types.package;
+        default = [];
+        example = literalExpression "[ pkgs.firefox pkgs.thunderbird ]";
+        description = ''
+          The set of packages that should be made available to the user.
+          This is in contrast to {option}`environment.systemPackages`,
+          which adds packages to all users.
+        '';
+      };
     };
   };
 in {
@@ -165,7 +175,7 @@ in {
         homeDir = userCfg.home;
         unwrappedCC = pkgs.stdenv.cc.cc;
         hostPlatformConfig = pkgs.stdenv.hostPlatform.config;
-        shell = pkgs.mkShell { name = "${name}-shell"; packages = [ pkgs.stdenv.cc.libc_dev pkgs.curl pkgs.wget ] ++ user.devPackages; inputsFrom = user.devPackages; };
+        shell = pkgs.mkShell { name = "${name}-shell"; packages = [ pkgs.stdenv.cc.libc_dev pkgs.curl pkgs.wget pkgs.git pkgs.less ] ++ user.packages ++ user.devPackages; inputsFrom = user.devPackages; };
       in ''
         echo setting up dev profile for ${userName} in ${homeDir}
         printf "$(tail -n +6 ${shell} | ${pkgs.gnused}/bin/sed '/^declare -x \(PWD=.*\|OLDPWD\|HOME=.*\|TEMP=.*\|TEMPDIR=.*\|TMP=.*\|TMPDIR=.*\|NIX_ENFORCE_PURITY=.*\|SSL_CERT_FILE=.*\|NIX_SSL_CERT_FILE=.*\)/d')\ndeclare -x BINDGEN_EXTRA_CLANG_ARGS=\"-idirafter ${unwrappedCC}/lib/gcc/${hostPlatformConfig}/${unwrappedCC.version}/include \$NIX_CFLAGS_COMPILE\"\n${concatStringsSep "\n" (lib.mapAttrsToList (n: v: "declare -x ${escapeShellArg n}=${escapeShellArg v}") user.environment)}" | ${pkgs.coreutils}/bin/install --mode=0644 --owner=${userName} --group=${groupName} /dev/stdin ${homeDir}/.bash_profile
