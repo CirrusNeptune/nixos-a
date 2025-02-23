@@ -1,17 +1,151 @@
+diff --git a/drivers/hid/hidraw.c b/drivers/hid/hidraw.c
+index 13c8dd8cd..c0ea8f837 100644
+--- a/drivers/hid/hidraw.c
++++ b/drivers/hid/hidraw.c
+@@ -30,6 +30,9 @@
+ 
+ #include <linux/hidraw.h>
+ 
++#include <linux/dev_printk.h>
++#include "../input/console-filter.h"
++
+ static int hidraw_major;
+ static struct cdev hidraw_cdev;
+ static const struct class hidraw_class = {
+@@ -261,6 +264,11 @@ static __poll_t hidraw_poll(struct file *file, poll_table *wait)
+ 	return mask;
+ }
+ 
++static __always_inline bool allow_console_filtering(struct hid_device *dev)
++{
++	return allow_console_filtering_vid_pid(dev->vendor, dev->product);
++}
++
+ static int hidraw_open(struct inode *inode, struct file *file)
+ {
+ 	unsigned int minor = iminor(inode);
+@@ -301,6 +309,13 @@ static int hidraw_open(struct inode *inode, struct file *file)
+ 		}
+ 	}
+ 
++	if (allow_console_filtering(dev->hid)) {
++		list->console = get_client_console();
++		dev_dbg(dev->dev, "hidraw console %d\n", list->console);
++	} else {
++		list->console = -1;
++	}
++
+ 	list->hidraw = hidraw_table[minor];
+ 	mutex_init(&list->read_mutex);
+ 	spin_lock_irqsave(&hidraw_table[minor]->list_lock, flags);
+@@ -520,8 +535,15 @@ int hidraw_report_event(struct hid_device *hid, u8 *data, int len)
+ 	int ret = 0;
+ 	unsigned long flags;
+ 
++	int active_console = fg_console;
++	dev_dbg(dev->dev, "hidraw active_console: %d\n", active_console);
++
+ 	spin_lock_irqsave(&dev->list_lock, flags);
+ 	list_for_each_entry(list, &dev->list, node) {
++		if (!(list->console == -1 || active_console == -1 ||
++			list->console == active_console))
++			continue;
++
+ 		int new_head = (list->head + 1) & (HIDRAW_BUFFER_SIZE - 1);
+ 
+ 		if (new_head == list->tail)
 diff --git a/drivers/input/console-filter.h b/drivers/input/console-filter.h
 new file mode 100644
-index 000000000..c0142f121
+index 000000000..690b5efbe
 --- /dev/null
 +++ b/drivers/input/console-filter.h
-@@ -0,0 +1,68 @@
+@@ -0,0 +1,211 @@
 +#ifndef __LINUX_CONSOLE_FILTER_H
 +#define __LINUX_CONSOLE_FILTER_H
 +
 +#include <linux/vt_kern.h>
 +
-+static inline pid_t get_client_sid(void)
++static inline pid_t get_systemd_exec_pid(struct task_struct *task)
 +{
-+	struct task_struct *task = current;
++#define SCAN_BUFFER_LEN 128
++#define PID_BUFFER_LEN 16
++	pid_t res = 0;
++	u8 scan_buffer[SCAN_BUFFER_LEN];
++	u8 pid_buffer[PID_BUFFER_LEN];
++
++	struct mm_struct *mm = get_task_mm(task);
++	unsigned long env_start, env_end, cur, chr, read_len, cmp_len, ref_str_len, pid_len;
++	const u8* ref_str_ptr;
++	bool expect_exact = false;
++	if (!mm)
++		goto out;
++	if (!mm->arg_end)
++		goto out_mm;	/* Shh! No looking before we're done */
++
++	spin_lock(&mm->arg_lock);
++	env_start = mm->env_start;
++	env_end = mm->env_end;
++	spin_unlock(&mm->arg_lock);
++
++#define DEF_REF_STR_LEN 17
++#define DEF_REF_STR "SYSTEMD_EXEC_PID="
++	ref_str_len = DEF_REF_STR_LEN;
++	ref_str_ptr = DEF_REF_STR;
++
++	pid_len = 0;
++
++	for (cur = env_start; cur < env_end; cur += read_len) {
++		read_len = min_t(unsigned long, SCAN_BUFFER_LEN, env_end - cur);
++		read_len = access_process_vm(task, cur,
++									 scan_buffer, read_len,
++									 FOLL_FORCE);
++		if (read_len == 0)
++			break;
++
++		for (chr = 0; chr < read_len; ++chr) {
++			if (ref_str_len != 0) {
++				if (scan_buffer[chr] != ref_str_ptr[0]) {
++					if (expect_exact) {
++						--chr;
++						ref_str_len = DEF_REF_STR_LEN;
++						ref_str_ptr = DEF_REF_STR;
++						expect_exact = false;
++					}
++					continue;
++				}
++				cmp_len = min_t(size_t, ref_str_len, read_len - chr);
++				if (memcmp(scan_buffer + chr, ref_str_ptr, cmp_len) != 0)
++					continue;
++				ref_str_ptr += cmp_len;
++				ref_str_len -= cmp_len;
++				chr += cmp_len - 1;
++				expect_exact = true;
++			} else if (scan_buffer[chr] != '\0') {
++				if (pid_len == PID_BUFFER_LEN - 1) // leave room for null terminator
++					goto out_mm;
++				pid_buffer[pid_len++] = scan_buffer[chr];
++			} else {
++				pid_buffer[pid_len] = '\0';
++				unsigned long resul = 0;
++				if (kstrtoul(pid_buffer, 10, &resul) == 0)
++					res = resul;
++				goto out_mm;
++			}
++		}
++	}
++
++out_mm:
++	mmput(mm);
++out:
++	return res;
++#undef SCAN_BUFFER_LEN
++#undef PID_BUFFER_LEN
++#undef DEF_REF_STR_LEN
++#undef DEF_REF_STR
++}
++
++static inline pid_t get_task_sid(struct task_struct *task)
++{
 +	struct task_struct *parent = NULL;
 +	pid_t sid = 0;
 +
@@ -62,18 +196,83 @@ index 000000000..c0142f121
 +	return console;
 +}
 +
++static inline pid_t get_sid_of_console(int console)
++{
++	struct vc_data *vc;
++	struct tty_struct *tty;
++	unsigned long flags;
++	struct pid *session;
++	pid_t session_nr = 0;
++
++	if (console < 0 || console >= MAX_NR_CONSOLES)
++		return 0;
++
++	vc = vc_cons[console].d;
++	if (!vc)
++		return 0;
++	tty = tty_port_tty_get(&vc->port);
++	if (!tty)
++		return 0;
++
++	spin_lock_irqsave(&tty->ctrl.lock, flags);
++	session = tty->ctrl.session;
++	if (session)
++		session_nr = pid_vnr(session);
++	spin_unlock_irqrestore(&tty->ctrl.lock, flags);
++
++	return session_nr;
++}
++
 +static inline int get_client_console(void)
 +{
-+	pid_t client_sid = get_client_sid();
-+	if (client_sid == 0)
-+		return -1;
++	struct task_struct *task = current;
++	struct task_struct *exec_task;
++	pid_t task_sid;
++	int iteration;
++	struct pid *pid;
++	int console = -1;
 +
-+	return get_console_of_sid(client_sid);
++	get_task_struct(task);
++
++	for (iteration = 0; iteration < 10; ++iteration) {
++		task_sid = get_task_sid(task);
++		if (task_sid == 0)
++			goto out; // kernel root or an error
++
++		console = get_console_of_sid(task_sid);
++		if (console != -1)
++			goto out; // current task can be traced to a virtual console
++
++		pid = find_get_pid(get_systemd_exec_pid(task));
++		if (!pid)
++			goto out;
++
++		exec_task = get_pid_task(pid, PIDTYPE_PID);
++		put_pid(pid);
++
++		if (!exec_task) {
++			goto out;
++		} else if (exec_task == task) {
++			put_task_struct(exec_task);
++			goto out; //  remote connection if exec_task == task
++		}
++		put_task_struct(task);
++		task = exec_task;
++	}
++
++out:
++	put_task_struct(task);
++	return console;
++}
++
++static __always_inline bool allow_console_filtering_vid_pid(int vid, int pid)
++{
++	return (pid == 0xb13 && vid == 0x45e) || (pid && vid == 0x54c);
 +}
 +
 +#endif /* __LINUX_CONSOLE_FILTER_H */
 diff --git a/drivers/input/evdev.c b/drivers/input/evdev.c
-index 95f90699d..5f2ab87f3 100644
+index 95f90699d..22acf8f50 100644
 --- a/drivers/input/evdev.c
 +++ b/drivers/input/evdev.c
 @@ -24,6 +24,8 @@
@@ -108,7 +307,7 @@ index 95f90699d..5f2ab87f3 100644
 +	int active_console = -1;
 +	if (evdev->allow_console_filtering) {
 +		active_console = fg_console;
-+		dev_dbg(&evdev->dev, "active_console: %d\n", active_console);
++		dev_dbg(&evdev->dev, "evdev active_console: %d\n", active_console);
 +	}
  
  	rcu_read_lock();
@@ -144,7 +343,7 @@ index 95f90699d..5f2ab87f3 100644
  
 +	if (evdev->allow_console_filtering) {
 +		client->console = get_client_console();
-+		dev_dbg(&evdev->dev, "console %d\n", client->console);
++		dev_dbg(&evdev->dev, "evdev console %d\n", client->console);
 +	} else {
 +		client->console = -1;
 +	}
@@ -152,22 +351,20 @@ index 95f90699d..5f2ab87f3 100644
  	file->private_data = client;
  	stream_open(inode, file);
  
-@@ -1330,6 +1357,14 @@ static void evdev_cleanup(struct evdev *evdev)
+@@ -1330,6 +1357,12 @@ static void evdev_cleanup(struct evdev *evdev)
  	}
  }
  
 +static __always_inline bool allow_console_filtering(struct input_dev *dev)
 +{
 +	struct input_id *input_id = &dev->id;
-+	dev_dbg(&dev->dev, "allow_console_filtering: vendor: 0x%04X, product: 0x%04X, bustype: 0x%04X, version: 0x%04X\n", input_id->vendor, input_id->product, input_id->bustype, input_id->version);
-+	return (input_id->product == 0xb13 && input_id->vendor == 0x45e)
-+		|| (input_id->product == 0xce6 && input_id->vendor == 0x54c);
++	return allow_console_filtering_vid_pid(input_id->vendor, input_id->product);
 +}
 +
  /*
   * Create new evdev device. Note that input core serializes calls
   * to connect and disconnect.
-@@ -1359,6 +1394,7 @@ static int evdev_connect(struct input_handler *handler, struct input_dev *dev,
+@@ -1359,6 +1392,7 @@ static int evdev_connect(struct input_handler *handler, struct input_dev *dev,
  	spin_lock_init(&evdev->client_lock);
  	mutex_init(&evdev->mutex);
  	evdev->exist = true;
@@ -176,7 +373,7 @@ index 95f90699d..5f2ab87f3 100644
  	dev_no = minor;
  	/* Normalize device number if it falls into legacy range */
 diff --git a/drivers/input/joydev.c b/drivers/input/joydev.c
-index 5824bca02..aac4963cb 100644
+index 5824bca02..b240b80f1 100644
 --- a/drivers/input/joydev.c
 +++ b/drivers/input/joydev.c
 @@ -23,6 +23,8 @@
@@ -196,16 +393,14 @@ index 5824bca02..aac4963cb 100644
  	spinlock_t buffer_lock; /* protects access to buffer, head and tail */
  	struct fasync_struct *fasync;
  	struct joydev *joydev;
-@@ -115,6 +118,8 @@ static void joydev_event(struct input_handle *handle,
- 	struct joydev *joydev = handle->private;
- 	struct joydev_client *client;
- 	struct js_event event;
+@@ -140,11 +143,16 @@ static void joydev_event(struct input_handle *handle,
+ 		return;
+ 	}
+ 
 +	int active_console = fg_console;
-+	dev_dbg(&joydev->dev, "active_console: %d\n", active_console);
- 
- 	switch (type) {
- 
-@@ -144,7 +149,9 @@ static void joydev_event(struct input_handle *handle,
++	dev_dbg(&joydev->dev, "joydev active_console: %d\n", active_console);
++
+ 	event.time = jiffies_to_msecs(jiffies);
  
  	rcu_read_lock();
  	list_for_each_entry_rcu(client, &joydev->client_list, node)
@@ -216,13 +411,25 @@ index 5824bca02..aac4963cb 100644
  	rcu_read_unlock();
  
  	wake_up_interruptible(&joydev->wait);
-@@ -273,6 +280,9 @@ static int joydev_open(struct inode *inode, struct file *file)
+@@ -273,6 +281,9 @@ static int joydev_open(struct inode *inode, struct file *file)
  	if (error)
  		goto err_free_client;
  
 +	client->console = get_client_console();
-+	dev_dbg(&joydev->dev, "console %d\n", client->console);
++	dev_dbg(&joydev->dev, "joydev console %d\n", client->console);
 +
  	file->private_data = client;
  	stream_open(inode, file);
  
+diff --git a/include/linux/hidraw.h b/include/linux/hidraw.h
+index cd67f4ca5..99517cd97 100644
+--- a/include/linux/hidraw.h
++++ b/include/linux/hidraw.h
+@@ -28,6 +28,7 @@ struct hidraw_list {
+ 	struct hidraw_report buffer[HIDRAW_BUFFER_SIZE];
+ 	int head;
+ 	int tail;
++	int console;
+ 	struct fasync_struct *fasync;
+ 	struct hidraw *hidraw;
+ 	struct list_head node;
