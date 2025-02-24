@@ -49,6 +49,7 @@ in {
             "--hostuser=homeassistant"
             "--group-add=3"
             "--group-add=26"
+            "--group-add=27"
             "--device-cgroup-rule=\"c *:* rw\""
             "--cap-add=SYS_TTY_CONFIG"
             "--cap-add=SETPCAP"
@@ -65,7 +66,7 @@ in {
       users.homeassistant = {
         isNormalUser = true;
         group = "homeassistant";
-        extraGroups = [ "video" "tty" ];
+        extraGroups = [ "video" "tty" "dialout" ];
         uid = 1100;
       };
       groups.homeassistant = {
