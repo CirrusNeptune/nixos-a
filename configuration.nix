@@ -30,9 +30,6 @@ in
   boot.loader.efi.canTouchEfiVariables = true;
 
   programs.mtr.enable = true;
-  programs.bash.shellAliases = {
-    docker = "podman";
-  };
 
   networking.hostName = "a"; # Define your hostname.
   # Pick only one of the below networking options.
