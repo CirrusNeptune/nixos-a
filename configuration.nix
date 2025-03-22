@@ -11,7 +11,7 @@ let
   gatewayHost = makeIpHost 1;
   lanHost = makeIpHost 2;
   hassHost = makeIpHost 3;
-  forgejoHost = makeIpHost 4;
+  kodiHost = makeIpHost 4;
 in
 {
   imports =
@@ -47,7 +47,7 @@ in
           # configure addresses including subnet mask
           (lanHost + "/24")
           (hassHost + "/24")
-          (forgejoHost + "/24")
+          (kodiHost + "/24")
         ];
         routes = [
           # create default routes
@@ -160,10 +160,6 @@ in
     host = hassHost;
   };
   a.services.cec.cecPhysAddr = "1.3.0.0";
-  a.services.forgejo = {
-    enable = true;
-    host = forgejoHost;
-  };
   a.services.borgbackup.enable = true;
 
   # Some programs need SUID wrappers, can be configured further or are
