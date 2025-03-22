@@ -14,14 +14,24 @@ in {
     };
   };
 
-  config = lib.mkIf cfg.enable (lib.a.makeGamescopeService {
+  config = lib.mkIf cfg.enable (lib.mkMerge [
+  (lib.a.makeGamescopeService {
     inherit config lib pkgs;
     service = "kodi";
     tty = "tty1";
     user = cfg.user;
     program = "${lib.getBin kodi-package}/bin/kodi-standalone";
-    #environment = {
-    #  KODI_AE_SINK = "ALSA";
-    #};
-  });
+  })
+  {
+    networking.nat = {
+      externalInterface = "eno2";
+      enable = true;
+      forwardPorts = [{
+          destination = "10.0.0.2:9191";
+          proto = "tcp";
+          sourcePort = "10.0.0.4:80";
+      }];
+    };
+  }
+  ]);
 }
