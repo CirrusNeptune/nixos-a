@@ -11,6 +11,7 @@ let
   gatewayHost = makeIpHost 1;
   lanHost = makeIpHost 2;
   hassHost = makeIpHost 3;
+  kodiHost = makeIpHost 4;
 in
 {
   imports =
@@ -46,6 +47,7 @@ in
           # configure addresses including subnet mask
           (lanHost + "/24")
           (hassHost + "/24")
+          (kodiHost + "/24")
         ];
         routes = [
           # create default routes
