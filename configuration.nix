@@ -5,7 +5,7 @@
 { config, lib, pkgs, ... }:
 
 let
-  ethernetInterface = "eno2";
+  ethernetInterface = "enp7s0";
   timeZone = "America/Los_Angeles";
   makeIpHost = nodeId: "10.0.0.${toString nodeId}";
   gatewayHost = makeIpHost 1;
