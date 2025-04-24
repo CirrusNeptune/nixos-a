@@ -28,6 +28,21 @@ in
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
+  # Early KMS and HISENSE + Nakamichi EDID
+  hardware.amdgpu.initrd.enable = true;
+  hardware.display = {
+    edid.packages = [
+      (pkgs.runCommand "edid-custom" {} ''
+        mkdir -p $out/lib/firmware/edid
+        ln -s ${./hdmi2_edid_capture.bin} $out/lib/firmware/edid/hdmi2_edid_capture.bin
+      '')
+    ];
+    outputs."HDMI-A-2" = {
+      mode = "e";
+      edid = "hdmi2_edid_capture.bin";
+    };
+  };
+
   programs.mtr.enable = true;
 
   networking.hostName = "a"; # Define your hostname.
