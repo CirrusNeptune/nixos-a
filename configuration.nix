@@ -11,6 +11,9 @@ let
   gatewayHost = makeIpHost 1;
   lanHost = makeIpHost 2;
   hassHost = makeIpHost 3;
+  makeIotHost = nodeId: "10.0.1.${toString nodeId}";
+  iotGatewayHost = makeIotHost 1;
+  iotHost = makeIotHost 2;
 in
 {
   imports =
@@ -53,6 +56,15 @@ in
   networking.useDHCP = false;
   systemd.network = {
     enable = true;
+    netdevs = {
+      "20-vlan-iot" = {
+        netdevConfig = {
+          Kind = "vlan";
+          Name = "vlan-iot";
+        };
+        vlanConfig.Id = 2;
+      };
+    };
     networks = {
       "10-lan" = {
         # match the interface by name
@@ -68,9 +80,34 @@ in
         ];
         # make the routes on this interface a dependency for network-online.target
         linkConfig.RequiredForOnline = "routable";
+        # IoT vlan
+        vlan = [ "vlan-iot" ];
+      };
+      "20-vlan-iot" = {
+         # match the interface by name
+         matchConfig.Name = "vlan-iot";
+         address = [
+           # configure addresses including subnet mask
+           (iotHost + "/24")
+         ];
+         # make the routes on this interface a dependency for network-online.target
+         linkConfig.RequiredForOnline = "routable";
       };
     };
   };
+
+  # Open ports in the firewall.
+  networking.firewall = {
+    enable = true;
+    trustedInterfaces = [ ethernetInterface ];
+    interfaces."vlan-iot" = let
+      wizPorts = [ 38900 38899 5577 9999 80 443 8883 ];
+    in {
+      allowedTCPPorts = wizPorts;
+      allowedUDPPorts = wizPorts;
+    };
+  };
+
   services.resolved = {
     domains = [ "mow" ];
     fallbackDns = [ gatewayHost ];
@@ -187,12 +224,6 @@ in
 
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
-
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  networking.firewall.enable = false;
 
   fileSystems."/b" = {
     device = "/dev/disk/by-uuid/bc630d37-a38a-4221-9a6f-c04288306d1f";
