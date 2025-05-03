@@ -108,6 +108,10 @@ in
     };
   };
 
+  # Add wireshark for remote capture
+  programs.wireshark.enable = true;
+
+  # Configure DNS
   services.resolved = {
     domains = [ "mow" ];
     fallbackDns = [ gatewayHost ];
@@ -184,7 +188,7 @@ in
       a = {
         hashedPassword = "$y$j9T$4OwHrG/9t08OLgF.l0pqj0$JJu2hTsddDPF4o12pZUWi0zSap8eStNvymaYt9Ss272";
         isNormalUser = true;
-        extraGroups = [ "wheel" "video" "render" ];
+        extraGroups = [ "wheel" "video" "render" "wireshark" ];
         packages = with pkgs; [
           firefox
           intiface-central
