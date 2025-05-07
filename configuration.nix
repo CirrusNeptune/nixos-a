@@ -14,6 +14,13 @@ let
   makeIotHost = nodeId: "10.0.1.${toString nodeId}";
   iotGatewayHost = makeIotHost 1;
   iotHost = makeIotHost 2;
+  dualsenseRule = pkgs.writeTextFile {
+    name = "dualsense-wireless-controller-udev-rule";
+    text = ''
+      SUBSYSTEM=="sound", ACTION=="change", ATTRS{idVendor}=="054c", ATTRS{idProduct}=="0ce6", ENV{SOUND_DESCRIPTION}="Wireless Controller"
+    '';
+    destination = "/etc/udev/rules.d/99-dualsense-wireless-controller.rules";
+  };
 in
 {
   imports =
@@ -141,6 +148,8 @@ in
     alsa.support32Bit = true;
     pulse.enable = true;
   };
+
+  services.udev.packages = [ dualsenseRule ];
 
   # Enable the X11 windowing system.
   # services.xserver.enable = true;
