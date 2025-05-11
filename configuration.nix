@@ -16,9 +16,7 @@ let
   iotHost = makeIotHost 2;
   dualsenseRule = pkgs.writeTextFile {
     name = "dualsense-wireless-controller-udev-rule";
-    text = ''
-      SUBSYSTEM=="sound", ACTION=="change", ATTRS{idVendor}=="054c", ATTRS{idProduct}=="0ce6", ENV{SOUND_DESCRIPTION}="Wireless Controller"
-    '';
+    text = ''SUBSYSTEM=="usb", ATTRS{idVendor}=="054c", ATTRS{idProduct}=="0ce6", MODE="0666"'';
     destination = "/etc/udev/rules.d/99-dualsense-wireless-controller.rules";
   };
 in
