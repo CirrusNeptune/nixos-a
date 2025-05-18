@@ -30,7 +30,12 @@ in
   nixpkgs.config.allowUnfree = true;
 
   # Enable flakes
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings.experimental-features = [ "nix-command" "flakes" "auto-allocate-uids" "cgroups" ];
+  nix.settings.system-features = [ "uid-range" ];
+  nix.settings.auto-allocate-uids = true;
+  nix.settings.allow-new-privileges = true;
+  nix.settings.filter-syscalls = false;
+  nix.settings.use-cgroups = true;
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
