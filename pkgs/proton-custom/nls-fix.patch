@@ -1,0 +1,22 @@
+diff --git a/wine/tools/makedep.c b/wine/tools/makedep.c
+index 4c9333e..3e1d134 100644
+--- a/wine/tools/makedep.c
++++ b/wine/tools/makedep.c
+@@ -2787,7 +2787,7 @@ static void output_source_rc( struct makefile *make, struct incl_file *source, c
+     if (make->src_dir) output_filename( "nls/locale.nls" );
+     output_filenames( source->dependencies );
+     output( "\n" );
+-    output( "\t%s%s -u -o $@", cmd_prefix( "WRC" ), tools_path( make, "wrc" ) );
++    output( "\t%s%s -u --nls-dir=nls -o $@", cmd_prefix( "WRC" ), tools_path( make, "wrc" ) );
+     if (make->is_win16) output_filename( "-m16" );
+     output_filename( "--nostdinc" );
+     if (po_dir) output_filename( strmake( "--po-dir=%s", po_dir ));
+@@ -2821,7 +2821,7 @@ static void output_source_mc( struct makefile *make, struct incl_file *source, c
+     output_filenames( source->dependencies );
+     if (make->src_dir) output_filename( "nls/locale.nls" );
+     output( "\n" );
+-    output( "\t%s%s -u -o $@ %s", cmd_prefix( "WMC" ), tools_path( make, "wmc" ), source->filename );
++    output( "\t%s%s -u --nls-dir=nls -o $@ %s", cmd_prefix( "WMC" ), tools_path( make, "wmc" ), source->filename );
+     if (linguas.count)
+     {
+         output_filename( "--po-dir=po" );

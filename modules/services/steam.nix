@@ -19,7 +19,7 @@ in {
       #user = "root";
       #program = "/run/current-system/sw/bin/runuser";
       #args = [ "-u" cfg.user "--" "${lib.getBin pkgs.steam}/bin/steam" "-tenfoot" "-pipewire-dmabuf" ];
-      program = "${lib.getBin pkgs.steam}/bin/steam";
+      program = "/run/current-system/sw/bin/steam";
       args = [ "-tenfoot" "-pipewire-dmabuf" ];
       gamescopeArguments = [
         "--steam"
@@ -41,6 +41,7 @@ in {
         gamescopeSession = {
           enable = true;
         };
+        extraCompatPackages = [ pkgs.proton-custom pkgs.proton-ge-bin ];
       };
       programs.gamescope.capSysNice = true;
       programs.gamemode = {

@@ -1,0 +1,31 @@
+diff --git a/piper/CMakeLists.txt b/piper/CMakeLists.txt
+index f96ec44..d800541 100644
+--- a/piper/CMakeLists.txt
++++ b/piper/CMakeLists.txt
+@@ -33,7 +33,7 @@ if(NOT DEFINED FMT_DIR)
+   ExternalProject_Add(
+     fmt_external
+     PREFIX "${CMAKE_CURRENT_BINARY_DIR}/f"
+-    URL "https://github.com/fmtlib/fmt/archive/refs/tags/${FMT_VERSION}.zip"
++    URL "@fmtZip@"
+     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${FMT_DIR}
+     CMAKE_ARGS -DFMT_TEST:BOOL=OFF  # Don't build all the tests
+   )
+@@ -49,7 +49,7 @@ if(NOT DEFINED SPDLOG_DIR)
+   ExternalProject_Add(
+     spdlog_external
+     PREFIX "${CMAKE_CURRENT_BINARY_DIR}/s"
+-    URL "https://github.com/gabime/spdlog/archive/refs/tags/v${SPDLOG_VERSION}.zip"
++    URL "@spdlogZip@"
+     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${SPDLOG_DIR}
+   )
+   add_dependencies(piper spdlog_external)
+@@ -63,7 +63,7 @@ if(NOT DEFINED PIPER_PHONEMIZE_DIR)
+   ExternalProject_Add(
+     piper_phonemize_external
+     PREFIX "${CMAKE_CURRENT_BINARY_DIR}/p"
+-    URL "https://github.com/shaunren/piper-phonemize/archive/refs/heads/pic.zip"
++    URL "@piperPhonemizeZip@"
+     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX:PATH=${PIPER_PHONEMIZE_DIR}
+   )
+   add_dependencies(piper piper_phonemize_external)

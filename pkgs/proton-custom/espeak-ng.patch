@@ -1,0 +1,14 @@
+diff --git a/cmake/deps.cmake b/cmake/deps.cmake
+index b63ced2..12fdf6d 100644
+--- a/cmake/deps.cmake
++++ b/cmake/deps.cmake
+@@ -17,8 +17,7 @@ if (SONIC_LIB AND SONIC_INC)
+   set(HAVE_LIBSONIC ON)
+ else()
+   FetchContent_Declare(sonic-git
+-    GIT_REPOSITORY https://github.com/waywardgeek/sonic.git
+-    GIT_TAG fbf75c3d6d846bad3bb3d456cbc5d07d9fd8c104
++    URL "@sonicZip@"
+   )
+   FetchContent_MakeAvailable(sonic-git)
+   FetchContent_GetProperties(sonic-git)
