@@ -37,11 +37,6 @@ in {
     serviceConfig = {
       Restart = "always";
       RestartSec = 5;
-      #ExecStart = ''
-      #  ${pkgs.gamescope}/bin/gamescope \
-      #    ${lib.escapeShellArgs gamescopeArguments} \
-      #    -- ${program} ${lib.escapeShellArgs args}
-      #'';
       ExecStart = ''
         ${config.security.wrapperDir}/gamescope \
           ${lib.escapeShellArgs gamescopeArguments} \
@@ -72,7 +67,9 @@ in {
       #AmbientCapabilities = [ "CAP_SYS_NICE" ];
     };
 
-    inherit environment;
+    environment = {
+      WLR_LIBINPUT_NO_DEVICES = "1";
+    } // environment;
     inherit path;
   };
 
