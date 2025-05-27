@@ -31,7 +31,7 @@ in
 
   # Enable flakes and uid-range
   nix.settings.experimental-features = [ "nix-command" "flakes" "auto-allocate-uids" "cgroups" ];
-  nix.settings.system-features = [ "uid-range" ];
+  nix.settings.system-features = [ "uid-range" "big-parallel" ];
   nix.settings.auto-allocate-uids = true;
 
   # Use the systemd-boot EFI boot loader.
