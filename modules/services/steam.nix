@@ -41,7 +41,7 @@ in {
         gamescopeSession = {
           enable = true;
         };
-        #extraPackages = [ pkgs.mangohud pkgs.gamemode ];
+        extraPackages = [ pkgs.mangohud pkgs.gamemode ];
         extraCompatPackages = [ pkgs.proton-mowbark pkgs.proton-ge-bin ];
       };
       programs.gamescope.capSysNice = true;
