@@ -1,0 +1,34 @@
+diff --git a/Makefile.in b/Makefile.in
+index 8b4b3bc..6ac144c 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -517,7 +517,7 @@ $(eval $(call rules-meson,dxvk,i386,windows))
+ $(eval $(call rules-meson,dxvk,x86_64,windows))
+ 
+ $(OBJ)/.dxvk-post-source:
+-	sed -re 's#@VCS_TAG@#$(shell git -C $(SRCDIR)/dxvk describe --always --abbrev=15 --dirty=0)#' \
++	sed -re 's#@VCS_TAG@#$(shell cat $(SRCDIR)/.dxvk-version)#' \
+ 	    $(SRCDIR)/dxvk/version.h.in > $(DXVK_SRC)/version.h.in
+ 	mkdir -p $(DST_LIBDIR)/wine/dxvk
+ 	rm -rf $(DST_LIBDIR)/wine/dxvk/version
+@@ -622,9 +622,9 @@ $(eval $(call rules-meson,vkd3d-proton,i386,windows))
+ $(eval $(call rules-meson,vkd3d-proton,x86_64,windows))
+ 
+ $(OBJ)/.vkd3d-proton-post-source:
+-	sed -re 's#@VCS_TAG@#$(shell git -C $(SRCDIR)/vkd3d-proton describe --always --exclude=* --abbrev=15 --dirty=0)#' \
++	sed -re 's#@VCS_TAG@#$(shell cat $(SRCDIR)/.vkd3d-proton-build)#' \
+ 	    $(SRCDIR)/vkd3d-proton/vkd3d_build.h.in > $(VKD3D_PROTON_SRC)/vkd3d_build.h.in
+-	sed -re 's#@VCS_TAG@#$(shell git -C $(SRCDIR)/vkd3d-proton describe --always --tags --dirty=+)#' \
++	sed -re 's#@VCS_TAG@#$(shell cat $(SRCDIR)/.vkd3d-proton-version)#' \
+ 	    $(SRCDIR)/vkd3d-proton/vkd3d_version.h.in > $(VKD3D_PROTON_SRC)/vkd3d_version.h.in
+ 	mkdir -p $(DST_LIBDIR)/wine/vkd3d-proton
+ 	rm -rf $(DST_LIBDIR)/wine/vkd3d-proton/version
+@@ -1152,7 +1152,7 @@ $(DIST_COPY_TARGETS): | $(DST_DIR)
+ all-dist: $(DIST_COPY_TARGETS)
+ 
+ all-dist:
+-	echo `date '+%s'` `GIT_DIR=$(abspath $(SRCDIR)/.git) git describe --tags` > $(DIST_VERSION)
++	echo `date '+%s'` `cat $(SRCDIR)/.version` > $(DIST_VERSION)
+ 
+ 
+ ##

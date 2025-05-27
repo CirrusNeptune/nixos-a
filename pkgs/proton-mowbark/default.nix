@@ -1,20 +1,20 @@
 { stdenvNoCC,
   fetchFromGitHub,
-  podman,
   dockerTools,
   mount,
   gnumake,
   bash,
   lib,
   rustPlatform,
+  fetchgit,
   fetchurl,
   fetchzip,
   replaceVars,
   zip,
   unzip,
+  undocker,
   ...
- }:
-stdenvNoCC.mkDerivation (finalAttrs:
+}: stdenvNoCC.mkDerivation (finalAttrs:
 let
   finalPackageName = finalAttrs.finalPackage.name;
 
@@ -133,20 +133,28 @@ let
     })
   ];
 in {
-  pname = "proton-custom"; # VAR
-  version = "0.5.0"; # VAR
-  src = fetchFromGitHub { # VAR
-    owner = "ValveSoftware";
-    repo = "Proton";
-    rev = "3a269ab9966409b968c8bc8f3e68bd0d2f42aadf";
-    hash = "sha256-yx3EPMSNcc4FyaoxTFQ9/Ql7uVULuh2L9bzaKWcHsco=";
-    fetchSubmodules = true;
+  pname = "proton-mowbark"; # VAR
+  version = "0.1.0"; # VAR
 
-    # Some builds version themselves with `git describe`.
-    # We need deep clones for commit hashes to match upstream.
-    leaveDotGit = true;
-    deepClone = true;
-  };
+  # Fetch proton source with submodules.
+  # .git directory is removed to maintain determinism -
+  # hook to harvest version information before this happens.
+  src = (fetchgit {
+    name = "source";
+    url = "https://github.com/ValveSoftware/Proton";
+    rev = "3a269ab9966409b968c8bc8f3e68bd0d2f42aadf";
+    hash = "sha256-dzIid6UGeFbAmQepM3FPRFo88BStG4qI3aGWYDJewUo=";
+    fetchSubmodules = true;
+  }).overrideAttrs (_: {
+    env.NIX_PREFETCH_GIT_CHECKOUT_HOOK = ''
+      pushd "$dir" >/dev/null
+      git -C vkd3d-proton describe --always --exclude=* --abbrev=15 --dirty=0 > .vkd3d-proton-build
+      git -C vkd3d-proton describe --always --tags --dirty=+ > .vkd3d-proton-version
+      git -C dxvk describe --always --abbrev=15 --dirty=0 > .dxvk-version
+      git describe --always --tags > .version
+      popd >/dev/null
+    '';
+  });
 
   # Package for use with programs.steam.extraCompatPackages.
   outputs = [
@@ -159,9 +167,6 @@ in {
   #   experimental-features = [ "auto-allocate-uids" "cgroups" ];
   #   system-features = [ "uid-range" ];
   #   auto-allocate-uids = true;
-  #   allow-new-privileges = true;
-  #   filter-syscalls = false;
-  #   use-cgroups = true;
   # };
   requiredSystemFeatures = [ "uid-range" ];
 
@@ -172,18 +177,18 @@ in {
 
   nativeBuildInputs = [
     mount
-    podman
     gnumake
+    undocker
   ];
 
   patches = [ # VAR
-    # Fix wrc/wmc make rules to build without an established NLSDIR.
-    ./nls-fix.patch
-
-    # ContainerId patches to enable Dualsense haptics
+    # ContainerId patches to enable Dualsense haptics.
     ./dualsense/0001-mmdevapi-correctly-read-and-write-containerid-as-cls.patch
     ./dualsense/0002-containerid-helper-to-generate-a-containerid-from-a-.patch
     ./dualsense/0003-Implement-SetupDiGetDeviceInterfacePropertyW-for-DEV.patch
+
+    # Patch `git describe` with strings harvested during fetchgit.
+    ./version.patch
 
     # Replace piper dependency download URLs with file paths.
     (patchZipRefs ./piper.patch piperZips)
@@ -191,12 +196,13 @@ in {
 
   configurePhase = ''
     runHook preConfigure
+    unset CONFIG_SHELL
 
     # Make piper dependency zips available to container.
     ${concatStringsSep "\n" (mapAttrsToList (name: value: "cp ${value} ${value.name}") allPiperZips)}
 
     # Make proton contrib tarballs available to container.
-    mkdir contrib
+    mkdir -p contrib
     ${concatStringsSep "\n" (map (x: "cp ${x} contrib/${x.name}") contribTarballs)}
 
     # Make gst-plugins-rs cargo deps available to container.
@@ -204,36 +210,38 @@ in {
     chmod -R +644 -- gst-plugins-rs/cargo-vendor-dir
     mv gst-plugins-rs/cargo-vendor-dir/.cargo gst-plugins-rs
 
-    # Establish cgroup2fs mount for podman.
-    mount -t cgroup2 none /sys/fs/cgroup
+    # Establish out-of-tree build directory.
+    mkdir -p $NIX_BUILD_TOP/build
 
-    # Wrap podman and force log-level to error.
-    # Cgroup warnings cause issues in proton's configure.sh.
-    local podmanArgs=(
-      --log-level error
-    )
-    mkdir $NIX_BUILD_TOP/mybin
-    export PATH=$NIX_BUILD_TOP/mybin:$PATH
-    echo -e '#!${bash}/bin/bash\nexec ${podman}/bin/podman' ''${podmanArgs[@]} '"$@"' > $NIX_BUILD_TOP/mybin/podman
-    chmod +x $NIX_BUILD_TOP/mybin/podman
-    unset podmanArgs
+    # Establish steamrt rootfs.
+    local STEAMRT_ROOTFS=$NIX_BUILD_TOP/steamrt-rootfs
+    mkdir -p $STEAMRT_ROOTFS
+    pushd $STEAMRT_ROOTFS >/dev/null
+    undocker ${steamrtImage} - | tar -x '--exclude=dev/*'
+    popd >/dev/null
+    mkdir -p $STEAMRT_ROOTFS$NIX_BUILD_TOP
+    mount --bind $NIX_BUILD_TOP $STEAMRT_ROOTFS$NIX_BUILD_TOP
+    mkdir -p $STEAMRT_ROOTFS/test
+    mount --bind $NIX_BUILD_TOP/build $STEAMRT_ROOTFS/test
+    mkdir -p $STEAMRT_ROOTFS/dev
+    mount --rbind /dev $STEAMRT_ROOTFS/dev
+    mkdir -p $STEAMRT_ROOTFS/proc
+    mount --bind /proc $STEAMRT_ROOTFS/proc
 
-    # Establish home directory and allow podman to accept any type of image.
-    mkdir $NIX_BUILD_TOP/home
+    # Fake podman with chroot.
+    mkdir -p $NIX_BUILD_TOP/bin
+    export PATH=$NIX_BUILD_TOP/bin:$PATH
+    cp ${./fake-podman.sh} $NIX_BUILD_TOP/bin/fake-podman.sh
+    echo -e '#!${bash}/bin/bash\nexec' chroot $STEAMRT_ROOTFS /bin/bash $NIX_BUILD_TOP/bin/fake-podman.sh '"$@"' > $NIX_BUILD_TOP/bin/podman
+    chmod +x $NIX_BUILD_TOP/bin/podman
+
+    # Establish home directory.
+    mkdir -p $NIX_BUILD_TOP/home
     export HOME=$NIX_BUILD_TOP/home
-    mkdir -p $HOME/.config/containers
-    echo '{ "default": [ { "type": "insecureAcceptAnything" } ] }' > $HOME/.config/containers/policy.json
-
-    # Establish out-of-tree build directory and switch to it.
-    mkdir $NIX_BUILD_TOP/build
-    cd $NIX_BUILD_TOP/build
-
-    # Load steamrt SDK image into podman and configure its git to ignore repository uids.
-    podman load -i ${steamrtImage}
-    podman build -f ${./configure-git.dockerfile} -t localhost/steamrt:steamrt-mod
 
     # Run configure.sh to get Makefile.
-    bash $NIX_BUILD_TOP/source/configure.sh --build-name=${finalPackageName} --container-engine=podman --proton-sdk-image=localhost/steamrt:steamrt-mod
+    cd $NIX_BUILD_TOP/build
+    bash $NIX_BUILD_TOP/source/configure.sh --build-name=${finalPackageName} --container-engine=podman
 
     runHook postConfigure
   '';
