@@ -17,7 +17,7 @@ in {
   config = lib.mkIf cfg.enable (lib.a.makeGamescopeService {
     inherit config lib pkgs;
     service = "kodi";
-    tty = "tty1";
+    tty = 1;
     user = cfg.user;
     program = "${lib.getBin kodi-package}/bin/kodi-standalone";
     #environment = {

@@ -14,7 +14,7 @@ in {
     (lib.a.makeGamescopeService {
       inherit config lib pkgs;
       service = "steam";
-      tty = "tty2";
+      tty = 2;
       user = cfg.user;
       #user = "root";
       #program = "/run/current-system/sw/bin/runuser";

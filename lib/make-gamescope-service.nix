@@ -13,6 +13,7 @@
   ...
 }: let
   mkIntegerSeq = start: end: lib.strings.concatMapStringsSep "," toString (lib.lists.range start end);
+  ttyString = toString tty;
 in {
   systemd.services."${service}" = {
     enable = true;
@@ -21,27 +22,28 @@ in {
       "plymouth-start.service"
       "plymouth-quit.service"
       "systemd-logind.service"
-      "getty@${tty}.service"
+      "getty@tty${ttyString}.service"
     ];
     before = [ "graphical.target" ];
     wants = [ "dbus.socket" "systemd-logind.service" "plymouth-quit.service"];
     wantedBy = [ "graphical.target" ];
-    conflicts = [ "getty@${tty}.service" ];
+    conflicts = [ "getty@tty${ttyString}.service" ];
 
     restartIfChanged = false;
     unitConfig = {
-      ConditionPathExists = "/dev/${tty}";
+      ConditionPathExists = "/dev/tty${ttyString}";
       StartLimitBurst = 6;
       StartLimitIntervalSec = 45;
     };
     serviceConfig = {
       Restart = "always";
       RestartSec = 5;
-      ExecStart = ''
-        ${config.security.wrapperDir}/gamescope \
+      ExecStart = (pkgs.writeShellScript "${service}-start.sh" ''
+        ${pkgs.kbd}/bin/chvt ${ttyString}
+        exec ${config.security.wrapperDir}/gamescope \
           ${lib.escapeShellArgs gamescopeArguments} \
           -- ${program} ${lib.escapeShellArgs args}
-      '';
+      '');
       User = user;
       Group = "users";
 
@@ -52,7 +54,7 @@ in {
       UtmpIdentifier = "%n";
       UtmpMode = "user";
       # A virtual terminal is needed.
-      TTYPath = "/dev/${tty}";
+      TTYPath = "/dev/tty${ttyString}";
       TTYReset = "yes";
       TTYVHangup = "yes";
       TTYVTDisallocate = "yes";
@@ -63,13 +65,11 @@ in {
       # Set up a full (custom) user session for the user, required by Gamescope.
       PAMName = "${service}";
 
-      #Capabilities = [ "CAP_SYS_NICE" ];
-      #AmbientCapabilities = [ "CAP_SYS_NICE" ];
+      Capabilities = [ "CAP_SYS_TTY_CONFIG" ];
+      AmbientCapabilities = [ "CAP_SYS_TTY_CONFIG" ];
     };
 
-    environment = {
-      WLR_LIBINPUT_NO_DEVICES = "1";
-    } // environment;
+    inherit environment;
     inherit path;
   };
 
