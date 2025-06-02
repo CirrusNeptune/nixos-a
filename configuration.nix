@@ -11,6 +11,7 @@ let
   gatewayHost = makeIpHost 1;
   lanHost = makeIpHost 2;
   hassHost = makeIpHost 3;
+  kodiHost = makeIpHost 4;
   makeIotHost = nodeId: "10.0.1.${toString nodeId}";
   iotGatewayHost = makeIotHost 1;
   iotHost = makeIotHost 2;
@@ -80,6 +81,7 @@ in
           # configure addresses including subnet mask
           (lanHost + "/24")
           (hassHost + "/24")
+          (kodiHost + "/24")
         ];
         routes = [
           # create default routes
@@ -108,11 +110,24 @@ in
     enable = true;
     trustedInterfaces = [ ethernetInterface "podman0" ];
     interfaces."vlan-iot" = let
-      wizPorts = [ 38900 38899 5577 9999 80 443 8883 ];
+      wizPorts = [ 38900 38899 5577 9999 8883 ];
     in {
       allowedTCPPorts = wizPorts;
       allowedUDPPorts = wizPorts;
     };
+  };
+
+  # Kodi NAT
+  networking.nat = {
+    enable = true;
+    extraCommands = ''
+      iptables -w -t nat -A nixos-nat-pre \
+        -p tcp \
+        -d ${kodiHost} \
+        --dport 80 \
+        -j DNAT \
+        --to-destination ${kodiHost}:9191
+    '';
   };
 
   # Add wireshark for remote capture
