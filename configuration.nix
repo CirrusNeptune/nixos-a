@@ -106,7 +106,7 @@ in
   # Open ports in the firewall.
   networking.firewall = {
     enable = true;
-    trustedInterfaces = [ ethernetInterface ];
+    trustedInterfaces = [ ethernetInterface "podman0" ];
     interfaces."vlan-iot" = let
       wizPorts = [ 38900 38899 5577 9999 80 443 8883 ];
     in {
