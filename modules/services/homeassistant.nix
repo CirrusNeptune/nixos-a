@@ -10,8 +10,8 @@ let
 
   haImage = pkgs.dockerTools.pullImage {
     imageName = "ghcr.io/cirrusneptune/homeassistant-mowbark";
-    imageDigest = "sha256:21dc97bc6cb5bdfecbc9ca613eb939bdfa0e0ed385b0d850c00af0fed979cd1b";
-    sha256 = "sha256-cJ5yIM3SfDS0N4NiUlHDU/a0UIQgLQeeYe4m0JthQDA=";
+    imageDigest = "sha256:b87e765fb5586477659b5ba24d9e372e97f555d549bc81e386261158fac48a7d";
+    sha256 = "sha256-gXYV2ck6FaaDIOv6P6nuJ0PSWCN1W9qPY7oYI4BfdvM=";
     finalImageTag = "a";
     finalImageName = "localhost/homeassistant-a";
   };
