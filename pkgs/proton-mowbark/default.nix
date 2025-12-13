@@ -108,8 +108,8 @@ let
   # Fetch all proton contrib deps.
   contribTarballs = let # VAR
     wineGeckoVer = "2.47.4";
-    wineMonoVer = "9.4.0";
-    xaliaVer = "0.4.5";
+    wineMonoVer = "10.0.0";
+    xaliaVer = "0.4.6";
   in [
     (fetchurl rec {
       name = "wine-gecko-${wineGeckoVer}-x86_64.tar.xz";
@@ -124,17 +124,17 @@ let
     (fetchurl rec {
       name = "wine-mono-${wineMonoVer}-x86.tar.xz";
       url = "https://github.com/madewokherd/wine-mono/releases/download/wine-mono-${wineMonoVer}/${name}";
-      hash = "sha256-/XciGarPRrgl+okaZHr0qd34Q5MgEBwjGRiyA3vxOFg=";
+      hash = "sha256-tIfEREFXiaiyWzplQq+maKa21gZ8ZIYm8yOIREP3tw0=";
     })
     (fetchurl rec {
       name = "xalia-${xaliaVer}-net48-mono.zip";
       url = "https://github.com/madewokherd/xalia/releases/download/xalia-${xaliaVer}/${name}";
-      hash = "sha256-fgYXg6zwBcjckL1H/qGvn8lB+AxFlHd1L8MvvCkk7GU=";
+      hash = "sha256-JNjN76e7lzKIW+o8HzltJV/5BCXBTJSYE/wrzYGwqNc=";
     })
   ];
 in {
   pname = "proton-mowbark"; # VAR
-  version = "0.1.0"; # VAR
+  version = "0.2.0"; # VAR
 
   # Fetch proton source with submodules.
   # .git directory is removed to maintain determinism -
@@ -142,8 +142,8 @@ in {
   src = (fetchgit {
     name = "source";
     url = "https://github.com/ValveSoftware/Proton";
-    rev = "3a269ab9966409b968c8bc8f3e68bd0d2f42aadf";
-    hash = "sha256-dzIid6UGeFbAmQepM3FPRFo88BStG4qI3aGWYDJewUo=";
+    rev = "1d1d7c091405c7faeeaf39c55aebb4edc4eee174";
+    hash = "sha256-gq4NRqZsJNDiXbThsavbEZG7Uc77PdpabPgGzZXoC2A=";
     fetchSubmodules = true;
   }).overrideAttrs (_: {
     env.NIX_PREFETCH_GIT_CHECKOUT_HOOK = ''
