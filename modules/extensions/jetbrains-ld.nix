@@ -42,7 +42,7 @@ in {
 
   config = mkIf cfg.enable {
     programs.nix-ld.enable = true;
-    programs.nix-ld.package = pkgs.nix-ld-rs;
+    programs.nix-ld.package = pkgs.nix-ld;
     # Runtime libraries required by IDE server
     programs.nix-ld.libraries = with pkgs; [
       SDL
