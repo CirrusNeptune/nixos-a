@@ -2,10 +2,16 @@
 let
   cfg = config.a.services.homeassistant;
 
-  mowbarkRfUdevRule = pkgs.writeTextFile {
-    name = "mowbark-rf-udev-rule";
-    text = ''SUBSYSTEM=="usb", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6014", MODE="0666"'';
-    destination = "/etc/udev/rules.d/99-mowbark-rf.rules";
+  tty0UdevRule = pkgs.writeTextFile {
+    name = "tty0-udev-rule";
+    text = ''KERNEL=="tty0", SUBSYSTEM=="tty", MODE="0660"'';
+    destination = "/etc/udev/rules.d/0-tty0.rules";
+  };
+
+  zwaUdevRule = pkgs.writeTextFile {
+    name = "zwa-udev-rule";
+    text = ''KERNEL=="ttyACM[0-9]*", SUBSYSTEM=="tty", ATTRS{idVendor}=="303a", ATTRS{idProduct}=="4001", SYMLINK="ttyZWA"'';
+    destination = "/etc/udev/rules.d/99-zwa.rules";
   };
 
   haImage = pkgs.dockerTools.pullImage {
@@ -59,8 +65,43 @@ in {
       };
     };
 
+    # Voice assistant services
+    services.wyoming = {
+      faster-whisper.servers = {
+        hass-whisper = {
+          enable = true;
+          uri = "tcp://0.0.0.0:10300";
+          language = "en";
+        };
+      };
+      piper.servers = {
+        hass-piper = {
+          enable = true;
+          voice = "en-us-ryan-medium";
+          uri = "tcp://0.0.0.0:10200";
+        };
+      };
+      openwakeword = {
+        enable = false;
+        uri = "tcp://0.0.0.0:10400";
+      };
+    };
+    services.zwave-js = {
+      enable = true;
+      serialPort = "/dev/ttyZWA";
+      secretsConfigFile = "/secrets/zwave-js-keys.json";
+    };
+
+    services.esphome = {
+      enable = true;
+      address = "10.0.0.3";
+    };
+
     # Allow VT_ACTIVATE for switching tty
     #systemd.services.podman-homeassistant.serviceConfig.AmbientCapabilities = [ "CAP_SYS_TTY_CONFIG" ];
+
+    # udev rules for hardware
+    services.udev.packages = [ tty0UdevRule zwaUdevRule ];
 
     users = {
       users.homeassistant = {
