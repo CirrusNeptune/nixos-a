@@ -72,6 +72,7 @@ in {
           enable = true;
           uri = "tcp://0.0.0.0:10300";
           language = "en";
+          model = "distil-small.en";
         };
       };
       piper.servers = {
