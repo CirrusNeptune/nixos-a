@@ -88,9 +88,17 @@ in {
       };
     };
     services.zwave-js = {
-      enable = true;
+      enable = false;
       serialPort = "/dev/ttyZWA";
       secretsConfigFile = "/secrets/zwave-js-keys.json";
+    };
+    services.zwave-js-ui = {
+      enable = true;
+      serialPort = "/dev/ttyZWA";
+      settings = {
+        HOST = "0.0.0.0";
+        PORT = "8091";
+      };
     };
 
     services.esphome = {
