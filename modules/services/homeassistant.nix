@@ -21,6 +21,14 @@ let
     finalImageTag = "a";
     finalImageName = "localhost/homeassistant-a";
   };
+
+  esphomeImage = pkgs.dockerTools.pullImage {
+    imageName = "ghcr.io/esphome/esphome";
+    imageDigest = "sha256:c9583f3073d3708c0eb4f602aa0fbaa5a8caf32d313d0558728eb3b75f840304";
+    sha256 = "sha256-vFe0p0LOVeUmGRj7CySPZgSDY1/8QnmCao/D4OBOUkQ=";
+    finalImageTag = "a";
+    finalImageName = "localhost/esphome-a";
+  };
 in {
   options.a.services.homeassistant = {
     enable = lib.mkEnableOption "Enable homeassistant service";
@@ -62,6 +70,26 @@ in {
           ];
           user = "homeassistant";
         };
+        esphome = {
+          volumes = [
+            "/var/esphome:/config"
+            "/etc/timezone:/etc/timezone:ro"
+            "/etc/localtime:/etc/localtime:ro"
+          ];
+          imageFile = esphomeImage;
+          image = "localhost/esphome-a:a";
+          ports = [
+            "${cfg.host}:6052:6052"
+          ];
+          extraOptions = [
+            "--hostuser=homeassistant"
+          ];
+          user = "homeassistant";
+          environment = {
+            USERNAME = "puppy";
+            PASSWORD = "bark";
+          };
+        };
       };
     };
 
@@ -102,7 +130,7 @@ in {
     };
 
     services.esphome = {
-      enable = true;
+      enable = false;
       address = "10.0.0.3";
     };
 
