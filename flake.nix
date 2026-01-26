@@ -23,6 +23,12 @@
           # Package overlays
           nixpkgs.overlays = [
             (final: prev: import ./pkgs final)
+            (final: prev: {
+              dolphin-emu = prev.dolphin-emu.overrideAttrs (finalAttrs: previousAttrs: {
+                version = "2512";
+                __intentionallyOverridingVersion = true;
+              });
+            })
           ];
 
           # Use configuration.nix for everything

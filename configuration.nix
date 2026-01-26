@@ -216,6 +216,7 @@ in
         packages = with pkgs; [
           firefox
           intiface-central
+          dolphin-emu
         ];
       };
     };
