@@ -20,6 +20,11 @@ let
     text = ''SUBSYSTEM=="usb", ATTRS{idVendor}=="054c", ATTRS{idProduct}=="0ce6", MODE="0666"'';
     destination = "/etc/udev/rules.d/99-dualsense-wireless-controller.rules";
   };
+  gcAdapterRule = pkgs.writeTextFile {
+    name = "gc-udev-rule";
+    text = ''SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTRS{idVendor}=="057e", ATTRS{idProduct}=="0337", MODE="0666"'';
+    destination = "/etc/udev/rules.d/99-gc.rules";
+  };
 in
 {
   imports =
@@ -164,7 +169,7 @@ in
     pulse.enable = true;
   };
 
-  services.udev.packages = [ dualsenseRule ];
+  services.udev.packages = [ dualsenseRule gcAdapterRule ];
 
   # Enable the X11 windowing system.
   # services.xserver.enable = true;
