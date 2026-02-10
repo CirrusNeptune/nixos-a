@@ -67,6 +67,7 @@ in {
             "--device-cgroup-rule=\"c *:* rw\""
             "--cap-add=SYS_TTY_CONFIG"
             "--cap-add=SETPCAP"
+            "--dns=10.0.0.1"
           ];
           user = "homeassistant";
         };
