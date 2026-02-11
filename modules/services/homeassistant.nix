@@ -5,7 +5,7 @@ let
   tty0UdevRule = pkgs.writeTextFile {
     name = "tty0-udev-rule";
     text = ''KERNEL=="tty0", SUBSYSTEM=="tty", MODE="0660"'';
-    destination = "/etc/udev/rules.d/0-tty0.rules";
+    destination = "/etc/udev/rules.d/51-tty0.rules";
   };
 
   zwaUdevRule = pkgs.writeTextFile {
