@@ -245,6 +245,7 @@ in
   };
   a.services.cec.cecPhysAddr = "1.3.0.0";
   a.services.borgbackup.enable = true;
+  a.services.ollama.enable = true;
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
