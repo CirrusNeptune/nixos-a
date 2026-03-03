@@ -161,6 +161,9 @@ in {
       zlib
       systemd
       libselinux
+      gtk3
+      webkitgtk_4_1
+      gobject-introspection
     ];
 
     users.users = mapAttrs (name: user: {
