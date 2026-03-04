@@ -235,6 +235,14 @@ in
     git
     gdb
     file
+    claude-code
+    jetbrains.pycharm-community
+    wine
+    umu-launcher
+    portaudio
+    SDL2
+    SDL2_mixer
+    alsa-lib
   ];
 
   # Add docker containers
@@ -246,10 +254,6 @@ in
   a.services.cec.cecPhysAddr = "1.3.0.0";
   a.services.borgbackup.enable = true;
   a.services.ollama.enable = true;
-  a.services.itchiodevtest = {
-    enable = true;
-    wine.enable = true;
-  };
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
@@ -290,6 +294,15 @@ in
         "create mask" = "0644";
         "directory mask" = "0755";
         "comment" = "Multimedia samba share.";
+      };
+      "sandbox" = {
+        "path" = "/b/sandbox";
+        "read only" = "no";
+        "browseable" = "yes";
+        "guest ok" = "yes";
+        "create mask" = "0644";
+        "directory mask" = "0755";
+        "comment" = "Sandbox samba share.";
       };
     };
   };
