@@ -235,6 +235,8 @@ in
     git
     gdb
     file
+    claude-code
+    jetbrains.pycharm-community
   ];
 
   # Add docker containers
