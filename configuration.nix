@@ -237,6 +237,12 @@ in
     file
     claude-code
     jetbrains.pycharm-community
+    wine
+    umu-launcher
+    portaudio
+    SDL2
+    SDL2_mixer
+    alsa-lib
   ];
 
   # Add docker containers
@@ -288,6 +294,15 @@ in
         "create mask" = "0644";
         "directory mask" = "0755";
         "comment" = "Multimedia samba share.";
+      };
+      "sandbox" = {
+        "path" = "/b/sandbox";
+        "read only" = "no";
+        "browseable" = "yes";
+        "guest ok" = "yes";
+        "create mask" = "0644";
+        "directory mask" = "0755";
+        "comment" = "Sandbox samba share.";
       };
     };
   };
