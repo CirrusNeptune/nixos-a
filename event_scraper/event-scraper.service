@@ -1,0 +1,13 @@
+[Unit]
+Description=Event scraper - scrape and publish events to Home Assistant
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/podman run --rm \
+    --env-file /mnt/c/Users/maxwr/Documents/event_scraper/.env \
+    -e DB_PATH=/data/events.db \
+    -v event-scraper-data:/data \
+    event-scraper
+
+[Install]
+WantedBy=default.target

@@ -251,6 +251,10 @@ in
     host = hassHost;
   };
   a.services.cec.cecPhysAddr = "1.3.0.0";
+  a.services.event-scraper = {
+    enable = true;
+    environmentFile = "/secrets/event-scraper.env";
+  };
   a.services.borgbackup.enable = true;
   a.services.ollama.enable = true;
 
