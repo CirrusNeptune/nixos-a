@@ -11,5 +11,6 @@
   ./services/lirc.nix
   ./services/mowbark-rf.nix
   ./services/ollama.nix
+  ./services/scritch.nix
   ./services/steam.nix
 ]
