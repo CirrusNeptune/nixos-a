@@ -9,6 +9,7 @@ let
     echo "SDL_VIDEODRIVER=$SDL_VIDEODRIVER"
     echo "SDL_AUDIODRIVER=$SDL_AUDIODRIVER"
     echo "XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR"
+    echo "Noop 1"
     env | sort
     echo "=== END DEBUG ==="
     exec ${scritchPkg}/bin/scritch "$@"

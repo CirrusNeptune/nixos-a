@@ -30,6 +30,8 @@
 # Audio
 , portaudio
 , pipewire
+# Graphics (libgbm for WebKit2GTK)
+, mesa
 # X11 client libs (needed by pygame-ce's bundled SDL2 to render via Xwayland)
 , xorg
 # Source
@@ -187,12 +189,15 @@ in stdenv.mkDerivation {
   dontUnpack = true;
   dontBuild = true;
 
-  nativeBuildInputs = [ makeWrapper gobject-introspection ];
-  buildInputs = [ gtk3 webkitgtk_4_1 glib gdk-pixbuf ];
+  nativeBuildInputs = [ makeWrapper wrapGAppsHook3 gobject-introspection pkg-config ];
+  buildInputs = [
+    gtk3 webkitgtk_4_1 glib gdk-pixbuf
+    pango atk harfbuzz libsoup_3 cairo
+  ];
 
-  # Skip wrapGAppsHook3 — its compiled C wrapper uses execve() with a
-  # constructed env, dropping DISPLAY that Gamescope sets for children.
-  # Instead we set GI_TYPELIB_PATH manually via makeWrapper (shell script).
+  # Prevent wrapGAppsHook3 from creating its own compiled C wrapper (which
+  # uses execve() and drops DISPLAY that Gamescope sets for children).
+  # Instead we consume gappsWrapperArgs in postFixup via makeWrapper (shell script).
   dontWrapGApps = true;
 
   installPhase = ''
@@ -201,23 +206,24 @@ in stdenv.mkDerivation {
     mkdir -p $out/bin $out/share/scritch
     cp -r ${src}/. $out/share/scritch/
 
-    # Main app entry point — plain shell wrapper that inherits env from Gamescope
+    runHook postInstall
+  '';
+
+  # wrapGAppsHook3 populates gappsWrapperArgs during fixup with the correct
+  # GI_TYPELIB_PATH, XDG_DATA_DIRS, etc. by scanning buildInputs.
+  # We use a shell makeWrapper (not the compiled C wrapper) so that env vars
+  # set by Gamescope (like DISPLAY) are inherited by the child process.
+  postFixup = ''
     makeWrapper ${pythonEnv}/bin/python $out/bin/scritch \
+      "''${gappsWrapperArgs[@]}" \
       --add-flags "$out/share/scritch/main.py" \
       --prefix LD_LIBRARY_PATH : "${lib.makeLibraryPath [
-        portaudio pipewire
+        portaudio pipewire mesa
         xorg.libX11 xorg.libXext xorg.libXcursor xorg.libXinerama
         xorg.libXi xorg.libXrandr xorg.libXxf86vm xorg.libXfixes
         xorg.libXrender xorg.libXScrnSaver
       ]}" \
-      --prefix GI_TYPELIB_PATH : "${lib.makeSearchPath "lib/girepository-1.0" [
-        gtk3 webkitgtk_4_1 glib gdk-pixbuf gobject-introspection
-        pango atk harfbuzz libsoup_3 cairo
-      ]}" \
-      --prefix XDG_DATA_DIRS : "${lib.makeSearchPath "share" [ gtk3 glib ]}" \
       --prefix PATH : "${lib.makeBinPath [ umu-launcher wine ]}" \
       --set SDL_AUDIODRIVER pipewire
-
-    runHook postInstall
   '';
 }
