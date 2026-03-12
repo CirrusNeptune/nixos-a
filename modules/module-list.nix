@@ -2,6 +2,8 @@
   ./extensions/jetbrains-ld.nix
   ./extensions/xpad-console-filter.nix
   ./services/borgbackup.nix
+  ./services/docker-registry.nix
+  ./services/libvirtd.nix
   ./services/cec.nix
   ./services/homeassistant.nix
   ./services/kodi.nix
@@ -9,5 +11,6 @@
   ./services/lirc.nix
   ./services/mowbark-rf.nix
   ./services/ollama.nix
+  ./services/scritch.nix
   ./services/steam.nix
 ]
