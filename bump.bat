@@ -12,7 +12,7 @@ set /a NEXT=%CURRENT%+1
 echo Bumping Noop %CURRENT% -^> %NEXT%
 
 :: Replace in file
-powershell -Command "$content = (Get-Content '%FILE%') | ForEach-Object { if ($_.ReadCount -eq %LINE%) { $_ -replace 'Noop %CURRENT%', 'Noop %NEXT%' } else { $_ } }; [System.IO.File]::WriteAllLines('%FILE%', $content)"
+powershell -Command "$content = [System.IO.File]::ReadAllLines('%FILE%', [System.Text.Encoding]::UTF8) | ForEach-Object -Begin { $i = 0 } -Process { $i++; if ($i -eq %LINE%) { $_ -replace 'Noop %CURRENT%', 'Noop %NEXT%' } else { $_ } }; [System.IO.File]::WriteAllLines('%FILE%', $content, (New-Object System.Text.UTF8Encoding $false))"
 
 git add .
 git commit --amend --no-edit

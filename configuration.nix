@@ -188,7 +188,7 @@ in
   a.services.scritch = {
     enable = true;
     user = "a";
-    src = /b/multimedia/scritch; # path to scritch source on the NixOS machine
+    src = builtins.path { path = /b/multimedia/scritch; name = "scritch-src"; };
   };
 
   systemd.defaultUnit = lib.mkForce "graphical.target";

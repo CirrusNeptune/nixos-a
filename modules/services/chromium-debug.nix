@@ -24,6 +24,8 @@ in {
     args = [
       "--remote-debugging-address=0.0.0.0"
       "--remote-debugging-port=${toString cfg.port}"
+      "--remote-allow-origins=*"
+      "--user-data-dir=/home/${cfg.user}/.config/chromium-debug"
     ];
     environment = {
       XDG_RUNTIME_DIR = "/run/user/1000";
