@@ -9,7 +9,7 @@ let
     echo "SDL_VIDEODRIVER=$SDL_VIDEODRIVER"
     echo "SDL_AUDIODRIVER=$SDL_AUDIODRIVER"
     echo "XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR"
-    echo "Noop 13"
+    echo "Noop 21"
     env | sort
     echo "=== END DEBUG ==="
     exec ${scritchPkg}/bin/scritch "$@"
@@ -37,7 +37,7 @@ in {
     # Gamescope needs XDG_RUNTIME_DIR to create its Wayland socket.
     # pam_systemd should provide this, and does for kodi/steam, but
     # scritch fails without it when started manually via
-    # `systemctl start scritch`. Root cause is unclear ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â may be
+    # `systemctl start scritch`. Root cause is unclear — may be
     # related to the compiled C wrapper from wrapGAppsHook3.
     # TODO: investigate why kodi/steam don't need this.
     # Note: SDL_AUDIODRIVER is set in the package wrapper (not here)

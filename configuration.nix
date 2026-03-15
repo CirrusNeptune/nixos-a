@@ -269,6 +269,11 @@ in
   };
   a.services.borgbackup.enable = true;
   a.services.ollama.enable = true;
+#  a.services.stable-diffusion-webui = {
+#    enable = true;
+#    srcDir = /b/stable-diffusion-webui; # path to webui source on the NixOS machine
+#    # useGpu = false; # uncomment for CPU-only mode
+#  };
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
