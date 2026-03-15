@@ -5,6 +5,7 @@
   ./services/docker-registry.nix
   ./services/libvirtd.nix
   ./services/cec.nix
+  ./services/chromium-debug.nix
   ./services/homeassistant.nix
   ./services/kodi.nix
   ./services/kwin-session.nix

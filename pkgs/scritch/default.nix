@@ -32,6 +32,15 @@
 , pipewire
 # Graphics (libgbm for WebKit2GTK)
 , mesa
+# NW.js/Chromium-based game dependencies
+, nss
+, nspr
+, at-spi2-atk
+, cups
+, libdrm
+, expat
+, libxkbcommon
+, alsa-lib
 # X11 client libs (needed by pygame-ce's bundled SDL2 to render via Xwayland)
 , xorg
 # Source
@@ -222,6 +231,10 @@ in stdenv.mkDerivation {
         xorg.libX11 xorg.libXext xorg.libXcursor xorg.libXinerama
         xorg.libXi xorg.libXrandr xorg.libXxf86vm xorg.libXfixes
         xorg.libXrender xorg.libXScrnSaver
+        # NW.js/Chromium-based game binaries (e.g. GROVE)
+        nss nspr at-spi2-atk cups libdrm
+        expat libxkbcommon alsa-lib
+        xorg.libxcb xorg.libXcomposite xorg.libXdamage
       ]}" \
       --prefix PATH : "${lib.makeBinPath [ umu-launcher wine ]}" \
       --set SDL_AUDIODRIVER pipewire

@@ -225,6 +225,7 @@ in
         extraGroups = [ "wheel" "video" "render" "wireshark" ];
         packages = with pkgs; [
           firefox
+          chromium
           intiface-central
           dolphin-emu
         ];
@@ -262,6 +263,10 @@ in
     host = hassHost;
   };
   a.services.cec.cecPhysAddr = "1.3.0.0";
+  a.services.chromium-debug = {
+    enable = true;
+    user = "a";
+  };
   a.services.borgbackup.enable = true;
   a.services.ollama.enable = true;
 
