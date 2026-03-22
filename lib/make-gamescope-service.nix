@@ -67,6 +67,11 @@ in {
 
       Capabilities = [ "CAP_SYS_TTY_CONFIG" ];
       AmbientCapabilities = [ "CAP_SYS_TTY_CONFIG" ];
+
+      # Gamescope doesn't always respond to SIGTERM; kill the whole
+      # process group and don't wait longer than 10 s before SIGKILL.
+      KillMode = "mixed";
+      TimeoutStopSec = 10;
     };
 
     inherit environment;
@@ -83,7 +88,6 @@ in {
     session required pam_unix.so
     #session required pam_env.so conffile=/etc/pam/environment readenv=0
     session required ${config.systemd.package}/lib/security/pam_systemd.so
-    #session required ${config.systemd.package}/lib/security/pam_systemd.so default-capability-ambient-set=~${mkIntegerSeq 0 63}
   '';
 
   systemd.targets.graphical.wants = [ "${service}.service" ];
