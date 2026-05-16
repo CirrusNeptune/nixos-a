@@ -10,4 +10,5 @@
   ./services/mowbark-rf.nix
   ./services/ollama.nix
   ./services/steam.nix
+  ./services/syncthing.nix
 ]
