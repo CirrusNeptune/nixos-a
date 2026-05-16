@@ -319,6 +319,18 @@ in
   # Filter xpad events to clients of the active VT session
   a.extensions.xpad-console-filter.enable = true;
 
+  # Snapcast server
+  services.snapserver = {
+    enable = true;
+    settings = {
+      stream = {
+        port = 1704;
+        source = "pipewire://?name=TVMirror&target=alsa_input.usb-0c76_USB_SPDIF_Receiver-00.analog-stereo&auto_connect=true";
+      };
+    };
+    openFirewall = true;
+  };
+
   # Copy the Nix:wqOS configuration file and link it from the resulting system
   # (/run/current-system/configuration.nix). This is useful in case you
   # accidentally delete configuration.nix.
