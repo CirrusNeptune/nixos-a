@@ -1,5 +1,6 @@
 [
   ./extensions/jetbrains-ld.nix
+  ./extensions/wireplumber-a
   ./extensions/xpad-console-filter.nix
   ./services/borgbackup.nix
   ./services/cec.nix
@@ -10,4 +11,5 @@
   ./services/mowbark-rf.nix
   ./services/ollama.nix
   ./services/steam.nix
+  ./services/snapserver.nix
 ]

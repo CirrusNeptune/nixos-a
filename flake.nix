@@ -29,11 +29,6 @@
                 __intentionallyOverridingVersion = true;
               });
             })
-            (final: prev: {
-              wireplumber = prev.wireplumber.overrideAttrs (finalAttrs: previousAttrs: {
-                patches = [ ./tvmirror.patch ];
-              });
-            })
           ];
 
           # Use configuration.nix for everything

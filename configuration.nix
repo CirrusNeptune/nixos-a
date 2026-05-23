@@ -12,6 +12,7 @@ let
   lanHost = makeIpHost 2;
   hassHost = makeIpHost 3;
   kodiHost = makeIpHost 4;
+  snapcastHost = makeIpHost 5;
   makeIotHost = nodeId: "10.0.1.${toString nodeId}";
   iotGatewayHost = makeIotHost 1;
   iotHost = makeIotHost 2;
@@ -87,6 +88,7 @@ in
           (lanHost + "/24")
           (hassHost + "/24")
           (kodiHost + "/24")
+          (snapcastHost + "/24")
         ];
         routes = [
           # create default routes
@@ -132,6 +134,12 @@ in
         --dport 80 \
         -j DNAT \
         --to-destination ${kodiHost}:9191
+      iptables -w -t nat -A nixos-nat-pre \
+        -p tcp \
+        -d ${snapcastHost} \
+        --dport 80 \
+        -j DNAT \
+        --to-destination ${snapcastHost}:1780
     '';
   };
 
@@ -320,20 +328,31 @@ in
   a.extensions.xpad-console-filter.enable = true;
 
   # Snapcast server
-  services.snapserver = {
+  a.services.snapserver = {
     enable = true;
     settings = {
       stream = {
         port = 1704;
-        source = "pipewire://?name=TVMirror&target=alsa_input.usb-0c76_USB_SPDIF_Receiver-00.analog-stereo&auto_connect=true";
-        buffer = 100;
+        source = [
+          "pipewire://?name=TV Mirror&target=alsa_input.usb-0c76_USB_SPDIF_Receiver-00.iec958-stereo&capture_sink=false&auto_connect=true"
+          "pipewire://?name=Kodi Mirror&target=Kodi&capture_sink=false&auto_connect=true"
+          "tcp://0.0.0.0:1781?name=Cirrus Work PC&mode=server"
+          "tcp://0.0.0.0:1782?name=Bjorn Lappy&mode=server"
+        ];
+        buffer = 1000;
       };
       http = {
         enabled = true;
       };
+      server = {
+        user = "a";
+      };
     };
     openFirewall = true;
   };
+
+  # Wireplumber extension for automatic snapcast linking
+  a.extensions.wireplumber-a.enable = true;
 
   # Copy the Nix:wqOS configuration file and link it from the resulting system
   # (/run/current-system/configuration.nix). This is useful in case you
