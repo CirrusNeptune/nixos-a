@@ -1,0 +1,13 @@
+diff --git a/src/scripts/linking/rescan.lua b/src/scripts/linking/rescan.lua
+index 368d824b..3d1e06a4 100644
+--- a/src/scripts/linking/rescan.lua
++++ b/src/scripts/linking/rescan.lua
+@@ -47,7 +47,7 @@ function checkLinkable (si, om, handle_nonstreams)
+ 
+   -- For the rest of them, only handle stream session items
+   if not si_props or (si_props ["item.node.type"] ~= "stream"
+-      and not handle_nonstreams) then
++      and not handle_nonstreams and si_props ["node.name"] ~= "TVMirror") then
+     return false, si_props
+   end
+ 
