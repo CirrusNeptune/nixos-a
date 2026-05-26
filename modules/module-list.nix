@@ -4,6 +4,7 @@
   ./extensions/xpad-console-filter.nix
   ./services/borgbackup.nix
   ./services/cec.nix
+  ./services/event-scraper.nix
   ./services/homeassistant.nix
   ./services/kodi.nix
   ./services/kwin-session.nix

@@ -1,0 +1,19 @@
+I need a webscraper python script.
+The python script is required to acquire all upcoming/future events from https://sf-eagle.com/events/.
+
+Return a JSON array of event objects. Each object must have these fields:
+- "title": string (event name)
+- "description": string or null
+- "location": string or null
+- "start_datetime": string in ISO 8601 format (e.g. "2025-03-15T19:00:00") or null
+- "end_datetime": string in ISO 8601 format or null
+- "url": string or null (event-specific URL if available)
+
+Rules:
+- Only include events that appear to be upcoming or future events.
+- If a field is unknown, set it to null.
+- If no events are found, return an empty array [].
+- Return ONLY the JSON array, no other text.
+
+After the scraper is made the scraper should be included in event_manager.py in the same way the other
+scrapers are.
