@@ -9,7 +9,7 @@ in {
   config = lib.mkIf cfg.enable {
     services.borgbackup.jobs = {
       rootBackup = {
-        paths = [ "/home/a" "/boot" "/var" ];
+        paths = [ "/home/a" "/boot" "/var" "/b/multimedia" ];
         repo = "/b/borg/backups/a";
         doInit = true;
         encryption = {

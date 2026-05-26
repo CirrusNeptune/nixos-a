@@ -3,13 +3,17 @@
   ./extensions/wireplumber-a
   ./extensions/xpad-console-filter.nix
   ./services/borgbackup.nix
+  ./services/docker-registry.nix
+  ./services/libvirtd.nix
   ./services/cec.nix
+  ./services/chromium-debug.nix
   ./services/homeassistant.nix
   ./services/kodi.nix
   ./services/kwin-session.nix
   ./services/lirc.nix
   ./services/mowbark-rf.nix
   ./services/ollama.nix
+  ./services/scritch.nix
   ./services/steam.nix
   ./services/snapserver.nix
 ]
