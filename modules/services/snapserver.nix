@@ -223,13 +223,11 @@ in
       serviceConfig = {
         ExecStart = toString [
           (lib.getExe' cfg.package "snapserver")
-          "--daemon"
         ];
-        Type = "forking";
+        Type = "simple";
         LimitRTPRIO = 50;
         LimitRTTIME = "infinity";
         NoNewPrivileges = true;
-        PIDFile = "/run/${name}/pid";
         ProtectKernelTunables = true;
         ProtectControlGroups = true;
         ProtectKernelModules = true;
