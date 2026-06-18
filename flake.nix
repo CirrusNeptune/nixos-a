@@ -32,7 +32,9 @@
           ];
 
           # Use configuration.nix for everything
-          imports = [ ./configuration.nix ];
+          imports = [
+            ./configuration.nix
+          ];
         })
       ];
     };

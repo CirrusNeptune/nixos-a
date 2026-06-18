@@ -193,6 +193,11 @@ in
     enable = true;
     user = "a";
   };
+  a.services.scritch = {
+    enable = true;
+    user = "a";
+    src = builtins.path { path = /b/multimedia/scritch; name = "scritch-src"; };
+  };
 
   systemd.defaultUnit = lib.mkForce "graphical.target";
 
@@ -228,6 +233,7 @@ in
         extraGroups = [ "wheel" "video" "render" "wireshark" ];
         packages = with pkgs; [
           firefox
+          chromium
           intiface-central
           dolphin-emu
         ];
@@ -248,6 +254,12 @@ in
     file
     claude-code
     jetbrains.pycharm-community
+    wine
+    umu-launcher
+    portaudio
+    SDL2
+    SDL2_mixer
+    alsa-lib
     flatpak-builder
     python3
   ];
@@ -259,6 +271,10 @@ in
     host = hassHost;
   };
   a.services.cec.cecPhysAddr = "1.3.0.0";
+  a.services.chromium-debug = {
+    enable = true;
+    user = "a";
+  };
   a.services.borgbackup.enable = true;
   a.services.ollama.enable = true;
 
@@ -301,6 +317,15 @@ in
         "create mask" = "0644";
         "directory mask" = "0755";
         "comment" = "Multimedia samba share.";
+      };
+      "sandbox" = {
+        "path" = "/b/sandbox";
+        "read only" = "no";
+        "browseable" = "yes";
+        "guest ok" = "yes";
+        "create mask" = "0644";
+        "directory mask" = "0755";
+        "comment" = "Sandbox samba share.";
       };
     };
   };
