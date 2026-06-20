@@ -43,9 +43,9 @@ let
 
   # Fetch base steamrt image.
   steamrtImage = dockerTools.pullImage { # VAR
-    imageName = "registry.gitlab.steamos.cloud/proton/sniper/sdk";
-    imageDigest = "sha256:5e17c2a9f62d7a982fd22bdf721119d39bd756d4b5e129ef26d349c2c8186a03";
-    sha256 = "sha256-VCxckZgliHK/bs1fPMVHC6dgvBAliyhUKNQotJnKdpo=";
+    imageName = "registry.gitlab.steamos.cloud/proton/steamrt4/sdk/x86_64";
+    imageDigest = "sha256:97526b794ce1a9bed5f891084462260b3a02399569f7438a3a57b5a253001db9";
+    sha256 = "sha256-T4V//hFRO1yAOfHev96IodzP1OTLMtlnEYTA31+jIfA=";
     finalImageTag = "steamrt";
     finalImageName = "localhost/steamrt";
   };
@@ -54,11 +54,11 @@ let
   gstPluginRsCargoDeps = rustPlatform.importCargoLock { # VAR
     lockFile = ./gst-plugins-rs-cargo.lock;
     outputHashes = {
-      "cairo-rs-0.16.9" = "sha256-0hEScmRh/0qLCUwx38JzaE7ksN05oHqWmFBe26lWoMo=";
+      "cairo-rs-0.16.9" = "sha256-ZALJ0PumC2WseuF0xrQGsFI/Zq/pb62Li/eOaa+IBI8=";
       "ffv1-0.0.0" = "sha256-af2VD00tMf/hkfvrtGrHTjVJqbl+VVpLaR0Ry+2niJE=";
       "flavors-0.2.0" = "sha256-zBa0X75lXnASDBam9Kk6w7K7xuH9fP6rmjWZBUB5hxk=";
-      "gdk4-0.5.6" = "sha256-XzruGCQRcgnG/Sn9NGm77n9a0yo3r0SclVRKaYztXmQ=";
-      "gstreamer-0.19.8" = "sha256-8mvkIpWn1uX+Up5ZWVDTCsiANxj3ityG2LkSJvmOeGI=";
+      "gdk4-0.5.6" = "sha256-9vfdNsN7fJv+KtTRYRMIvdN3tsRlpstoZ2XTHD0dlfo=";
+      "gstreamer-0.19.8" = "sha256-B8LsBHW1vy2SLq77+bwAXCbln2pEw1J6lzZ+uJ4yHqc=";
     };
   };
 
@@ -108,8 +108,8 @@ let
   # Fetch all proton contrib deps.
   contribTarballs = let # VAR
     wineGeckoVer = "2.47.4";
-    wineMonoVer = "10.0.0";
-    xaliaVer = "0.4.6";
+    wineMonoVer = "11.0.0";
+    xaliaVer = "0.4.9";
   in [
     (fetchurl rec {
       name = "wine-gecko-${wineGeckoVer}-x86_64.tar.xz";
@@ -124,17 +124,17 @@ let
     (fetchurl rec {
       name = "wine-mono-${wineMonoVer}-x86.tar.xz";
       url = "https://github.com/madewokherd/wine-mono/releases/download/wine-mono-${wineMonoVer}/${name}";
-      hash = "sha256-tIfEREFXiaiyWzplQq+maKa21gZ8ZIYm8yOIREP3tw0=";
+      hash = "sha256-DNcjqiiJf319JwLu1scuQmIlWYDiErwrPJS/ojSr5f0=";
     })
     (fetchurl rec {
       name = "xalia-${xaliaVer}-net48-mono.zip";
       url = "https://github.com/madewokherd/xalia/releases/download/xalia-${xaliaVer}/${name}";
-      hash = "sha256-JNjN76e7lzKIW+o8HzltJV/5BCXBTJSYE/wrzYGwqNc=";
+      hash = "sha256-4slKQPaPY2YMwGQFpkG8Tloum5MguWCOAaIf629nCcU=";
     })
   ];
 in {
   pname = "proton-mowbark"; # VAR
-  version = "0.2.0"; # VAR
+  version = "0.3.0"; # VAR
 
   # Fetch proton source with submodules.
   # .git directory is removed to maintain determinism -
@@ -142,8 +142,8 @@ in {
   src = (fetchgit {
     name = "source";
     url = "https://github.com/ValveSoftware/Proton";
-    rev = "1d1d7c091405c7faeeaf39c55aebb4edc4eee174";
-    hash = "sha256-gq4NRqZsJNDiXbThsavbEZG7Uc77PdpabPgGzZXoC2A=";
+    rev = "e50807ac2e9de5be423850ef8c270569d62af4bc";
+    hash = "sha256-PgdeA5vJoo5az21fo/zdRO9njNy6gkrxJkvWGBn67vg=";
     fetchSubmodules = true;
   }).overrideAttrs (_: {
     env.NIX_PREFETCH_GIT_CHECKOUT_HOOK = ''
@@ -182,11 +182,6 @@ in {
   ];
 
   patches = [ # VAR
-    # ContainerId patches to enable Dualsense haptics.
-    ./dualsense/0001-mmdevapi-correctly-read-and-write-containerid-as-cls.patch
-    ./dualsense/0002-containerid-helper-to-generate-a-containerid-from-a-.patch
-    ./dualsense/0003-Implement-SetupDiGetDeviceInterfacePropertyW-for-DEV.patch
-
     # Patch `git describe` with strings harvested during fetchgit.
     ./version.patch
 
@@ -241,7 +236,7 @@ in {
 
     # Run configure.sh to get Makefile.
     cd $NIX_BUILD_TOP/build
-    bash $NIX_BUILD_TOP/source/configure.sh --build-name=${finalPackageName} --container-engine=podman
+    bash $NIX_BUILD_TOP/source/configure.sh --build-name=${finalPackageName} --container-engine=podman --proton-sdk-image=localhost/steamrt:steamrt
 
     runHook postConfigure
   '';

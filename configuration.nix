@@ -147,9 +147,9 @@ in
   programs.wireshark.enable = true;
 
   # Configure DNS
-  services.resolved = {
-    domains = [ "mow" ];
-    fallbackDns = [ gatewayHost ];
+  services.resolved.settings.Resolve = {
+    Domains = [ "mow" ];
+    FallbackDns = [ gatewayHost ];
   };
 
   # Set your time zone.
@@ -247,7 +247,7 @@ in
     gdb
     file
     claude-code
-    jetbrains.pycharm-community
+    jetbrains.pycharm-oss
     flatpak-builder
     python3
   ];

@@ -1,6 +1,6 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
   };
 
   outputs = { self, nixpkgs }:
@@ -24,9 +24,8 @@
           nixpkgs.overlays = [
             (final: prev: import ./pkgs final)
             (final: prev: {
-              dolphin-emu = prev.dolphin-emu.overrideAttrs (finalAttrs: previousAttrs: {
-                version = "2512";
-                __intentionallyOverridingVersion = true;
+              bubblewrap = prev.bubblewrap.overrideAttrs (finalAttrs: previousAttrs: {
+                mesonFlags = [ (lib.mesonBool "support_setuid" true) ];
               });
             })
           ];

@@ -9,7 +9,7 @@ in {
   config = lib.mkIf cfg.enable {
     services.ollama = {
       enable = true;
-      acceleration = "rocm";
+      package = pkgs.ollama-rocm;
       host = "0.0.0.0";
     };
   };

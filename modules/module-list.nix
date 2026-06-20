@@ -1,7 +1,7 @@
 [
   ./extensions/jetbrains-ld.nix
   ./extensions/wireplumber-a
-  ./extensions/xpad-console-filter.nix
+  ./extensions/xpad-console-filter
   ./services/borgbackup.nix
   ./services/cec.nix
   ./services/homeassistant.nix
