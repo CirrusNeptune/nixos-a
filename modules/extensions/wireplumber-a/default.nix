@@ -8,6 +8,58 @@ in {
   };
 
   config = mkIf cfg.enable {
+    services.pipewire.extraConfig = {
+      client."101-kodi" = {
+        "stream.rules" = [
+          {
+            matches = [
+              {
+                "application.name" = "Kodi";
+              }
+            ];
+            actions = {
+              update-props = {
+                "node.target" = "kodi_combine";
+              };
+            };
+          }
+        ];
+      };
+      pipewire."100-kodi-combine" = {
+        "context.modules" = [
+          {
+            name = "libpipewire-module-combine-stream";
+            args = {
+              "combine.mode" = "sink";
+              "node.name" = "kodi_combine";
+              "node.description" = "Kodi Combine";
+              "combine.latency-compensate" = false;
+              "combine.props" = {
+                "audio.position" = [ "FL" "FR" "RL" "RR" "FC" "LFE" "SL" "SR" ];
+              };
+              "stream.props" = {};
+              "stream.rules" = [
+                {
+                  matches = [
+                    {
+                      "node.name" = "alsa_output.pci-0000_03_00.1.hdmi-surround71-extra3";
+                      "media.class" = "Audio/Sink";
+                    }
+                    {
+                      "node.name" = "Kodi Mirror";
+                      "media.class" = "Audio/Sink";
+                    }
+                  ];
+                  actions = {
+                    create-stream = {};
+                  };
+                }
+              ];
+            };
+          }
+        ];
+      };
+    };
     services.pipewire.wireplumber = {
       extraConfig."wireplumber-a" = {
         "context.properties" = {

@@ -335,7 +335,7 @@ in
         port = 1704;
         source = [
           "pipewire://?name=TV Mirror&target=alsa_input.usb-0c76_USB_SPDIF_Receiver-00.iec958-stereo&capture_sink=false&auto_connect=true"
-          "pipewire://?name=Kodi Mirror&target=Kodi&capture_sink=false&auto_connect=true"
+          "pipewire://?name=Kodi Mirror&capture_sink=false&auto_connect=true"
           "tcp://0.0.0.0:1781?name=Cirrus Work PC&mode=server"
           "tcp://0.0.0.0:1782?name=Bjorn Lappy&mode=server"
         ];
