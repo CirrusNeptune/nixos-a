@@ -8,6 +8,7 @@
   ./services/kodi.nix
   ./services/kwin-session.nix
   ./services/lirc.nix
+  ./services/loreserver.nix
   ./services/mowbark-rf.nix
   ./services/ollama.nix
   ./services/steam.nix

@@ -354,6 +354,16 @@ in
   # Wireplumber extension for automatic snapcast linking
   a.extensions.wireplumber-a.enable = true;
 
+  # Lore version control
+  a.services.loreserver = {
+    enable = true;
+    settings = {
+      immutable_store.local.path = "/b/lorestore";
+      mutable_store.local.path = "/b/lorestore";
+    };
+  };
+  systemd.services.loreserver.serviceConfig.ReadWritePaths = [ "/b/lorestore" ];
+
   # Copy the Nix:wqOS configuration file and link it from the resulting system
   # (/run/current-system/configuration.nix). This is useful in case you
   # accidentally delete configuration.nix.
