@@ -230,10 +230,20 @@ in
           firefox
           intiface-central
           dolphin-emu
+          rpcs3
         ];
       };
     };
   };
+
+  security.pam.loginLimits = [
+    {
+      domain = "a";
+      item = "memlock";
+      type = "-";
+      value = 2097152;
+    }
+  ];
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
