@@ -236,6 +236,7 @@ in
     };
   };
 
+  # 2GB memlock limit for rpcs3
   security.pam.loginLimits = [
     {
       domain = "a";
@@ -330,7 +331,7 @@ in
     enable = true;
     users = {
       linuxdev = { devPackages = [ pkgs.linux ]; };
-      pipewiredev = { devPackages = [ pkgs.pkg-config pkgs.pipewire ]; environment = { PIPEWIRE_RUNTIME_DIR = "/run/user/1000"; }; };
+      pipewiredev = { devPackages = [ pkgs.pkg-config pkgs.pipewire pkgs.snapcast ]; environment = { PIPEWIRE_RUNTIME_DIR = "/run/user/1000"; }; };
     };
   };
 
@@ -344,10 +345,10 @@ in
       stream = {
         port = 1704;
         source = [
-          "pipewire://?name=TV Mirror&target=alsa_input.usb-0c76_USB_SPDIF_Receiver-00.iec958-stereo&capture_sink=false&auto_connect=true"
+          #"pipewire://?name=TV Mirror&target=alsa_input.usb-0c76_USB_SPDIF_Receiver-00.iec958-stereo&capture_sink=false&auto_connect=true"
           "pipewire://?name=Kodi Mirror&capture_sink=false&auto_connect=true"
-          "tcp://0.0.0.0:1781?name=Cirrus Work PC&mode=server"
-          "tcp://0.0.0.0:1782?name=Bjorn Lappy&mode=server"
+          #"tcp://0.0.0.0:1781?name=Cirrus Work PC&mode=server"
+          #"tcp://0.0.0.0:1782?name=Bjorn Lappy&mode=server"
         ];
         buffer = 1000;
       };

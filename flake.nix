@@ -45,6 +45,25 @@
                   (lib.cmakeBool "BUILD_SHARED_LIBS" false)
                 ];
               });
+              kodi-wayland = (prev.kodi-wayland.override { ffmpeg = prev.ffmpeg_8; }).overrideAttrs (finalAttrs: previousAttrs: {
+                version = "22.0b1";
+                kodiReleaseName = "Piers";
+                src = prev.fetchFromGitHub {
+                  owner = "xbmc";
+                  repo = "xbmc";
+                  rev = "${finalAttrs.version}-${finalAttrs.kodiReleaseName}";
+                  hash = "sha256-WTnFExkD07WOJ0u1uZWkpC8pzG0D7ZpdE1lfonzdCFY=";
+                };
+                buildInputs = previousAttrs.buildInputs ++ [
+                  prev.crossguid
+                  prev.exiv2
+                  prev.pcre2
+                  prev.nlohmann_json
+                ];
+                cmakeFlags = previousAttrs.cmakeFlags ++ [
+                  (lib.cmakeBool "ENABLE_XSLT" false)
+                ];
+              });
             })
           ];
 
