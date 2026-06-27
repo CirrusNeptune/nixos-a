@@ -1,0 +1,14 @@
+diff --git a/server/streamreader/pipewire_stream.cpp b/server/streamreader/pipewire_stream.cpp
+index 0927cbab..76e59c8c 100644
+--- a/server/streamreader/pipewire_stream.cpp
++++ b/server/streamreader/pipewire_stream.cpp
+@@ -120,6 +120,9 @@ void PipeWireStream::on_state_changed(void* userdata, enum pw_stream_state old,
+         case PW_STREAM_STATE_STREAMING:
+             LOG(INFO, LOG_TAG) << "Stream is now streaming\n";
+             break;
++        case PW_STREAM_STATE_PAUSED:
++            stream->setState(ReaderState::kIdle);
++            break;
+         default:
+             break;
+     }

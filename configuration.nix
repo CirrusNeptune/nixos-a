@@ -236,6 +236,7 @@ in
     };
   };
 
+  # 2GB memlock limit for rpcs3
   security.pam.loginLimits = [
     {
       domain = "a";
@@ -330,7 +331,7 @@ in
     enable = true;
     users = {
       linuxdev = { devPackages = [ pkgs.linux ]; };
-      pipewiredev = { devPackages = [ pkgs.pkg-config pkgs.pipewire ]; environment = { PIPEWIRE_RUNTIME_DIR = "/run/user/1000"; }; };
+      pipewiredev = { devPackages = [ pkgs.pkg-config pkgs.pipewire pkgs.snapcast ]; environment = { PIPEWIRE_RUNTIME_DIR = "/run/user/1000"; }; };
     };
   };
 
