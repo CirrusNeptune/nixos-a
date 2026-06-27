@@ -45,6 +45,10 @@
                   (lib.cmakeBool "BUILD_SHARED_LIBS" false)
                 ];
               });
+              kodi-wayland = prev.kodi-wayland.overrideAttrs (finalAttrs: previousAttrs: {
+                version = "22.0b1";
+                kodiReleaseName = "Piers";
+              });
             })
           ];
 

@@ -236,6 +236,7 @@ in
     };
   };
 
+  # 2GB memlock limit for rpcs3
   security.pam.loginLimits = [
     {
       domain = "a";
