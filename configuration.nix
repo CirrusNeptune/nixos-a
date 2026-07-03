@@ -350,9 +350,13 @@ in
           "tcp://0.0.0.0:1781?name=Cirrus Work PC&mode=server"
           "tcp://0.0.0.0:1782?name=Bjorn Lappy&mode=server"
         ];
-        buffer = 1000;
+        buffer = 200;
+        codec = "pcm";
       };
       http = {
+        enabled = true;
+      };
+      tcp = {
         enabled = true;
       };
       server = {

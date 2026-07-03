@@ -25,6 +25,22 @@ in {
           }
         ];
       };
+      pipewire."50-reduce-spdif-prio" = {
+        "node.rules" = [
+          {
+            matches = [
+              {
+                "node.name" = "alsa_input.usb-0c76_USB_SPDIF_Receiver-00.iec958-stereo";
+              }
+            ];
+            actions = {
+              update-props = {
+                "priority.driver" = "200001";
+              };
+            };
+          }
+        ];
+      };
       pipewire."100-kodi-combine" = {
         "context.modules" = [
           {
