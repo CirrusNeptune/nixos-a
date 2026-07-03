@@ -178,7 +178,7 @@ in {
         hostPlatformConfig = pkgs.stdenv.hostPlatform.config;
         shell = pkgs.mkShell {
           name = "${name}-shell";
-          packages = [ pkgs.stdenv.cc.libc_dev ] ++ user.packages ++ user.devPackages;
+          packages = user.packages ++ user.devPackages;
           inputsFrom = user.devPackages;
           # Bash script ran during derivation build with all dev packages in the environment.
           # Manipulate environment as necessary before final `export`.
