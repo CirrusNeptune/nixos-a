@@ -1,14 +1,76 @@
 diff --git a/server/streamreader/pipewire_stream.cpp b/server/streamreader/pipewire_stream.cpp
-index 0927cbab..76e59c8c 100644
+index 0927cbab..a03f3a73 100644
 --- a/server/streamreader/pipewire_stream.cpp
 +++ b/server/streamreader/pipewire_stream.cpp
-@@ -120,6 +120,9 @@ void PipeWireStream::on_state_changed(void* userdata, enum pw_stream_state old,
+@@ -97,6 +97,18 @@ void PipeWireStream::on_process(void* userdata)
+     stream->processAudio();
+ }
+ 
++int PipeWireStream::on_paused([[maybe_unused]] struct spa_loop *loop,
++                              [[maybe_unused]] bool async,
++                              [[maybe_unused]] uint32_t seq,
++                              [[maybe_unused]] const void *data,
++                              [[maybe_unused]] size_t size,
++                              void *user_data)
++{
++    auto* stream = static_cast<PipeWireStream*>(user_data);
++    stream->paused();
++    return 0;
++}
++
+ void PipeWireStream::on_state_changed(void* userdata, enum pw_stream_state old, enum pw_stream_state state, const char* error)
+ {
+     auto* stream = static_cast<PipeWireStream*>(userdata);
+@@ -120,6 +132,12 @@ void PipeWireStream::on_state_changed(void* userdata, enum pw_stream_state old,
          case PW_STREAM_STATE_STREAMING:
              LOG(INFO, LOG_TAG) << "Stream is now streaming\n";
              break;
 +        case PW_STREAM_STATE_PAUSED:
-+            stream->setState(ReaderState::kIdle);
++            // Handle paused state on the same thread as processAudio()
++            if (stream->pw_stream_)
++                pw_loop_invoke(pw_stream_get_data_loop(stream->pw_stream_),
++                    on_paused, 0, NULL, 0, false, stream);
 +            break;
          default:
              break;
      }
+@@ -228,6 +246,14 @@ void PipeWireStream::processAudio()
+     pw_stream_queue_buffer(pw_stream_, b);
+ }
+ 
++void PipeWireStream::paused()
++{
++    if (!running_)
++        return;
++
++    setState(ReaderState::kIdle);
++}
++
+ void PipeWireStream::on_core_info(void* userdata, const struct pw_core_info* info)
+ {
+     std::ignore = userdata; // Unused
+diff --git a/server/streamreader/pipewire_stream.hpp b/server/streamreader/pipewire_stream.hpp
+index 20649c38..bc292717 100644
+--- a/server/streamreader/pipewire_stream.hpp
++++ b/server/streamreader/pipewire_stream.hpp
+@@ -60,6 +60,12 @@ protected:
+ private:
+     // PipeWire callbacks
+     static void on_process(void* userdata);
++    static int on_paused(struct spa_loop *loop,
++                         bool async,
++                         uint32_t seq,
++                         const void *data,
++                         size_t size,
++                         void *user_data);
+     static void on_state_changed(void* userdata, enum pw_stream_state old, enum pw_stream_state state, const char* error);
+     static void on_param_changed(void* userdata, uint32_t id, const struct spa_pod* param);
+     static void on_core_info(void* userdata, const struct pw_core_info* info);
+@@ -68,6 +74,7 @@ private:
+     void initPipeWire();
+     void uninitPipeWire();
+     void processAudio();
++    void paused();
+ 
+     // PipeWire structures
+     struct pw_main_loop* pw_main_loop_;
