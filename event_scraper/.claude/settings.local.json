@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.sf.dog)",
+      "Bash(python3:*)",
+      "WebFetch(domain:www.frolicparty.com)",
+      "WebFetch(domain:sf-eagle.com)",
+      "WebFetch(domain:www.sfk9unit.org)"
+    ]
+  }
+}

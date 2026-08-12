@@ -1,0 +1,9 @@
+[Unit]
+Description=Run event scraper weekly on Fridays
+
+[Timer]
+OnCalendar=Fri *-*-* 09:00:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target
