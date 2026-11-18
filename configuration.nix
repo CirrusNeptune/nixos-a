@@ -28,7 +28,7 @@ let
   };
   dolphinBtAdapterRule = pkgs.writeTextFile {
     name = "dolphin-bt-udev-rule";
-    text = ''SUBSYSTEM=="usb", ATTRS{idVendor}=="2357", ATTRS{idProduct}=="0604", MODE="0666"'';
+    text = ''SUBSYSTEM=="usb", ATTRS{idVendor}=="2357", ATTRS{idProduct}=="0604", MODE="0666", RUN+="/bin/sh -c 'echo -n %k > /sys/bus/usb/drivers/btusb/unbind'"'';
     destination = "/etc/udev/rules.d/99-dolphin-bt.rules";
   };
 in

@@ -239,6 +239,26 @@ in
       };
     };
 
+    # Periodically restart snapserver to reset the accumulated clock drift
+    # between the clients and the server.
+    systemd.user.services.snapserver-restart = {
+      description = "Restart Snapserver";
+      serviceConfig = {
+        Type = "oneshot";
+        ExecStart = "${config.systemd.package}/bin/systemctl --user try-restart snapserver.service";
+      };
+    };
+
+    systemd.user.timers.snapserver-restart = {
+      description = "Restart Snapserver every 12 hours";
+      wantedBy = [ "timers.target" ];
+      timerConfig = {
+        OnBootSec = "12h";
+        OnUnitActiveSec = "12h";
+        Unit = "snapserver-restart.service";
+      };
+    };
+
     networking.firewall.allowedTCPPorts =
       lib.optionals cfg.openFirewall [ cfg.settings.stream.port ]
       ++ lib.optional (cfg.openFirewall && cfg.settings.tcp.enabled) cfg.settings.tcp.port
