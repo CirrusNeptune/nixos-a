@@ -26,6 +26,11 @@ let
     text = ''SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTRS{idVendor}=="057e", ATTRS{idProduct}=="0337", MODE="0666"'';
     destination = "/etc/udev/rules.d/99-gc.rules";
   };
+  dolphinBtAdapterRule = pkgs.writeTextFile {
+    name = "dolphin-bt-udev-rule";
+    text = ''SUBSYSTEM=="usb", ATTRS{idVendor}=="2357", ATTRS{idProduct}=="0604", MODE="0666"'';
+    destination = "/etc/udev/rules.d/99-dolphin-bt.rules";
+  };
 in
 {
   imports =
@@ -177,7 +182,7 @@ in
     pulse.enable = true;
   };
 
-  services.udev.packages = [ dualsenseRule gcAdapterRule ];
+  services.udev.packages = [ dualsenseRule gcAdapterRule dolphinBtAdapterRule ];
 
   # Enable the X11 windowing system.
   # services.xserver.enable = true;
